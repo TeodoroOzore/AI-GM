@@ -24,6 +24,7 @@ type CharacterSheet = {
   abilities: Record<AbilityKey, number>;
   savingThrows: Record<AbilityKey, number>;
   skills: string[];
+  skillProficiencies: string[];
   inventory: string[];
   equipment: string[];
   spells: string[];
@@ -67,7 +68,7 @@ type DraftCharacter = {
   passivePerception: string;
   inspiration: boolean;
   abilities: Record<AbilityKey, string>;
-  skills: string;
+  skillProficiencies: string[];
   inventory: string;
   equipment: string;
   spells: string;
@@ -83,6 +84,26 @@ type DraftCharacter = {
 
 const STORAGE_KEY = 'ai-gm-state-v1';
 const abilityKeys: AbilityKey[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
+const skillDefinitions = [
+  { name: 'Acrobatics', ability: 'DEX' },
+  { name: 'Animal Handling', ability: 'WIS' },
+  { name: 'Arcana', ability: 'INT' },
+  { name: 'Athletics', ability: 'STR' },
+  { name: 'Deception', ability: 'CHA' },
+  { name: 'History', ability: 'INT' },
+  { name: 'Insight', ability: 'WIS' },
+  { name: 'Intimidation', ability: 'CHA' },
+  { name: 'Investigation', ability: 'INT' },
+  { name: 'Medicine', ability: 'WIS' },
+  { name: 'Nature', ability: 'INT' },
+  { name: 'Perception', ability: 'WIS' },
+  { name: 'Performance', ability: 'CHA' },
+  { name: 'Persuasion', ability: 'CHA' },
+  { name: 'Religion', ability: 'INT' },
+  { name: 'Sleight of Hand', ability: 'DEX' },
+  { name: 'Stealth', ability: 'DEX' },
+  { name: 'Survival', ability: 'WIS' }
+] as const;
 
 function createDraftCharacter(): DraftCharacter {
   return {
@@ -110,7 +131,7 @@ function createDraftCharacter(): DraftCharacter {
       WIS: '13',
       CHA: '10'
     },
-    skills: 'Arcana\nHistoria\nInvestigación',
+    skillProficiencies: ['Arcana', 'History', 'Investigation'],
     inventory: 'Libro de runas\nPiedra luminosa',
     equipment: 'Daga de práctica\nCapa antigua',
     spells: 'Mago armado\nDetectar magia',
@@ -143,7 +164,27 @@ function parseAttackFormulas(input: string) {
   });
 }
 
+function getAbilityModifier(score: number) {
+  return Math.floor((score - 10) / 2);
+}
+
+function formatSigned(value: number) {
+  return value >= 0 ? `+${value}` : `${value}`;
+}
+
 function createCharacterFromDraft(draft: DraftCharacter): CharacterSheet {
+  const abilities = {
+    STR: Number(draft.abilities.STR) || 10,
+    DEX: Number(draft.abilities.DEX) || 10,
+    CON: Number(draft.abilities.CON) || 10,
+    INT: Number(draft.abilities.INT) || 10,
+    WIS: Number(draft.abilities.WIS) || 10,
+    CHA: Number(draft.abilities.CHA) || 10
+  };
+  const proficiencyBonus = Number(draft.proficiencyBonus) || 2;
+  const skillProficiencies = Array.isArray(draft.skillProficiencies) ? draft.skillProficiencies : [];
+  const passivePerception = 10 + getAbilityModifier(abilities.WIS) + (skillProficiencies.includes('Perception') ? proficiencyBonus : 0);
+
   return {
     name: draft.name.trim() || 'Jugador',
     race: draft.race.trim() || 'Humano',
@@ -153,23 +194,16 @@ function createCharacterFromDraft(draft: DraftCharacter): CharacterSheet {
     alignment: draft.alignment.trim() || 'Neutral',
     level: Number(draft.level) || 1,
     experience: Number(draft.experience) || 0,
-    proficiencyBonus: Number(draft.proficiencyBonus) || 2,
+    proficiencyBonus,
     hp: Number(draft.hp) || 8,
     maxHp: Number(draft.maxHp) || Number(draft.hp) || 8,
     tempHp: 0,
     armorClass: Number(draft.armorClass) || 10,
     speed: Number(draft.speed) || 30,
     initiative: Number(draft.initiative) || 0,
-    passivePerception: Number(draft.passivePerception) || 10,
+    passivePerception,
     inspiration: draft.inspiration,
-    abilities: {
-      STR: Number(draft.abilities.STR) || 10,
-      DEX: Number(draft.abilities.DEX) || 10,
-      CON: Number(draft.abilities.CON) || 10,
-      INT: Number(draft.abilities.INT) || 10,
-      WIS: Number(draft.abilities.WIS) || 10,
-      CHA: Number(draft.abilities.CHA) || 10
-    },
+    abilities,
     savingThrows: {
       STR: Number(draft.abilities.STR) || 10,
       DEX: Number(draft.abilities.DEX) || 10,
@@ -178,7 +212,8 @@ function createCharacterFromDraft(draft: DraftCharacter): CharacterSheet {
       WIS: Number(draft.abilities.WIS) || 10,
       CHA: Number(draft.abilities.CHA) || 10
     },
-    skills: parseList(draft.skills),
+    skills: skillProficiencies,
+    skillProficiencies,
     inventory: parseList(draft.inventory),
     equipment: parseList(draft.equipment),
     spells: parseList(draft.spells),
@@ -424,8 +459,24 @@ function App() {
 
           <div className="form-grid">
             <label>
-              Habilidades
-              <textarea value={draftCharacter.skills} onChange={(event) => setDraftCharacter({ ...draftCharacter, skills: event.target.value })} />
+              Competencias de habilidades (D&D 5e)
+              <div className="checkbox-list">
+                {skillDefinitions.map((skill) => (
+                  <label key={skill.name}>
+                    <input
+                      type="checkbox"
+                      checked={draftCharacter.skillProficiencies.includes(skill.name)}
+                      onChange={(event) => {
+                        const next = event.target.checked
+                          ? [...draftCharacter.skillProficiencies, skill.name]
+                          : draftCharacter.skillProficiencies.filter((name) => name !== skill.name);
+                        setDraftCharacter({ ...draftCharacter, skillProficiencies: next });
+                      }}
+                    />
+                    <span>{skill.name} ({skill.ability})</span>
+                  </label>
+                ))}
+              </div>
             </label>
             <label>
               Inventario
@@ -565,7 +616,19 @@ function App() {
         <div className="sheet-grid secondary-grid">
           <div>
             <h3>Habilidades y competencias</h3>
-            <ul>{character.skills.map((skill) => <li key={skill}>{skill}</li>)}</ul>
+            <ul>
+              {skillDefinitions.map((skill) => {
+                const isProficient = character.skillProficiencies.includes(skill.name);
+                const modifier = getAbilityModifier(character.abilities[skill.ability]) + (isProficient ? character.proficiencyBonus : 0);
+                return (
+                  <li key={skill.name}>
+                    <strong>{skill.name}</strong> ({skill.ability}) — {formatSigned(modifier)}
+                    {isProficient ? ' · competente' : ''}
+                  </li>
+                );
+              })}
+            </ul>
+            <p><strong>Percepción pasiva:</strong> {character.passivePerception}</p>
             <p><strong>Idiomas:</strong> {character.languages.join(', ')}</p>
             <p><strong>Competencias:</strong> {character.proficiencies.join(', ')}</p>
           </div>
