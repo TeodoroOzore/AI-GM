@@ -1290,4 +1290,1234 @@ input:focus, textarea:focus, select:focus {
   opacity: 0.75;
 }
 
+/* ─── CHARACTER CREATION WIZARD & RECOMMENDATIONS ─── */
+.creation-steps {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: var(--leather-2);
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid var(--seam);
+  overflow-x: auto;
+}
+
+.creation-step-btn {
+  flex: 1;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--parchment-dim);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 8px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.creation-step-btn.active {
+  background: var(--ink);
+  border-color: var(--brass-dim);
+  color: var(--brass);
+}
+
+.creation-step-btn:hover {
+  color: var(--brass);
+}
+
+.step-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--seam);
+}
+
+.step-prev-btn, .step-next-btn {
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  color: var(--parchment);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 8px 16px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.step-next-btn {
+  border-color: var(--brass-dim);
+  color: var(--brass);
+  margin-left: auto;
+}
+
+.step-prev-btn:hover, .step-next-btn:hover {
+  border-color: var(--brass);
+  background: var(--leather-2);
+}
+
+.rec-panel {
+  margin-top: 14px;
+  background: rgba(201, 162, 39, 0.08);
+  border: 1px solid var(--brass-dim);
+  border-radius: 4px;
+  padding: 12px 14px;
+}
+
+.rec-header {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--brass);
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.rec-description {
+  font-size: 0.85rem;
+  color: var(--parchment);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.rec-apply-btn {
+  background: rgba(201, 162, 39, 0.15);
+  border: 1px dashed var(--brass);
+  color: var(--brass);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 6px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  display: inline-block;
+}
+
+.rec-apply-btn:hover {
+  background: rgba(201, 162, 39, 0.3);
+}
+
+.rec-star {
+  color: var(--brass);
+  font-size: 0.8rem;
+  margin-left: 4px;
+}
+
+.subsection {
+  margin-top: 18px;
+}
+
+.skill-count-badge {
+  float: right;
+  font-size: 0.62rem;
+  color: var(--brass);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.skill-row-creation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: var(--leather-2);
+  margin-bottom: 4px;
+  border: 1px solid transparent;
+}
+
+.skill-row-creation.recommended {
+  border-color: rgba(201, 162, 39, 0.3);
+}
+
+.skill-stat-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  background: var(--ink);
+  color: var(--brass-dim);
+  border: 1px solid var(--seam);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.skill-mod-preview {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  margin-left: auto;
+}
+
+.skill-mod-preview.positive {
+  color: var(--brass);
+}
+
+.skill-mod-preview.negative {
+  color: var(--wax-bright);
+}
+
+/* Tools Grid */
+.tools-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.tool-cat-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--parchment-dim);
+  margin-bottom: 4px;
+}
+
+.tool-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tool-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tool-chip input {
+  accent-color: var(--brass);
+  width: auto;
+}
+
+.tool-chip.selected {
+  border-color: var(--brass);
+  background: rgba(201, 162, 39, 0.1);
+  color: var(--brass);
+}
+
+.tool-chip.recommended {
+  border-color: var(--brass-dim);
+}
+
+/* Spells Grid */
+.spell-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--brass);
+  margin: 10px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.spell-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.spell-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.spell-chip.selected {
+  border-color: var(--brass);
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.spell-chip.recommended {
+  border-color: var(--brass-dim);
+}
+
+.spell-chip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.spell-chip-name {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--parchment);
+}
+
+.spell-chip-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.65rem;
+}
+
+.spell-school {
+  font-family: var(--font-mono);
+  color: var(--parchment-dim);
+  font-style: italic;
+}
+
+.ritual-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  background: rgba(201, 162, 39, 0.2);
+  color: var(--brass);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.spell-chip-desc {
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  margin-top: 2px;
+}
+
+/* Armor Selection */
+.armor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.armor-option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.armor-option.selected {
+  border-color: var(--brass);
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.armor-option.recommended {
+  border-color: var(--brass-dim);
+}
+
+.armor-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.armor-option-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.armor-option-name {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.armor-type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 2px;
+  border: 1px solid var(--seam);
+  background: var(--leather);
+  color: var(--parchment-dim);
+}
+
+.armor-type-badge.ligera { border-color: #27ae60; color: #27ae60; }
+.armor-type-badge.media { border-color: #f39c12; color: #f39c12; }
+.armor-type-badge.pesada { border-color: #e74c3c; color: #e74c3c; }
+.armor-type-badge.escudo { border-color: #3498db; color: #3498db; }
+
+.armor-option-ac {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--brass);
+}
+
+.armor-option-details {
+  font-size: 0.65rem;
+  color: var(--parchment-dim);
+}
+
+.shield-toggle {
+  margin-top: 10px;
+}
+
+/* Weapons Selection */
+.weapon-category-section {
+  margin-top: 10px;
+}
+
+.weapon-cat-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--brass-dim);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.weapon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.weapon-card {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 8px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.weapon-card.selected {
+  border-color: var(--brass);
+  background: rgba(201, 162, 39, 0.1);
+}
+
+.weapon-card.recommended {
+  border-color: var(--brass-dim);
+}
+
+.weapon-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.weapon-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weapon-card-name {
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.weapon-card-stats {
+  display: flex;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.weapon-dice {
+  color: var(--brass);
+  font-weight: bold;
+}
+
+.weapon-dmg-type {
+  color: var(--parchment-dim);
+}
+
+.weapon-card-props {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.weapon-prop-chip {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  padding: 0 4px;
+  border-radius: 2px;
+}
+
+.weapon-range-note {
+  font-size: 0.65rem;
+  color: var(--parchment-dim);
+  font-style: italic;
+}
+
+/* Review Step */
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.review-block {
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 10px 14px;
+  border-radius: 4px;
+}
+
+.review-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--brass-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.review-value {
+  font-size: 0.88rem;
+  color: var(--parchment);
+}
+
+.review-abilities {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  margin-top: 4px;
+}
+
+.review-ability strong {
+  color: var(--brass);
+}
+
+/* ─── CHARACTER SHEET EXPANDED FEATURES ─── */
+.dmg-badge-small, .dmg-badge-inline {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  border: 1px solid var(--seam);
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.armor-info-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 6px 10px;
+  border-radius: 3px;
+  margin-top: 6px;
+  font-size: 0.78rem;
+}
+
+.armor-info-name {
+  font-weight: bold;
+  color: var(--parchment);
+}
+
+.armor-warn {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--wax-bright);
+}
+
+.armor-info-shield {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--brass);
+}
+
+.tool-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.tool-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  background: var(--ink);
+  border: 1px solid var(--brass-dim);
+  color: var(--brass);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Spell sheet row */
+.spell-sheet-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 6px 8px;
+  border-radius: 3px;
+}
+
+.spell-sheet-main {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.spell-sheet-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spell-school-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--parchment-dim);
+  font-style: italic;
+}
+
+.spell-notes-input {
+  flex: 1;
+  font-size: 0.78rem !important;
+  padding: 3px 6px !important;
+}
+
+/* Weapon sheet card */
+.weapon-sheet-card {
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weapon-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.weapon-name-input {
+  flex: 1;
+  font-weight: bold;
+}
+
+.magical-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: #f1c40f;
+  background: rgba(241, 196, 15, 0.15);
+  border: 1px solid #f1c40f;
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+.weapon-sheet-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weapon-sheet-attack {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--brass);
+  font-weight: bold;
+}
+
+.weapon-prof-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--parchment-dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.weapon-sheet-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.weapon-cat-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+.weapon-cat-badge.simple {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+}
+
+.weapon-cat-badge.marcial {
+  background: rgba(201, 162, 39, 0.15);
+  border: 1px solid var(--brass-dim);
+  color: var(--brass);
+}
+
+.weapon-range-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--parchment-dim);
+}
+
+.weapon-prop-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+/* ─── GOLD & INVENTORY STYLES ──────────────────────────────────── */
+.gold-card-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: radial-gradient(ellipse at left, rgba(201, 162, 39, 0.1), transparent), var(--leather-2);
+  border: 1px solid var(--brass-dim);
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.gold-summary-badge {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--brass);
+  background: var(--leather);
+  padding: 6px 12px;
+  border: 1px solid var(--brass-dim);
+  border-radius: 4px;
+}
+
+.inventory-table-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--brass-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--seam);
+  margin-bottom: 6px;
+}
+
+.inventory-table-header .col-name { flex: 2; }
+.inventory-table-header .col-qty { width: 70px; text-align: center; }
+.inventory-table-header .col-notes { flex: 3; }
+.inventory-table-header .col-actions { width: 24px; }
+
+.inventory-sheet-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  padding: 6px 8px;
+  border-radius: 3px;
+  margin-bottom: 4px;
+  transition: border-color 0.2s;
+}
+
+.inventory-sheet-row:hover {
+  border-color: var(--brass-dim);
+}
+
+.inv-name-input {
+  flex: 2;
+  font-weight: 500;
+}
+
+.inv-qty-input {
+  width: 70px;
+  text-align: center;
+}
+
+.inv-notes-input {
+  flex: 3;
+  color: var(--parchment-dim);
+  font-size: 0.78rem;
+}
+
+/* ─── EQUIPPED GEAR STYLES ─────────────────────────────────────── */
+.gear-sheet-card {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.2s;
+}
+
+.gear-sheet-card:hover {
+  border-color: var(--brass-dim);
+}
+
+.gear-sheet-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gear-name-input {
+  flex: 1;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: var(--parchment);
+  min-width: 140px;
+}
+
+.gear-slot-selector {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--brass-dim);
+}
+
+.gear-slot-selector select {
+  padding: 3px 6px;
+  font-size: 0.72rem;
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  color: var(--brass);
+}
+
+.gear-magic-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #f1c40f;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.gear-sheet-details {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gear-notes-input {
+  flex: 1;
+  font-size: 0.76rem;
+  color: var(--parchment-dim);
+  min-width: 150px;
+}
+
+.gear-props-input {
+  flex: 1;
+  font-size: 0.76rem;
+  color: var(--brass);
+  font-family: var(--font-mono);
+  min-width: 150px;
+}
+
+/* ─── PACK GRID IN CREATION ───────────────────────────────────── */
+.pack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 10px;
+}
+
+/* ─── SKILLS 2-COLUMN GRID ─────────────────────────────────────── */
+.skills-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 480px) {
+  .skills-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skill-row-card {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.72rem;
+  transition: all 0.2s;
+}
+
+.skill-row-card.proficient {
+  border-color: var(--brass-dim);
+  background: rgba(201, 162, 39, 0.05);
+}
+
+.skill-row-card .abbr {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  color: var(--brass-dim);
+  width: 24px;
+}
+
+.skill-row-card .skill-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.72rem;
+}
+
+.skill-row-card .mod {
+  font-family: var(--font-mono);
+  font-weight: bold;
+  font-size: 0.72rem;
+  color: var(--brass);
+}
+
+.skill-row-card .prof-check {
+  font-family: var(--font-mono);
+  color: var(--brass);
+  font-size: 0.68rem;
+  width: 10px;
+  text-align: center;
+}
+
+.skill-row-card .roll-btn {
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  padding: 1px 4px;
+  font-size: 0.62rem;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.skill-row-card .roll-btn:hover {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+
+/* ─── D&D CONDITION CHIPS ──────────────────────────────────────── */
+.conditions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 6px;
+}
+
+.condition-chip-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  padding: 6px 8px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.condition-chip-btn:hover {
+  border-color: var(--brass-dim);
+  color: var(--parchment);
+}
+
+.condition-chip-btn.active {
+  background: rgba(168, 58, 58, 0.25);
+  border-color: var(--wax-bright);
+  color: #ff8888;
+  box-shadow: 0 0 6px rgba(168, 58, 58, 0.4);
+}
+
+/* ─── FEATS PROGRESSION STYLES ─────────────────────────────────── */
+.feat-header-card {
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.1), transparent), var(--leather-2);
+  border: 1px solid var(--brass-dim);
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.feat-counter-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--parchment);
+}
+
+.feat-counter-badge {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--brass);
+  margin-top: 4px;
+}
+
+.feat-unlocked-msg {
+  font-size: 0.78rem;
+  color: #6f8f4e;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: rgba(111, 143, 78, 0.15);
+  border: 1px solid #6f8f4e;
+  border-radius: 3px;
+}
+
+.feat-locked-msg {
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  border-radius: 3px;
+}
+
+.acquired-feats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.acquired-feat-card {
+  background: var(--leather-2);
+  border: 1px solid var(--brass-dim);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.acquired-feat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.acquired-feat-title {
+  font-weight: bold;
+  color: var(--brass);
+  font-size: 0.9rem;
+}
+
+.acquired-feat-locked-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--parchment-dim);
+  background: var(--leather);
+  padding: 2px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--seam);
+}
+
+.acquired-feat-desc {
+  margin: 6px 0 0 0;
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+}
+
+.feat-catalog-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feat-catalog-card {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.2s;
+}
+
+.feat-catalog-card:hover {
+  border-color: var(--brass-dim);
+}
+
+.feat-catalog-card.ineligible {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+.feat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feat-card-name {
+  font-weight: bold;
+  color: var(--parchment);
+  font-size: 0.88rem;
+}
+
+.feat-cat-chip {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+}
+
+.feat-cat-chip.combat { border-color: #e74c3c; color: #e74c3c; }
+.feat-cat-chip.magic { border-color: #9b59b6; color: #9b59b6; }
+.feat-cat-chip.defense { border-color: #3498db; color: #3498db; }
+.feat-cat-chip.utility { border-color: #2ecc71; color: #2ecc71; }
+
+.feat-prereq-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--brass-dim);
+}
+
+.feat-card-desc {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+}
+
+.feat-card-footer {
+  margin-top: 4px;
+}
+
+.choose-feat-btn {
+  background: rgba(111, 143, 78, 0.2);
+  border: 1px solid #6f8f4e;
+  color: #8ebd63;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.choose-feat-btn:hover {
+  background: #6f8f4e;
+  color: #fff;
+}
+
+.feat-locked-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--parchment-dim);
+}
+
+.feat-reason-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--wax-bright);
+}
+
+/* ─── READ-ONLY PROFICIENCY CHIPS ──────────────────────────────── */
+.prof-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.prof-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--seam);
+  background: var(--leather);
+  color: var(--parchment-dim);
+  user-select: none;
+  cursor: default;
+}
+
+/* Active: character HAS this proficiency */
+.prof-chip.active,
+.prof-chip.armor-chip.active,
+.prof-chip.weapon-chip.active {
+  border-color: var(--brass-dim);
+  background: rgba(201, 162, 39, 0.1);
+  color: var(--brass);
+}
+
+/* Inactive: character LACKS this proficiency */
+.prof-chip.inactive {
+  opacity: 0.4;
+  border-style: dashed;
+  color: var(--parchment-dim);
+}
+
+/* Save chips */
+.prof-chip.save-chip {
+  border-color: var(--brass-dim);
+  background: rgba(201, 162, 39, 0.12);
+  color: var(--brass);
+  font-weight: bold;
+}
+
+/* Tool chips */
+.prof-chip.tool-chip {
+  border-color: #5b8c5a;
+  background: rgba(91, 140, 90, 0.12);
+  color: #8ebd63;
+}
+
+/* Language chips */
+.prof-chip.lang-chip {
+  border-color: #4a7bb0;
+  background: rgba(74, 123, 176, 0.12);
+  color: #7eb8f5;
+}
+
+.prof-none {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  font-style: italic;
+}
+
+.prof-lock-note {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--parchment-dim);
+  padding: 6px 8px;
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  border-left: 3px solid var(--brass-dim);
+  border-radius: 2px;
+}
 

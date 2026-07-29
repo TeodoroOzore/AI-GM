@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/react-shim.d.ts","./src/types.ts","./src/vite-env.d.ts","./src/components/charactercreation.tsx","./src/components/charactersheet.tsx","./src/components/diceanimationoverlay.tsx","./src/components/dicetray.tsx","./src/components/header.tsx","./src/components/journalconsole.tsx"],"version":"5.9.3"}
