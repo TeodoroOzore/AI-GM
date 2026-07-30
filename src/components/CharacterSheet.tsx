@@ -1444,6 +1444,189 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
           <>
             <div className="block-label">Compañeros, monturas y aliados</div>
 
+            {/* PALADIN: Find Steed (Nv.5+) */}
+            {c.className === 'Paladín' && c.level >= 5 && (
+              <div className="paladin-steed-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">🐴</span>
+                  <div>
+                    <div className="pact-banner-title" style={{ color: '#f0c674' }}>Invocar Corcel (Nivel 5+)</div>
+                    <div className="pact-banner-sub">Conjuro Find Steed · Montura divina con vínculo telepático</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn steed-horse"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Caballo de Guerra');
+                      if (exists) { alert('El Caballo de Guerra ya está en tu lista de compañeros.'); return; }
+                      // Remove any existing steed (only one at a time)
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Caballo de Guerra',
+                          type: 'Montura (Corcel)',
+                          hp: 19,
+                          notes: `CA 11 | Velocidad 18m | Inteligencia 6 | Vínculo telepático 1.5km | Montura leal, lucha solo si la montás.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐴</span>
+                    <span className="summon-label">Caballo de Guerra</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn steed-mastiff"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Mastín');
+                      if (exists) { alert('El Mastín ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Mastín',
+                          type: 'Montura (Corcel)',
+                          hp: 15,
+                          notes: `CA 12 | Velocidad 12m | Olfato +4 | Puede montar criaturas Medianas | Vínculo telepático 1.5km.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐕</span>
+                    <span className="summon-label">Mastín</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn steed-elk"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Alce');
+                      if (exists) { alert('El Alce ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Alce',
+                          type: 'Montura (Corcel)',
+                          hp: 22,
+                          notes: `CA 10 | Velocidad 24m | Derriba al cargar (CD 13 FUE) | Montura rápida y resistente.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦌</span>
+                    <span className="summon-label">Alce</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn steed-camel"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Camello');
+                      if (exists) { alert('El Camello ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Camello',
+                          type: 'Montura (Corcel)',
+                          hp: 15,
+                          notes: `CA 9 | Velocidad 15m | Resistencia a clima desértico | Puede llevar carga pesada | 2 días sin agua.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐪</span>
+                    <span className="summon-label">Camello</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* PALADIN: Find Greater Steed (Nv.13+) */}
+            {c.className === 'Paladín' && c.level >= 13 && (
+              <div className="paladin-greater-steed-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">🦄</span>
+                  <div>
+                    <div className="pact-banner-title" style={{ color: '#ffd700' }}>Invocar Corcel Mayor (Nivel 13+)</div>
+                    <div className="pact-banner-sub">Conjuro Find Greater Steed · Montura épica mítica</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn steed-pegasus"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Pegaso');
+                      if (exists) { alert('El Pegaso ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Pegaso',
+                          type: 'Montura Épica (Corcel Mayor)',
+                          hp: 59,
+                          notes: `CA 12 | Vuelo 27m | Velocidad 27m | Vínculo telepático 1.5km | Puede cargar a un jinete.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦄</span>
+                    <span className="summon-label">Pegaso</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn steed-griffon"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Grifo');
+                      if (exists) { alert('El Grifo ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Grifo',
+                          type: 'Montura Épica (Corcel Mayor)',
+                          hp: 59,
+                          notes: `CA 12 | Vuelo 24m | Velocidad 9m | Ataques: Pico 1d8+4 + Garras 2d6+4 | Montura agresiva.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦅</span>
+                    <span className="summon-label">Grifo</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn steed-direwolf"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Lobo Terrible');
+                      if (exists) { alert('El Lobo Terrible ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Lobo Terrible',
+                          type: 'Montura Épica (Corcel Mayor)',
+                          hp: 45,
+                          notes: `CA 14 | Velocidad 15m | Derriba al golpear (CD 14 FUE) | Ventaja ataque si aliado adyacente | Montura sigilosa y letal.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐺</span>
+                    <span className="summon-label">Lobo Terrible</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn steed-sabertooth"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Tigre Dientes de Sable');
+                      if (exists) { alert('El Tigre Dientes de Sable ya está en tu lista de compañeros.'); return; }
+                      const filtered = c.companions.filter(f => !['Caballo de Guerra', 'Mastín', 'Alce', 'Camello', 'Pegaso', 'Grifo', 'Lobo Terrible', 'Tigre Dientes de Sable'].includes(f.name));
+                      update({
+                        companions: [...filtered, {
+                          name: 'Tigre Dientes de Sable',
+                          type: 'Montura Épica (Corcel Mayor)',
+                          hp: 52,
+                          notes: `CA 12 | Velocidad 12m | Olfato +5 | Abalanzarse: derriba + mordisco 1d10+5 | Sigilo +6.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐯</span>
+                    <span className="summon-label">Tigre D. de Sable</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* RANGER: Señor de las Bestias - beast companion presets */}
             {c.className === 'Explorador' && c.subclass === 'Señor de las Bestias' && (
               <div className="ranger-beast-banner">
@@ -1736,6 +1919,123 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                   >
                     <span className="summon-emoji">🐸</span>
                     <span className="summon-label">Buscar Sapo</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* DRUID: Wild Companion (TCoE) - any druid */}
+            {c.className === 'Druida' && (
+              <div className="druid-familiar-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">🌿</span>
+                  <div>
+                    <div className="pact-banner-title" style={{ color: '#6dbf67' }}>Compañero Salvaje (Wild Companion)</div>
+                    <div className="pact-banner-sub">Gasta 1 uso de Forma Salvaje para invocar un familiar espiritual</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn druid-fam-owl"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Búho Salvaje');
+                      if (exists) { alert('El Búho Salvaje ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Búho Salvaje',
+                          form: 'Búho',
+                          notes: '🌿 Compañero Salvaje (gasta 1 uso de Forma Salvaje). Vuelo 18m. Visión en oscuridad 36m. Percepción +3. Ayudar como acción en combate.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦉</span>
+                    <span className="summon-label">Búho Salvaje</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn druid-fam-cat"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Gato Salvaje');
+                      if (exists) { alert('El Gato Salvaje ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Gato Salvaje',
+                          form: 'Gato',
+                          notes: '🌿 Compañero Salvaje (gasta 1 uso de Forma Salvaje). Velocidad 12m. Trepar 9m. Sigilo +4. Percepción +3. Ayudar como acción.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐱</span>
+                    <span className="summon-label">Gato Salvaje</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn druid-fam-raven"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Cuervo Salvaje');
+                      if (exists) { alert('El Cuervo Salvaje ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Cuervo Salvaje',
+                          form: 'Cuervo',
+                          notes: '🌿 Compañero Salvaje (gasta 1 uso de Forma Salvaje). Vuelo 15m. Imita sonidos. Percepción +3. Vínculo telepático 30m.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐦‍⬛</span>
+                    <span className="summon-label">Cuervo Salvaje</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn druid-fam-bat"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Murciélago Salvaje');
+                      if (exists) { alert('El Murciélago Salvaje ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Murciélago Salvaje',
+                          form: 'Murciélago',
+                          notes: '🌿 Compañero Salvaje (gasta 1 uso de Forma Salvaje). Vuelo 9m. Ecolocalización 18m. Percepción +3 (sonido). Ayudar.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦇</span>
+                    <span className="summon-label">Murciélago Salvaje</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn druid-fam-rat"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Rata Salvaje');
+                      if (exists) { alert('La Rata Salvaje ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Rata Salvaje',
+                          form: 'Rata',
+                          notes: '🌿 Compañero Salvaje (gasta 1 uso de Forma Salvaje). Velocidad 9m. Ventaja percepción olfato. Infiltración. Ayudar.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐭</span>
+                    <span className="summon-label">Rata Salvaje</span>
+                  </button>
+                  <button
+                    className="familiar-summon-btn druid-fam-toad"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Sapo Salvaje');
+                      if (exists) { alert('El Sapo Salvaje ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Sapo Salvaje',
+                          form: 'Sapo',
+                          notes: '🌿 Compañero Salvaje (gasta 1 uso de Forma Salvaje). Velocidad 6m, nado 6m. Anfibio. Visión en oscuridad 9m. Ayudar.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐸</span>
+                    <span className="summon-label">Sapo Salvaje</span>
                   </button>
                 </div>
               </div>
