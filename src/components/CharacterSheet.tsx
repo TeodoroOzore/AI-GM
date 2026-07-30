@@ -26,7 +26,14 @@ import {
   EquipmentSlot,
   WEAPONS_CATALOG,
   getCharacterProficiencies,
+  SubclassSpellGrant,
+  SubclassCompanionGrant,
+  getSpellcastingLimits,
+  WARLOCK_INVOCATIONS_CATALOG,
+  getWarlockInvocationsLimit,
 } from '../types';
+import { SUBCLASS_CATALOG } from '../data/subclasses';
+import { BASE_CLASSES_CATALOG, FIGHTING_STYLES } from '../data/baseClasses';
 
 type CharacterSheetProps = {
   character: CharacterType;
@@ -34,7 +41,7 @@ type CharacterSheetProps = {
   onQuickSkillRoll: (skillName: string, ability: AbilityKey) => void;
 };
 
-type TabKey = 'stats' | 'status' | 'inventory' | 'dynamic' | 'proficiencies' | 'subclass' | 'gear' | 'feats' | 'companions' | 'familiars';
+type TabKey = 'stats' | 'status' | 'inventory' | 'dynamic' | 'proficiencies' | 'class' | 'gear' | 'feats' | 'companions' | 'familiars';
 
 export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   character: c,
@@ -42,11 +49,37 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   onQuickSkillRoll
 }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('stats');
+  const [previewSubclass, setPreviewSubclass] = useState<string>('');
 
   const cdef = CLASSES[c.className] || CLASSES['Guerrero'];
 
   const update = (partial: Partial<CharacterType>) => {
     onUpdateCharacter({ ...c, ...partial });
+  };
+
+  const handleImportSubclassSpells = (subclassSpells: SubclassSpellGrant[], subName: string) => {
+    const unlockedSpells = subclassSpells.filter(sp => c.level >= sp.levelUnlocked);
+    const existingNames = new Set((c.spellsKnown || []).map(s => s.name.toLowerCase()));
+    const newSpells = unlockedSpells
+      .filter(sp => !existingNames.has(sp.spellName.toLowerCase()))
+      .map(sp => ({
+        name: sp.spellName,
+        level: sp.spellLevel,
+        notes: sp.notes || `Otorgado por subclase ${subName}`
+      }));
+
+    if (newSpells.length > 0) {
+      update({ spellsKnown: [...(c.spellsKnown || []), ...newSpells] });
+      alert(`Se añadieron ${newSpells.length} conjuros de subclase a tu repertorio.`);
+    } else {
+      alert('Todos los conjuros desbloqueados de esta subclase ya están en tu repertorio.');
+    }
+  };
+
+  const handleAddCompanionNote = (comp: SubclassCompanionGrant) => {
+    const noteText = `\n\n[Compañero/Familiar: ${comp.name}]\n- Tipo: ${comp.type}\n- Resumen: ${comp.statsSummary}\n- Detalle: ${comp.description}`;
+    update({ subclassNotes: (c.subclassNotes || '') + noteText });
+    alert(`Se añadió la información de ${comp.name} a tus notas de subclase.`);
   };
 
   const handleAddProficientSkill = () => {
@@ -84,7 +117,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
     { key: 'status', label: 'Estado' },
     { key: 'inventory', label: 'Inventario' },
     { key: 'dynamic', label: cdef.tabName },
-    { key: 'subclass', label: 'Subclase' },
+    { key: 'class', label: 'Clase' },
     { key: 'gear', label: 'Equipo' },
     { key: 'feats', label: 'Dotes' },
     { key: 'companions', label: 'Compañeros' },
@@ -378,113 +411,252 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
           </>
         )}
 
-        {activeTab === 'dynamic' && (
-          <>
-            <div className="block-label">{cdef.tabName}</div>
-            {cdef.spellcasting && (
-              <>
-                <div className="flavor">
-                  Habilidad de lanzamiento: {ABILITIES.find(a => a.key === cdef.spellcasting?.ability)?.full}. CD de salvación de conjuro: {8 + profBonus(c.level) + abilityMod(c.abilities[cdef.spellcasting.ability])}. Bono de ataque con conjuro: {fmtSigned(profBonus(c.level) + abilityMod(c.abilities[cdef.spellcasting.ability]))}.
-                </div>
-                <div className="block-label" style={{ marginTop: '8px' }}>Ranuras de conjuro</div>
-                <div>
-                  {cdef.spellcasting.type === 'pact' ? (
-                    (() => {
-                      const p = PACT_SLOTS[c.level];
-                      const used = c.spellSlotsUsed['pact'] || 0;
-                      return (
-                        <div className="resource">
-                          <div className="rlabel">Ranuras de Pacto (nivel {p.level})</div>
-                          <div className="rctrl">
-                            <button onClick={() => handleSlotChange('pact', 1)}>−</button>
-                            <span>{p.count - used}/{p.count}</span>
-                            <button onClick={() => handleSlotChange('pact', -1)}>+</button>
-                          </div>
+        {activeTab === 'dynamic' && (() => {
+          const limits = getSpellcastingLimits(c);
+          const currentCantripsCount = (c.spellsKnown || []).filter(s => s.level === '0' || s.level?.toLowerCase().includes('truco')).length;
+          const currentSpellsCount = (c.spellsKnown || []).length - currentCantripsCount;
+
+          return (
+            <div className="spellcasting-tab-container">
+              {limits.isSpellcaster && (
+                <>
+                  {/* MAGICAL LIMITS DASHBOARD */}
+                  <div className="spell-limits-dashboard">
+                    <div className="dashboard-title-row">
+                      <span className="dash-icon">🔮</span>
+                      <div>
+                        <strong>Capacidad Mágica · Nivel {c.level} ({c.className})</strong>
+                        <span className="dash-sub">Aptitud: <b>{limits.abilityLabel}</b> ({fmtSigned(limits.abilityModVal)})</span>
+                      </div>
+                    </div>
+
+                    <div className="limit-stats-grid">
+                      <div className="limit-stat-card">
+                        <span className="stat-value">{limits.saveDC}</span>
+                        <span className="stat-label">CD Salvación</span>
+                      </div>
+                      <div className="limit-stat-card">
+                        <span className="stat-value">{fmtSigned(limits.attackBonus)}</span>
+                        <span className="stat-label">Bono Ataque</span>
+                      </div>
+                      <div className={`limit-stat-card ${limits.cantripsKnownMax > 0 && currentCantripsCount > limits.cantripsKnownMax ? 'over-limit' : ''}`}>
+                        <span className="stat-value">{limits.cantripsKnownMax > 0 ? `${currentCantripsCount} / ${limits.cantripsKnownMax}` : '—'}</span>
+                        <span className="stat-label">Trucos Conocidos</span>
+                      </div>
+                      <div className={`limit-stat-card ${limits.spellsKnownOrPreparedMax > 0 && currentSpellsCount > limits.spellsKnownOrPreparedMax ? 'over-limit' : ''}`}>
+                        <span className="stat-value">{limits.spellsKnownOrPreparedMax > 0 ? `${currentSpellsCount} / ${limits.spellsKnownOrPreparedMax}` : '—'}</span>
+                        <span className="stat-label">{limits.labelKnownOrPrepared}</span>
+                      </div>
+                      <div className="limit-stat-card highlight">
+                        <span className="stat-value">Nv {limits.maxSpellLevel}</span>
+                        <span className="stat-label">Nivel Máx. Conjuro</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* WARLOCK SCALING BANNER */}
+                  {c.className === 'Brujo' && limits.pactSlotLevel && (
+                    <div className="warlock-scaling-banner">
+                      <span className="banner-icon">⚡</span>
+                      <div>
+                        <strong>Escalado de Pacto de Brujo (Nivel {limits.pactSlotLevel})</strong>
+                        <p>Tus espacios de pacto se recargan en descansos cortos. Todos los conjuros que lances escalan automáticamente y se ejecutan con la fuerza de un espacio de <strong>Nivel {limits.pactSlotLevel}</strong>.</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* RITUAL CASTING BANNER */}
+                  {limits.ritualCasting && limits.ritualDescription && (
+                    <div className="ritual-info-banner">
+                      <span className="ritual-icon">📜</span>
+                      <div>
+                        <strong>Capacidad de Lanzamiento Ritual Activa</strong>
+                        <p>{limits.ritualDescription}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* CONCENTRATION TRACKER */}
+                  <div className="concentration-tracker-box">
+                    <div className="tracker-top-row">
+                      <span className="tracker-title">🧠 Control de Concentración Activa</span>
+                      <select
+                        value={c.concentratingOnSpell || ''}
+                        onChange={e => update({ concentratingOnSpell: e.target.value })}
+                        className="concentration-select"
+                      >
+                        <option value="">— Sin Concentración —</option>
+                        {c.spellsKnown
+                          .filter(s => s.name && s.level !== '0' && !s.level?.toLowerCase().includes('truco'))
+                          .map((s, idx) => (
+                            <option key={idx} value={s.name}>🧠 Mantener: {s.name}</option>
+                          ))}
+                      </select>
+                    </div>
+
+                    {c.concentratingOnSpell ? (
+                      <div className="concentration-active-banner">
+                        <div className="active-spell-title">
+                          ⚡ MANTENIENDO CONCENTRACIÓN EN: <strong>"{c.concentratingOnSpell}"</strong>
                         </div>
-                      );
-                    })()
-                  ) : (
-                    (() => {
-                      const table = cdef.spellcasting.type === 'full' ? FULL_SLOTS[c.level] : HALF_SLOTS[c.level];
-                      return table.map((max, idx) => {
-                        if (max <= 0) return null;
-                        const lvl = idx + 1;
-                        const used = c.spellSlotsUsed[lvl] || 0;
+                        <p className="concentration-save-reminder">
+                          ⚠️ <strong>Al recibir daño en combate:</strong> Debés realizar una tirada de salvación de Constitución (CD 10 o la mitad del daño sufrido, lo que sea mayor). Si la fallás, perdés el conjuro.
+                        </p>
+                        <button
+                          className="cancel-concentration-btn"
+                          onClick={() => update({ concentratingOnSpell: '' })}
+                        >
+                          ✕ Romper Concentración
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="concentration-idle-note">
+                        Actualmente no estás manteniendo la concentración en ningún hechizo. Al lanzar un hechizo de concentración, seleccionalo arriba para activar el monitoreo de salvación por daño.
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* SPOTS AND SLOTS RESTORATION */}
+              {cdef.spellcasting && (
+                <>
+                  <div className="block-label" style={{ marginTop: '12px' }}>Espacios de conjuro disponibles</div>
+                  <div>
+                    {cdef.spellcasting.type === 'pact' ? (
+                      (() => {
+                        const p = PACT_SLOTS[c.level];
+                        const used = c.spellSlotsUsed['pact'] || 0;
                         return (
-                          <div key={lvl} className="resource">
-                            <div className="rlabel">Nivel {lvl}</div>
+                          <div className="resource">
+                            <div className="rlabel">Espacios de Pacto (Nivel {p.level})</div>
                             <div className="rctrl">
-                              <button onClick={() => handleSlotChange(String(lvl), 1)}>−</button>
-                              <span>{max - used}/{max}</span>
-                              <button onClick={() => handleSlotChange(String(lvl), -1)}>+</button>
+                              <button onClick={() => handleSlotChange('pact', 1)}>−</button>
+                              <span>{p.count - used}/{p.count}</span>
+                              <button onClick={() => handleSlotChange('pact', -1)}>+</button>
                             </div>
                           </div>
                         );
-                      });
-                    })()
-                  )}
-                </div>
-              </>
-            )}
-
-            <div className="block-label" style={{ marginTop: '8px' }}>Recursos de clase</div>
-            <div>
-              {classResources(c.className, c.level).map(r => {
-                if (r.info) return <div key={r.key} className="resource"><div className="rlabel">{r.label}</div></div>;
-                const used = c.classResourceUsed[r.key] || 0;
-                return (
-                  <div key={r.key} className="resource">
-                    <div className="rlabel">{r.label}</div>
-                    <div className="rctrl">
-                      <button onClick={() => handleResourceChange(r.key, 1, r.max)}>−</button>
-                      <span>{r.max - used}/{r.max}</span>
-                      <button onClick={() => handleResourceChange(r.key, -1, r.max)}>+</button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="block-label" style={{ marginTop: '8px' }}>
-              {cdef.spellcasting ? 'Conjuros y trucos conocidos' : 'Técnicas y maniobras conocidas'}
-            </div>
-            <div className="list-rows">
-              {c.spellsKnown.map((sp, i) => (
-                <div key={i} className="spell-sheet-row">
-                  <div className="spell-sheet-main">
-                    <input type="text" placeholder="Nombre" value={sp.name} onChange={e => {
-                      const next = [...c.spellsKnown];
-                      next[i].name = e.target.value;
-                      update({ spellsKnown: next });
-                    }} />
-                    <input type="text" placeholder="Nivel" value={sp.level} onChange={e => {
-                      const next = [...c.spellsKnown];
-                      next[i].level = e.target.value;
-                      update({ spellsKnown: next });
-                    }} style={{ width: '60px' }} />
-                    <button className="rm" onClick={() => update({ spellsKnown: c.spellsKnown.filter((_, idx) => idx !== i) })}>✕</button>
-                  </div>
-                  <div className="spell-sheet-meta">
-                    {sp.damageType && (
-                      <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[sp.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[sp.damageType] || 'var(--parchment-dim)' }}>
-                        {DAMAGE_TYPE_EMOJI[sp.damageType] || ''} {sp.damageType}
-                      </span>
+                      })()
+                    ) : (
+                      (() => {
+                        const table = cdef.spellcasting.type === 'full' ? FULL_SLOTS[c.level] : HALF_SLOTS[c.level];
+                        return table.map((max, idx) => {
+                          if (max <= 0) return null;
+                          const lvl = idx + 1;
+                          const used = c.spellSlotsUsed[lvl] || 0;
+                          return (
+                            <div key={lvl} className="resource">
+                              <div className="rlabel">Espacios Nivel {lvl}</div>
+                              <div className="rctrl">
+                                <button onClick={() => handleSlotChange(String(lvl), 1)}>−</button>
+                                <span>{max - used}/{max}</span>
+                                <button onClick={() => handleSlotChange(String(lvl), -1)}>+</button>
+                              </div>
+                            </div>
+                          );
+                        });
+                      })()
                     )}
-                    {sp.school && <span className="spell-school-badge">{sp.school}</span>}
-                    <input type="text" placeholder="Notas" value={sp.notes} onChange={e => {
-                      const next = [...c.spellsKnown];
-                      next[i].notes = e.target.value;
-                      update({ spellsKnown: next });
-                    }} className="spell-notes-input" />
                   </div>
-                </div>
-              ))}
+                </>
+              )}
+
+              <div className="block-label" style={{ marginTop: '12px' }}>Recursos de clase y particularidades</div>
+              <div>
+                {classResources(c.className, c.level).map(r => {
+                  if (r.info) return <div key={r.key} className="resource"><div className="rlabel">{r.label}</div></div>;
+                  const used = c.classResourceUsed[r.key] || 0;
+                  return (
+                    <div key={r.key} className="resource">
+                      <div className="rlabel">{r.label}</div>
+                      <div className="rctrl">
+                        <button onClick={() => handleResourceChange(r.key, 1, r.max)}>−</button>
+                        <span>{r.max - used}/{r.max}</span>
+                        <button onClick={() => handleResourceChange(r.key, -1, r.max)}>+</button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* SPELLS KNOWN / PREPARED LIST WITH LEVEL BADGES */}
+              <div className="block-label" style={{ marginTop: '12px' }}>
+                {cdef.spellcasting ? 'Repertorio / Conjuros preparados' : 'Técnicas y maniobras conocidas'}
+              </div>
+
+              <div className="list-rows">
+                {c.spellsKnown.map((sp, i) => {
+                  const isCantrip = sp.level === '0' || sp.level?.toLowerCase().includes('truco');
+                  const isWarlock = c.className === 'Brujo' && !isCantrip;
+
+                  return (
+                    <div key={i} className="spell-sheet-row">
+                      <div className="spell-sheet-main">
+                        <input
+                          type="text"
+                          placeholder="Nombre del conjuro"
+                          value={sp.name}
+                          onChange={e => {
+                            const next = [...c.spellsKnown];
+                            next[i].name = e.target.value;
+                            update({ spellsKnown: next });
+                          }}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Nivel (0-9)"
+                          value={sp.level}
+                          onChange={e => {
+                            const next = [...c.spellsKnown];
+                            next[i].level = e.target.value;
+                            update({ spellsKnown: next });
+                          }}
+                          style={{ width: '70px' }}
+                        />
+                        <button className="rm" onClick={() => update({ spellsKnown: c.spellsKnown.filter((_, idx) => idx !== i) })}>✕</button>
+                      </div>
+
+                      <div className="spell-sheet-meta">
+                        <span className={`spell-level-chip ${isCantrip ? 'cantrip' : 'spell'}`}>
+                          {isCantrip ? '✨ Truco (Nvl 0)' : `🔮 Nivel ${sp.level || '1'}`}
+                        </span>
+
+                        {isWarlock && limits.pactSlotLevel && (
+                          <span className="warlock-scaled-chip">
+                            ⚡ Escala a Nivel {limits.pactSlotLevel}
+                          </span>
+                        )}
+
+                        {sp.damageType && (
+                          <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[sp.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[sp.damageType] || 'var(--parchment-dim)' }}>
+                            {DAMAGE_TYPE_EMOJI[sp.damageType] || ''} {sp.damageType}
+                          </span>
+                        )}
+                        {sp.school && <span className="spell-school-badge">{sp.school}</span>}
+                        <input
+                          type="text"
+                          placeholder="Notas o componentes (ej. [Ritual], Concentración)"
+                          value={sp.notes}
+                          onChange={e => {
+                            const next = [...c.spellsKnown];
+                            next[i].notes = e.target.value;
+                            update({ spellsKnown: next });
+                          }}
+                          className="spell-notes-input"
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button className="add-row-btn" onClick={() => update({ spellsKnown: [...c.spellsKnown, { name: '', level: '1', notes: '' }] })}>
+                + añadir {cdef.spellcasting ? 'conjuro' : 'técnica'}
+              </button>
             </div>
-            <button className="add-row-btn" onClick={() => update({ spellsKnown: [...c.spellsKnown, { name: '', level: '', notes: '' }] })}>
-              + añadir {cdef.spellcasting ? 'conjuro' : 'técnica'}
-            </button>
-          </>
-        )}
+          );
+        })()}
 
         {activeTab === 'proficiencies' && (
           <>
@@ -546,26 +718,415 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
           </>
         )}
 
-        {activeTab === 'subclass' && (
-          <>
-            {c.level < cdef.unlockLevel ? (
-              <div className="flavor">Tu subclase se desbloquea en nivel {cdef.unlockLevel}. Todavía sos nivel {c.level}.</div>
-            ) : (
-              <>
-                <div className="block-label">Elegí tu senda</div>
-                <select value={c.subclass} onChange={e => update({ subclass: e.target.value })}>
-                  <option value="">— sin elegir —</option>
-                  {cdef.subclasses.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+        {activeTab === 'class' && (() => {
+          const baseDetail = BASE_CLASSES_CATALOG[c.className] || BASE_CLASSES_CATALOG['Guerrero'];
+          const selectedOrPreviewSubclass = c.subclass || previewSubclass;
+          const subDetail = selectedOrPreviewSubclass ? SUBCLASS_CATALOG[selectedOrPreviewSubclass] : null;
+          const isSubclassUnlocked = c.level >= cdef.unlockLevel;
 
-                <div className="field" style={{ marginTop: '10px' }}>
-                  <label>Notas de tu subclase (rasgos, votos, tradición)</label>
-                  <textarea rows={5} value={c.subclassNotes || ''} onChange={e => update({ subclassNotes: e.target.value })} />
+          return (
+            <div className="class-tab-container">
+              {/* SECTION 1: BASE CLASS OVERVIEW HERO */}
+              <div className="base-class-hero-box">
+                <div className="class-hero-top">
+                  <div>
+                    <h2 className="class-hero-title">📜 Clase: {baseDetail.name}</h2>
+                    <span className="class-hero-sub">
+                      Dado de Golpe: <b>{baseDetail.hitDie}</b> · Atributos Primarios: <b>{baseDetail.primaryAbilities}</b>
+                    </span>
+                  </div>
+                  <div className="class-saves-badges">
+                    <span className="save-badge-label">Salvaciones:</span>
+                    {baseDetail.saves.map(s => (
+                      <span key={s} className="class-save-tag">{s}</span>
+                    ))}
+                  </div>
                 </div>
-              </>
-            )}
-          </>
-        )}
+
+                <p className="class-hero-desc">{baseDetail.description}</p>
+
+                <div className="class-gimmick-banner">
+                  <span className="gimmick-icon">⚡</span>
+                  <div>
+                    <strong>Mecánicas e Identidad Base:</strong>
+                    <p>{baseDetail.coreGimmick}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION 2: CLASS SPECIFIC CHOICES (e.g. FIGHTING STYLES / METAMAGIC / PATTS) */}
+              {baseDetail.fightingStyles && baseDetail.fightingStyles.length > 0 && (
+                <div className="class-section-box">
+                  <div className="block-label">⚔️ Estilos de Combate de {baseDetail.name}</div>
+                  <p className="section-subtitle-text">
+                    Como {c.className}, podés adoptar un estilo de combate especializado para potenciar tus ataques y defensa.
+                  </p>
+
+                  <div className="fighting-style-selector-row">
+                    <select
+                      value={c.fightingStyle || ''}
+                      onChange={e => update({ fightingStyle: e.target.value })}
+                      className="fighting-style-select"
+                    >
+                      <option value="">— Elegir Estilo de Combate —</option>
+                      {baseDetail.fightingStyles.map(fs => (
+                        <option key={fs.name} value={fs.name}>{fs.name}</option>
+                      ))}
+                    </select>
+
+                    {c.fightingStyle && (
+                      <span className="style-active-badge">✓ Estilo Activo: {c.fightingStyle}</span>
+                    )}
+                  </div>
+
+                  {c.fightingStyle ? (() => {
+                    const currentStyle = baseDetail.fightingStyles!.find(fs => fs.name === c.fightingStyle);
+                    return currentStyle ? (
+                      <div className="fighting-style-active-card">
+                        <div className="style-card-name">🛡️ {currentStyle.name}</div>
+                        <div className="style-card-desc">{currentStyle.description}</div>
+                      </div>
+                    ) : null;
+                  })() : (
+                    <div className="fighting-styles-preview-grid">
+                      {baseDetail.fightingStyles.map(fs => (
+                        <div
+                          key={fs.name}
+                          className="fighting-style-preview-card"
+                          onClick={() => update({ fightingStyle: fs.name })}
+                        >
+                          <div className="style-prev-title">{fs.name}</div>
+                          <div className="style-prev-desc">{fs.description}</div>
+                          <button className="style-select-btn">+ Seleccionar</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Special choices (e.g. Metamagic for Sorcerer, Pact Boon for Warlock) */}
+              {baseDetail.specialChoices && (
+                <div className="class-section-box">
+                  <div className="block-label">✨ {baseDetail.specialChoices.label}</div>
+                  <div className="special-choices-grid">
+                    {baseDetail.specialChoices.options.map(opt => {
+                      const isSelected = c.classChoices?.[baseDetail.specialChoices!.key] === opt.name;
+                      return (
+                        <div
+                          key={opt.name}
+                          className={`special-choice-card ${isSelected ? 'selected' : ''}`}
+                          onClick={() => update({
+                            classChoices: { ...(c.classChoices || {}), [baseDetail.specialChoices!.key]: opt.name }
+                          })}
+                        >
+                          <div className="choice-header">
+                            <span className="choice-title">{opt.name}</span>
+                            {isSelected && <span className="choice-badge">✓ Elegido</span>}
+                          </div>
+                          <p className="choice-desc">{opt.description}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* WARLOCK: Invocaciones Mágicas */}
+              {c.className === 'Brujo' && c.level >= 2 && (() => {
+                const invLimit = getWarlockInvocationsLimit(c.level);
+                const activeInvocations: string[] = c.warlockInvocations || [];
+
+                const toggleInvocation = (name: string) => {
+                  const isActive = activeInvocations.includes(name);
+                  if (isActive) {
+                    update({ warlockInvocations: activeInvocations.filter(n => n !== name) });
+                  } else {
+                    if (activeInvocations.length >= invLimit) {
+                      alert(`Ya alcanzaste el límite de ${invLimit} invocación${invLimit !== 1 ? 'es' : ''} para Nivel ${c.level}.`);
+                      return;
+                    }
+                    update({ warlockInvocations: [...activeInvocations, name] });
+                  }
+                };
+
+                return (
+                  <div className="class-section-box">
+                    <div className="block-label">🔮 Invocaciones Mágicas de Brujo</div>
+                    <div className="invocations-meta-bar">
+                      <span className="inv-counter">
+                        Activas: <strong>{activeInvocations.length}</strong> / {invLimit}
+                      </span>
+                      <span className="inv-level-note">
+                        Límite para Nivel {c.level}: {invLimit} invocación{invLimit !== 1 ? 'es' : ''}
+                      </span>
+                    </div>
+                    <div className="invocations-grid">
+                      {WARLOCK_INVOCATIONS_CATALOG.map(inv => {
+                        const isActive = activeInvocations.includes(inv.name);
+                        return (
+                          <div
+                            key={inv.name}
+                            className={`invocation-card ${isActive ? 'active' : ''}`}
+                            onClick={() => toggleInvocation(inv.name)}
+                          >
+                            <div className="inv-card-header">
+                              <span className="inv-name">{inv.name}</span>
+                              {isActive && <span className="inv-badge">✓ Activa</span>}
+                            </div>
+                            <p className="inv-desc">{inv.description}</p>
+                            {inv.prerequisite && (
+                              <span className="inv-prereq">🔒 {inv.prerequisite}</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* SECTION 3: BASE CLASS PROGRESSION TIMELINE (LEVEL 1-20) */}
+              <div className="class-section-box">
+                <div className="block-label">📜 Progresión de {baseDetail.name} (Niveles 1 a 20)</div>
+                <div className="class-features-timeline">
+                  {baseDetail.featuresTimeline.map((feat, idx) => {
+                    const isUnlocked = c.level >= feat.level;
+                    return (
+                      <div key={idx} className={`timeline-feature-card ${isUnlocked ? 'unlocked' : 'locked'}`}>
+                        <div className="feature-card-top">
+                          <span className="feature-title">{feat.title}</span>
+                          <span className={`feature-level-pill ${isUnlocked ? 'pill-unlocked' : 'pill-locked'}`}>
+                            {isUnlocked ? `Nivel ${feat.level} (Activo)` : `🔒 Nivel ${feat.level}`}
+                          </span>
+                        </div>
+                        <p className="feature-desc">{feat.description}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* SECTION 4: INTEGRATED SUBCLASS SECTION */}
+              <div className="subclass-embedded-container">
+                <div className="subclass-embedded-header">
+                  <h3 className="embedded-title">🔮 Subclase / Senda de {c.className}</h3>
+                  <span className="embedded-subtitle">
+                    Desbloqueo en Nivel {cdef.unlockLevel} · Nivel actual: Nivel {c.level}
+                  </span>
+                </div>
+
+                {!isSubclassUnlocked && (
+                  <div className="subclass-unlock-warning">
+                    <span className="warning-icon">💡</span>
+                    <div>
+                      <strong>Senda en desarrollo (Nivel {c.level})</strong>
+                      <p>Las subclases para <em>{c.className}</em> se desbloquean en <strong>Nivel {cdef.unlockLevel}</strong>. A continuación podés previsualizar las opciones disponibles para planificar la evolución de tu personaje.</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="subclass-selector-card">
+                  <div className="block-label">
+                    {isSubclassUnlocked ? '⚔️ Tu Subclase Elegida' : '🔮 Previsualizador de Subclases'}
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <select
+                      value={c.subclass || previewSubclass}
+                      onChange={e => {
+                        const val = e.target.value;
+                        if (isSubclassUnlocked) {
+                          update({ subclass: val });
+                        }
+                        setPreviewSubclass(val);
+                      }}
+                      className="subclass-select-main"
+                    >
+                      <option value="">— Seleccionar Subclase de {c.className} —</option>
+                      {cdef.subclasses.map(s => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+
+                    {c.subclass && (
+                      <span className="subclass-active-badge">
+                        ✓ Subclase Activa en Nivel {c.level}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {subDetail ? (
+                  <div className="subclass-details-view">
+                    {/* Hero Box */}
+                    <div className="subclass-hero-box">
+                      <div className="subclass-hero-header">
+                        <div>
+                          <h3 className="subclass-hero-title">{subDetail.name}</h3>
+                          <span className="subclass-class-tag">{subDetail.className} · {subDetail.keyRole}</span>
+                        </div>
+                      </div>
+                      <p className="subclass-hero-desc">{subDetail.description}</p>
+
+                      <div className="subclass-gimmick-box">
+                        <div className="gimmick-label">⚡ Mecánica Única Principal:</div>
+                        <div className="gimmick-text">{subDetail.coreMechanic}</div>
+                      </div>
+
+                      {subDetail.proficienciesGranted && subDetail.proficienciesGranted.length > 0 && (
+                        <div className="subclass-profs-box">
+                          <span className="profs-label">🛡️ Competencias Otorgadas:</span>
+                          <div className="profs-tags">
+                            {subDetail.proficienciesGranted.map(p => (
+                              <span key={p} className="subclass-prof-tag">{p}</span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Actions Bar */}
+                    <div className="subclass-actions-bar">
+                      {subDetail.spells && subDetail.spells.length > 0 && (
+                        <button
+                          className="subclass-btn-action spell-btn"
+                          onClick={() => handleImportSubclassSpells(subDetail.spells!, subDetail.name)}
+                        >
+                          ✨ Importar Conjuros de Subclase al Conjurador
+                        </button>
+                      )}
+                      {subDetail.companion && (
+                        <button
+                          className="subclass-btn-action companion-btn"
+                          onClick={() => handleAddCompanionNote(subDetail.companion!)}
+                        >
+                          🐾 Registrar {subDetail.companion.name} en Notas
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Spells */}
+                    {subDetail.spells && subDetail.spells.length > 0 && (
+                      <div className="subclass-section">
+                        <div className="subclass-section-title">🪄 Conjuros / Trucos de la Senda</div>
+                        <div className="subclass-spells-grid">
+                          {subDetail.spells.map((sp, idx) => {
+                            const spellUnlocked = c.level >= sp.levelUnlocked;
+                            return (
+                              <div key={idx} className={`subclass-spell-card ${spellUnlocked ? 'unlocked' : 'locked'}`}>
+                                <div className="spell-card-header">
+                                  <span className="spell-card-name">{sp.spellName}</span>
+                                  <span className="spell-card-lvl">Nivel {sp.spellLevel}</span>
+                                </div>
+                                <div className="spell-card-status">
+                                  {spellUnlocked ? (
+                                    <span className="badge-ok">✓ Desbloqueado (Nv {sp.levelUnlocked})</span>
+                                  ) : (
+                                    <span className="badge-lock">🔒 Requiere Nivel {sp.levelUnlocked}</span>
+                                  )}
+                                </div>
+                                {sp.notes && <div className="spell-card-notes">{sp.notes}</div>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Auras */}
+                    {subDetail.auras && subDetail.auras.length > 0 && (
+                      <div className="subclass-section">
+                        <div className="subclass-section-title">🛡️ Auras y Efectos Zonal</div>
+                        <div className="subclass-auras-list">
+                          {subDetail.auras.map((aura, idx) => {
+                            const auraUnlocked = c.level >= aura.levelUnlocked;
+                            return (
+                              <div key={idx} className={`subclass-aura-card ${auraUnlocked ? 'unlocked' : 'locked'}`}>
+                                <div className="aura-card-header">
+                                  <span className="aura-name">✨ {aura.name}</span>
+                                  <span className="aura-range">📍 Alcance: {aura.range}</span>
+                                </div>
+                                <div className="aura-status">
+                                  {auraUnlocked ? '✅ Aura Activa' : `🔒 Se desbloquea a Nivel ${aura.levelUnlocked}`}
+                                </div>
+                                <p className="aura-desc">{aura.description}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Companion */}
+                    {subDetail.companion && (
+                      <div className="subclass-section">
+                        <div className="subclass-section-title">🐾 Compañero / Familiar de la Senda</div>
+                        <div className="subclass-companion-box">
+                          <div className="companion-header">
+                            <span className="comp-name">{subDetail.companion.name}</span>
+                            <span className="comp-type">{subDetail.companion.type}</span>
+                          </div>
+                          <p className="comp-desc">{subDetail.companion.description}</p>
+                          <div className="comp-stats">📊 {subDetail.companion.statsSummary}</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Maneuvers */}
+                    {subDetail.maneuversOrAbilities && subDetail.maneuversOrAbilities.length > 0 && (
+                      <div className="subclass-section">
+                        <div className="subclass-section-title">⚔️ Maniobras y Capacidades Disponibles</div>
+                        <div className="maneuvers-list">
+                          {subDetail.maneuversOrAbilities.map((man, idx) => (
+                            <div key={idx} className="maneuver-item">
+                              🗡️ {man}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Features Timeline */}
+                    <div className="subclass-section">
+                      <div className="subclass-section-title">📜 Progresión de Rasgos de Subclase</div>
+                      <div className="subclass-features-timeline">
+                        {subDetail.features.map((feat, idx) => {
+                          const featUnlocked = c.level >= feat.level;
+                          return (
+                            <div key={idx} className={`timeline-feature-card ${featUnlocked ? 'unlocked' : 'locked'}`}>
+                              <div className="feature-card-top">
+                                <span className="feature-title">{feat.title}</span>
+                                <span className={`feature-level-pill ${featUnlocked ? 'pill-unlocked' : 'pill-locked'}`}>
+                                  {featUnlocked ? `Nivel ${feat.level} (Activo)` : `🔒 Nivel ${feat.level}`}
+                                </span>
+                              </div>
+                              <p className="feature-desc">{feat.description}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flavor" style={{ marginTop: '16px', textAlign: 'center', padding: '20px' }}>
+                    Elegí una subclase arriba para ver toda su descripción, mecánicas únicas, conjuros, auras y progresión por nivel.
+                  </div>
+                )}
+
+                {/* Subclass Notes */}
+                <div className="field" style={{ marginTop: '20px' }}>
+                  <label>📝 Notas de tu subclase (votos, tradición, juramentos, historial)</label>
+                  <textarea
+                    rows={5}
+                    value={c.subclassNotes || ''}
+                    onChange={e => update({ subclassNotes: e.target.value })}
+                    placeholder="Escribí aquí tus votos sagrados, patrón del brujo, libro de sombras o anotaciones sobre tu subclase..."
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {activeTab === 'gear' && (
           <>
@@ -882,6 +1443,145 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
         {activeTab === 'companions' && (
           <>
             <div className="block-label">Compañeros, monturas y aliados</div>
+
+            {/* RANGER: Señor de las Bestias - beast companion presets */}
+            {c.className === 'Explorador' && c.subclass === 'Señor de las Bestias' && (
+              <div className="ranger-beast-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">🐾</span>
+                  <div>
+                    <div className="pact-banner-title" style={{ color: '#6dbf67' }}>Señor de las Bestias</div>
+                    <div className="pact-banner-sub">Invocación rápida de tu compañero bestia</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn beast-wolf"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Lobo');
+                      if (exists) { alert('El Lobo ya está en tu lista de compañeros.'); return; }
+                      update({
+                        companions: [...c.companions, {
+                          name: 'Lobo',
+                          type: 'Bestia (Lobo)',
+                          hp: 5 * c.level,
+                          notes: `CA ${13 + profBonus(c.level)} | Daño 1d6+2+${profBonus(c.level)} | Derriba criaturas Grandes o menores al golpear (CD FUE). Actúa en tu turno.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐺</span>
+                    <span className="summon-label">Convocar Lobo</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn beast-bear"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Oso');
+                      if (exists) { alert('El Oso ya está en tu lista de compañeros.'); return; }
+                      update({
+                        companions: [...c.companions, {
+                          name: 'Oso',
+                          type: 'Bestia (Oso Pardo)',
+                          hp: 5 * c.level,
+                          notes: `CA ${13 + profBonus(c.level)} | Daño 1d8+4+${profBonus(c.level)} | Dos ataques por turno. Abrazo: apresa al objetivo. Actúa en tu turno.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐻</span>
+                    <span className="summon-label">Convocar Oso</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn beast-eagle"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Águila');
+                      if (exists) { alert('El Águila ya está en tu lista de compañeros.'); return; }
+                      update({
+                        companions: [...c.companions, {
+                          name: 'Águila',
+                          type: 'Bestia (Águila Gigante)',
+                          hp: 5 * c.level,
+                          notes: `CA ${13 + profBonus(c.level)} | Daño 1d6+1+${profBonus(c.level)} | Vuela 24m. Sentido agudo. Puede llevar a un aliado mediano. Actúa en tu turno.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦅</span>
+                    <span className="summon-label">Convocar Águila</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn beast-panther"
+                    onClick={() => {
+                      const exists = c.companions.some(f => f.name === 'Pantera');
+                      if (exists) { alert('La Pantera ya está en tu lista de compañeros.'); return; }
+                      update({
+                        companions: [...c.companions, {
+                          name: 'Pantera',
+                          type: 'Bestia (Pantera)',
+                          hp: 5 * c.level,
+                          notes: `CA ${13 + profBonus(c.level)} | Daño 1d6+3+${profBonus(c.level)} | Sigilo. Abalanzarse: derriba si falla CD FUE. Actúa en tu turno.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐆</span>
+                    <span className="summon-label">Convocar Pantera</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* MAGO: Escuela de Nigromancia - undead servants presets */}
+            {c.className === 'Mago' && c.subclass === 'Escuela de Nigromancia' && c.level >= 6 && (
+              <div className="necro-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">💀</span>
+                  <div>
+                    <div className="pact-banner-title" style={{ color: '#b0c4de' }}>Servidores de la Muerte</div>
+                    <div className="pact-banner-sub">Creación rápida de no-muertos (Animar a los Muertos)</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn undead-skeleton"
+                    onClick={() => {
+                      update({
+                        companions: [...c.companions, {
+                          name: 'Esqueleto',
+                          type: 'No-Muerto (Esqueleto)',
+                          hp: 13 + c.level,
+                          notes: `CA 13 | Daño 1d6+2+${profBonus(c.level)} (arco/espada) | Inmune a veneno y al cansancio. Obedece tus órdenes.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">💀</span>
+                    <span className="summon-label">Animar Esqueleto</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn undead-zombie"
+                    onClick={() => {
+                      update({
+                        companions: [...c.companions, {
+                          name: 'Zombie',
+                          type: 'No-Muerto (Zombie)',
+                          hp: 22 + c.level,
+                          notes: `CA 8 | Daño 1d6+1+${profBonus(c.level)} (puñetazo) | Resistencia No-Muerta: si recibe daño mortal, salvación CD 5+daño; si lo supera, queda a 1 PG.`
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🧟</span>
+                    <span className="summon-label">Animar Zombie</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="list-rows">
               {c.companions.map((comp, i) => (
                 <div key={i} className="list-row wide">
@@ -918,6 +1618,215 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
         {activeTab === 'familiars' && (
           <>
             <div className="block-label">Familiares</div>
+
+            {/* MAGO: Buscar Familiar - standard D&D familiars */}
+            {c.className === 'Mago' && (
+              <div className="wizard-familiar-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">📜</span>
+                  <div>
+                    <div className="pact-banner-title" style={{ color: '#7eb8e8' }}>Buscar Familiar</div>
+                    <div className="pact-banner-sub">Invocación rápida de familiar arcano (ritual de 1h)</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn fam-owl"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Búho');
+                      if (exists) { alert('El Búho ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Búho',
+                          form: 'Búho',
+                          notes: 'Vuelo 18m. Visión en oscuridad 36m. Percepción +3. Puede entregar objetos. Ayudar como acción en combate.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦉</span>
+                    <span className="summon-label">Buscar Búho</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn fam-cat"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Gato');
+                      if (exists) { alert('El Gato ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Gato',
+                          form: 'Gato',
+                          notes: 'Velocidad 12m. Trepar 9m. Sigilo +4. Percepción +3. Sentidos agudizados de olfato. Ayudar como acción en combate.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐱</span>
+                    <span className="summon-label">Buscar Gato</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn fam-raven"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Cuervo');
+                      if (exists) { alert('El Cuervo ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Cuervo',
+                          form: 'Cuervo',
+                          notes: 'Vuelo 15m. Puede imitar sonidos simples. Percepción +3. Multiataques con pico. Vínculo telepático 30m.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐦‍⬛</span>
+                    <span className="summon-label">Buscar Cuervo</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn fam-bat"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Murciélago');
+                      if (exists) { alert('El Murciélago ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Murciélago',
+                          form: 'Murciélago',
+                          notes: 'Vuelo 9m. Ecolocalización 18m. Ciego fuera de ese rango. Percepción +3 (sonido). Ayudar como acción en combate.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🦇</span>
+                    <span className="summon-label">Buscar Murciélago</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn fam-rat"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Rata');
+                      if (exists) { alert('La Rata ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Rata',
+                          form: 'Rata',
+                          notes: 'Velocidad 9m. Ventaja en percepción de olfato. Puede infiltrarse en espacios diminutos. Ayudar como acción en combate.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐭</span>
+                    <span className="summon-label">Buscar Rata</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn fam-toad"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Sapo');
+                      if (exists) { alert('El Sapo ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Sapo',
+                          form: 'Sapo',
+                          notes: 'Velocidad 6m, nado 6m. Anfibio: puede respirar bajo agua. Visión en oscuridad 9m. Ayudar como acción en combate.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐸</span>
+                    <span className="summon-label">Buscar Sapo</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* WARLOCK: Pacto de la Cadena - familiar presets */}
+            {c.className === 'Brujo' && c.classChoices?.pactBoon === 'Pacto de la Cadena' && (
+              <div className="warlock-pact-banner">
+                <div className="pact-banner-header">
+                  <span className="pact-banner-icon">⛓️</span>
+                  <div>
+                    <div className="pact-banner-title">Pacto de la Cadena</div>
+                    <div className="pact-banner-sub">Convocación instantánea de tu familiar superior</div>
+                  </div>
+                </div>
+                <div className="warlock-familiar-preset-row">
+                  <button
+                    className="familiar-summon-btn imp"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Diablillo');
+                      if (exists) { alert('El Diablillo ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Diablillo',
+                          form: 'Diablillo (Imp)',
+                          notes: 'Resistencia mágica. Invisibilidad. Resistencia a daño no mágico. Veneno: CD 11 CON o 3d6 veneno. Visión en oscuridad 36m. Puede cambiar de forma (rata, cuervo, araña, diablillo).'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">😈</span>
+                    <span className="summon-label">Convocar Diablillo</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn quasit"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Quasit');
+                      if (exists) { alert('El Quasit ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Quasit',
+                          form: 'Quasit',
+                          notes: 'Garras venenosas: CD 13 CON o 2d4 veneno. Invisibilidad. Asustar: CD 10 SAB o asustado. Puede cambiar de forma (murciélago, rata, sapo, quasit). Resistencia mágica.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">👿</span>
+                    <span className="summon-label">Convocar Quasit</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn pseudo"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Pseudodragón');
+                      if (exists) { alert('El Pseudodragón ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Pseudodragón',
+                          form: 'Pseudodragón',
+                          notes: 'Telepatía 80 pies. Aguijón somnífero: CD 11 CON o inconsciente 1 hora. Resistencia mágica. Sentidos mágicos 10 pies. Visión en penumbra 18m.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🐉</span>
+                    <span className="summon-label">Convocar Pseudodragón</span>
+                  </button>
+
+                  <button
+                    className="familiar-summon-btn sprite"
+                    onClick={() => {
+                      const exists = c.familiars.some(f => f.name === 'Duendecillo');
+                      if (exists) { alert('El Duendecillo ya está en tu lista de familiares.'); return; }
+                      update({
+                        familiars: [...c.familiars, {
+                          name: 'Duendecillo',
+                          form: 'Duendecillo (Sprite)',
+                          notes: 'Flechas somnoléferas: CD 10 CON o inconsciente 1 min. Detección del Corazón: percibe si está asustado, envenenado o miente. Invisibilidad. Volar 40 pies.'
+                        }]
+                      });
+                    }}
+                  >
+                    <span className="summon-emoji">🧙</span>
+                    <span className="summon-label">Convocar Duendecillo</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="list-rows">
               {c.familiars.map((f, i) => (
                 <div key={i} className="list-row">

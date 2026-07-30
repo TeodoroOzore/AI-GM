@@ -82,6 +82,48 @@ export const CLASSES: Record<string, ClassDef> = {
   'Brujo': { hitDie: 8, saves: ['wis', 'cha'], spellcasting: { type: 'pact', ability: 'cha' }, tabName: 'Pacto de Sangre', unlockLevel: 1, subclasses: ['Patrón Arquihada', 'Patrón Fiendish', 'Patrón Great Old One'] }
 };
 
+export type SubclassFeature = {
+  level: number;
+  title: string;
+  description: string;
+  type?: 'feature' | 'spell' | 'aura' | 'companion' | 'proficiency' | 'maneuver';
+};
+
+export type SubclassSpellGrant = {
+  levelUnlocked: number;
+  spellName: string;
+  spellLevel: string;
+  notes?: string;
+};
+
+export type SubclassAuraGrant = {
+  levelUnlocked: number;
+  name: string;
+  range: string;
+  description: string;
+};
+
+export type SubclassCompanionGrant = {
+  name: string;
+  type: string;
+  description: string;
+  statsSummary: string;
+};
+
+export type SubclassDetail = {
+  name: string;
+  className: string;
+  description: string;
+  coreMechanic: string;
+  keyRole: string;
+  proficienciesGranted?: string[];
+  features: SubclassFeature[];
+  spells?: SubclassSpellGrant[];
+  auras?: SubclassAuraGrant[];
+  companion?: SubclassCompanionGrant;
+  maneuversOrAbilities?: string[];
+};
+
 export type FeatDef = {
   name: string;
   description: string;
@@ -254,8 +296,90 @@ export const DND_CONDITIONS: ConditionDef[] = [
 
 export const FAMILIAR_FORMS = [
   'Gato', 'Búho', 'Rata', 'Cuervo', 'Araña', 'Serpiente venenosa',
-  'Mefita de fuego', 'Rana venenosa', 'Halcón', 'Tejón', 'Pez volador', 'Pseudodragón (nivel alto)'
+  'Mefita de fuego', 'Rana venenosa', 'Halcón', 'Tejón', 'Pez volador',
+  // Familiares especiales del Pacto de la Cadena (Brujo)
+  'Diablillo (Imp)', 'Quasit', 'Pseudodragón', 'Duendecillo (Sprite)'
 ];
+
+// ─── INVOCACIONES MÁGICAS DE BRUJO ──────────────────────────────────────────
+export type WarlockInvocation = {
+  name: string;
+  description: string;
+  prerequisite?: string;
+};
+
+export const WARLOCK_INVOCATIONS_CATALOG: WarlockInvocation[] = [
+  {
+    name: 'Descarga Agónica',
+    description: 'Cuando usás Descarga Sobrenatural, podés empujar al objetivo hasta 3 metros si falla su salvación de Constitución.',
+  },
+  {
+    name: 'Visión del Diablo',
+    description: 'Podés ver normalmente en oscuridad mágica y no mágica hasta 36 metros.',
+  },
+  {
+    name: 'Armadura de Sombras',
+    description: 'Podés lanzar Escudo de Fe sobre vos mismo en cualquier momento, sin gastar espacios de conjuro. Requiere concentración.',
+  },
+  {
+    name: 'Libro de los Secretos Antiguos',
+    description: 'Podés anotar rituales en tu Libro de Sombras y lanzarlos sin gastar espacios de conjuro.',
+    prerequisite: 'Pacto del Tomo (Nivel 3)',
+  },
+  {
+    name: 'Amo de las Cadenas',
+    description: 'Podés lanzar Buscar Familiar sin gastar espacios. Tu familiar puede atacar si usás tu Acción en tu turno.',
+    prerequisite: 'Pacto de la Cadena (Nivel 3)',
+  },
+  {
+    name: 'Hoja Sedienta',
+    description: 'Tu arma del Pacto de la Hoja gana un bonificador de +1 a las tiradas de ataque y de daño.',
+    prerequisite: 'Pacto de la Hoja (Nivel 5)',
+  },
+  {
+    name: 'Salto Ascendente',
+    description: 'Podés lanzar Salto sobre vos mismo a voluntad, sin gastar espacios de conjuro.',
+  },
+  {
+    name: 'Esculpido de Carne',
+    description: 'Aprendés los trucos Ilusión Menor y Prestidigitación. No cuentan para tus trucos de Brujo.',
+  },
+  {
+    name: 'Mirada del Cazador de Sombras',
+    description: 'Podés lanzar Comprensión Idiomas a voluntad, sin gastar espacios de conjuro.',
+  },
+  {
+    name: 'Maldición Inficiada',
+    description: 'Cuando matás a una criatura maldecida con tu Maldición del Brujo, podés mover la maldición a otra criatura como acción bonus.',
+  },
+  {
+    name: 'Tirón Repulsivo',
+    description: 'Cuando usás Descarga Sobrenatural y el objetivo falla, lo empujás hasta 3 metros en lugar de hacia vos.',
+    prerequisite: 'Nivel 5',
+  },
+  {
+    name: 'Susurros de la Tumba',
+    description: 'Podés lanzar Hablar con los Muertos a voluntad, sin gastar espacios de conjuro.',
+    prerequisite: 'Nivel 9',
+  },
+  {
+    name: 'Ojos del Amo de Runas',
+    description: 'Podés lanzar Detectar Pensamientos a voluntad, sin gastar espacios de conjuro.',
+    prerequisite: 'Nivel 7',
+  },
+];
+
+/** Devuelve cuántas invocaciones puede tener activas el Brujo según su nivel (D&D 5e PHB). */
+export function getWarlockInvocationsLimit(level: number): number {
+  if (level >= 18) return 8;
+  if (level >= 15) return 7;
+  if (level >= 12) return 6;
+  if (level >= 9)  return 5;
+  if (level >= 7)  return 4;
+  if (level >= 5)  return 3;
+  if (level >= 2)  return 2;
+  return 0;
+}
 
 // ─── PROFICIENCY TABLES ────────────────────────────────────────────
 // Armor competencies per class (D&D 5e PHB)
@@ -1011,6 +1135,205 @@ export type CharacterSheet = {
   equippedArmor?: string;
   equippedShield?: boolean;
   selectedTools: string[];
+  fightingStyle?: string;
+  classChoices?: Record<string, string>;
+  concentratingOnSpell?: string;
+  warlockInvocations?: string[];
+};
+
+export type SpellcastingLimits = {
+  isSpellcaster: boolean;
+  spellcastingType: 'full' | 'half' | 'pact' | 'third' | null;
+  abilityKey: AbilityKey;
+  abilityLabel: string;
+  abilityModVal: number;
+  saveDC: number;
+  attackBonus: number;
+  cantripsKnownMax: number;
+  spellsKnownOrPreparedMax: number;
+  maxSpellLevel: number;
+  labelKnownOrPrepared: string;
+  pactSlotLevel?: number;
+  pactSlotsCount?: number;
+  ritualCasting: boolean;
+  ritualDescription?: string;
+};
+
+function getMaxSlotLevel(slots?: number[]): number {
+  if (!slots) return 1;
+  for (let i = slots.length - 1; i >= 0; i--) {
+    if (slots[i] > 0) return i + 1;
+  }
+  return 1;
+}
+
+export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
+  const cdef = CLASSES[c.className] || CLASSES['Guerrero'];
+  const spellType = cdef.spellcasting?.type || null;
+
+  const abKey: AbilityKey = cdef.spellcasting?.ability || (c.subclass === 'Caballero Arcano' || c.subclass === 'Embaucador Arcano' ? 'int' : 'int');
+  const abVal = abilityMod(c.abilities[abKey]);
+  const prof = profBonus(c.level);
+  const dc = 8 + prof + abVal;
+  const atk = prof + abVal;
+
+  let cantripsMax = 0;
+  let spellsMax = 0;
+  let maxLvl = 1;
+  let labelText = 'Conjuros Conocidos';
+  let ritual = false;
+  let ritualDesc = '';
+  let pactLvl: number | undefined;
+  let pactCnt: number | undefined;
+
+  const lvl = c.level;
+
+  switch (c.className) {
+    case 'Mago':
+      cantripsMax = lvl >= 10 ? 5 : lvl >= 4 ? 4 : 3;
+      spellsMax = Math.max(1, abVal + lvl);
+      labelText = 'Conjuros Preparados (Grimorio)';
+      maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
+      ritual = true;
+      ritualDesc = 'Podés lanzar cualquier conjuro con la etiqueta [Ritual] de tu grimorio sin tenerlo preparado y sin gastar espacios de conjuro (+10 minutos).';
+      break;
+
+    case 'Clérigo':
+      cantripsMax = lvl >= 10 ? 5 : lvl >= 4 ? 4 : 3;
+      spellsMax = Math.max(1, abVal + lvl);
+      labelText = 'Dones Divinos Preparados';
+      maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
+      ritual = true;
+      ritualDesc = 'Podés lanzar cualquier conjuro preparado con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
+      break;
+
+    case 'Druida':
+      cantripsMax = lvl >= 10 ? 4 : lvl >= 4 ? 3 : 2;
+      if (c.subclass === 'Círculo de la Tierra') cantripsMax += 1;
+      spellsMax = Math.max(1, abVal + lvl);
+      labelText = 'Cantos de la Naturaleza Preparados';
+      maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
+      ritual = true;
+      ritualDesc = 'Podés lanzar cualquier conjuro preparado con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
+      break;
+
+    case 'Bardo':
+      cantripsMax = lvl >= 10 ? 4 : lvl >= 4 ? 3 : 2;
+      const bardoKnown = [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 15, 16, 18, 19, 19, 20, 22, 22, 22];
+      spellsMax = bardoKnown[Math.min(19, Math.max(0, lvl - 1))];
+      if (c.subclass === 'Colegio del Conocimiento' && lvl >= 6) spellsMax += 2;
+      labelText = 'Repertorio Conocido';
+      maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
+      ritual = true;
+      ritualDesc = 'Podés lanzar cualquier conjuro conocido de Bardo con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
+      break;
+
+    case 'Hechicero':
+      cantripsMax = lvl >= 10 ? 6 : lvl >= 4 ? 5 : 4;
+      const sorcKnown = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 13, 14, 14, 15, 15, 15, 15];
+      spellsMax = sorcKnown[Math.min(19, Math.max(0, lvl - 1))];
+      labelText = 'Conjuros Conocidos (Linaje)';
+      maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
+      ritual = false;
+      break;
+
+    case 'Brujo':
+      cantripsMax = lvl >= 10 ? 4 : lvl >= 4 ? 3 : 2;
+      const warlockKnown = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15];
+      spellsMax = warlockKnown[Math.min(19, Math.max(0, lvl - 1))];
+      labelText = 'Conjuros de Pacto Conocidos';
+      pactLvl = PACT_SLOTS[lvl]?.level || 1;
+      pactCnt = PACT_SLOTS[lvl]?.count || 1;
+      maxLvl = pactLvl;
+      ritual = c.classChoices?.['pactBoon'] === 'Pacto del Tomo';
+      if (ritual) ritualDesc = 'Con el Pacto del Tomo, podés lanzar conjuros rituales inscritos en tu Libro de Sombras.';
+      break;
+
+    case 'Paladín':
+      cantripsMax = 0;
+      spellsMax = Math.max(1, abVal + Math.floor(lvl / 2));
+      labelText = 'Conjuros de Juramento Preparados';
+      maxLvl = getMaxSlotLevel(HALF_SLOTS[lvl]);
+      ritual = false;
+      break;
+
+    case 'Explorador':
+      cantripsMax = 0;
+      const rangerKnown = [0, 2, 3, 4, 5, 6, 7, 8, 9, 9, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11];
+      spellsMax = rangerKnown[Math.min(19, Math.max(0, lvl - 1))];
+      labelText = 'Conjuros Conocidos';
+      maxLvl = getMaxSlotLevel(HALF_SLOTS[lvl]);
+      ritual = false;
+      break;
+
+    case 'Guerrero':
+      if (c.subclass === 'Caballero Arcano' && lvl >= 3) {
+        cantripsMax = lvl >= 10 ? 3 : 2;
+        const ekKnown = [0, 0, 3, 4, 4, 4, 5, 6, 6, 7, 8, 8, 9, 10, 10, 11, 11, 12, 12, 13];
+        spellsMax = ekKnown[Math.min(19, Math.max(0, lvl - 1))];
+        maxLvl = lvl >= 19 ? 4 : lvl >= 13 ? 3 : lvl >= 7 ? 2 : 1;
+        labelText = 'Conjuros Arcanos Conocidos';
+      }
+      break;
+
+    case 'Pícaro':
+      if (c.subclass === 'Embaucador Arcano' && lvl >= 3) {
+        cantripsMax = lvl >= 10 ? 3 : 2;
+        const atKnown = [0, 0, 3, 4, 4, 4, 5, 6, 6, 7, 8, 8, 9, 10, 10, 11, 11, 12, 12, 13];
+        spellsMax = atKnown[Math.min(19, Math.max(0, lvl - 1))];
+        maxLvl = lvl >= 19 ? 4 : lvl >= 13 ? 3 : lvl >= 7 ? 2 : 1;
+        labelText = 'Trucos de Ilusión y Conjuros';
+      }
+      break;
+  }
+
+  const isCaster = spellType !== null || (cantripsMax > 0 || spellsMax > 0);
+
+  return {
+    isSpellcaster: isCaster,
+    spellcastingType: spellType || (isCaster ? 'third' : null),
+    abilityKey: abKey,
+    abilityLabel: ABILITIES.find(a => a.key === abKey)?.label || 'INT',
+    abilityModVal: abVal,
+    saveDC: dc,
+    attackBonus: atk,
+    cantripsKnownMax: cantripsMax,
+    spellsKnownOrPreparedMax: spellsMax,
+    maxSpellLevel: maxLvl,
+    labelKnownOrPrepared: labelText,
+    pactSlotLevel: pactLvl,
+    pactSlotsCount: pactCnt,
+    ritualCasting: ritual,
+    ritualDescription: ritualDesc
+  };
+}
+
+export type FightingStyleDef = {
+  name: string;
+  description: string;
+  classes: string[];
+};
+
+export type BaseClassFeature = {
+  level: number;
+  title: string;
+  description: string;
+};
+
+export type BaseClassDetail = {
+  name: string;
+  hitDie: string;
+  primaryAbilities: string;
+  saves: string[];
+  description: string;
+  coreGimmick: string;
+  fightingStyles?: FightingStyleDef[];
+  specialChoices?: {
+    label: string;
+    key: string;
+    options: { name: string; description: string }[];
+  };
+  featuresTimeline: BaseClassFeature[];
 };
 
 export function blankCharacter(): CharacterSheet {
@@ -1052,7 +1375,8 @@ export function blankCharacter(): CharacterSheet {
     notes: '',
     equippedArmor: '',
     equippedShield: false,
-    selectedTools: []
+    selectedTools: [],
+    warlockInvocations: []
   };
 }
 
