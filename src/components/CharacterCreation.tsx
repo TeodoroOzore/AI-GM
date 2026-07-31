@@ -26,7 +26,19 @@ import {
   EquipmentItem,
   EquippedGearItem,
   getCharacterProficiencies,
+  RaceDef,
+  RaceTrait,
 } from '../types';
+
+// ─── Catálogo de idiomas del mundo de D&D 5e ───
+const LANGUAGE_OPTIONS = [
+  'Común', 'Enano', 'Élfico', 'Gigante', 'Gnomo', 'Goblin', 'Mediano', 'Orco',
+  'Abisal', 'Celestial', 'Dracónico', 'Infernal', 'Primigenio', 'Silvano',
+  'Subcomún', 'Bajocomún', 'Lenguaje de las Bestias', 'Jerga de los Ladrones'
+];
+
+// ─── Trucos de Mago para el rasgo "Truco" del Alto Elfo ───
+const WIZARD_CANTRIPS = CANTRIPS_CATALOG.filter(c => c.classes.includes('Mago')).map(c => c.name);
 
 type CharacterCreationProps = {
   onCreateCharacter: (character: CharacterSheet, introMessage: string, worldMemory: string) => void;
@@ -43,6 +55,11 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   const [background, setBackground] = useState('Forastero');
   const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
   const [raceChoiceB, setRaceChoiceB] = useState<AbilityKey>('dex');
+  const [raceExtraLanguage, setRaceExtraLanguage] = useState<string>('');
+  const [raceSkillChoices, setRaceSkillChoices] = useState<string[]>([]);
+  const [raceAncestry, setRaceAncestry] = useState<string>('');
+  const [raceToolChoice, setRaceToolChoice] = useState<string>('');
+  const [raceCantrip, setRaceCantrip] = useState<string>('');
 
   const [method, setMethod] = useState<CreationMethod>('standard');
   const standardPool = [15, 14, 13, 12, 10, 8];
@@ -315,6 +332,11 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     c.race = race;
     c.raceChoiceA = raceChoiceA;
     c.raceChoiceB = raceChoiceB;
+    c.raceExtraLanguage = raceExtraLanguage;
+    c.raceSkillChoices = raceSkillChoices;
+    c.raceAncestry = raceAncestry;
+    c.raceToolChoice = raceToolChoice;
+    c.raceCantrip = raceCantrip;
     c.background = background;
     c.className = className;
     c.level = level;
@@ -535,7 +557,14 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
           <div className="row">
             <div className="field">
               <label>Raza</label>
-              <select value={race} onChange={e => setRace(e.target.value)}>
+              <select value={race} onChange={e => {
+                setRace(e.target.value);
+                setRaceExtraLanguage('');
+                setRaceSkillChoices([]);
+                setRaceAncestry('');
+                setRaceToolChoice('');
+                setRaceCantrip('');
+              }}>
                 {Object.keys(RACES).map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
@@ -599,6 +628,197 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
               <p className="rec-description">{rec.description}</p>
             </div>
           )}
+
+          {/* ══════ RACE INFO PANEL ══════ */}
+          {(() => {
+            const rdef: RaceDef | undefined = RACES[race];
+            if (!rdef) return null;
+            const sizeLabel = rdef.size === 'M' ? 'Mediano' : rdef.size === 'P' ? 'Pequeño' : rdef.size || '';
+            return (
+              <div className="race-info-panel">
+                <div className="race-info-header">🧬 Raza: {race}</div>
+                {rdef.description && <p className="race-description">{rdef.description}</p>}
+                <div className="race-stats-grid">
+                  {rdef.speed && <span className="race-stat-chip">🏃 Velocidad: {rdef.speed}m</span>}
+                  {sizeLabel && <span className="race-stat-chip">📏 Tamaño: {sizeLabel}</span>}
+                  {rdef.darkvision && <span className="race-stat-chip">👁️ Visión en oscuridad: {rdef.darkvision}m</span>}
+                  {rdef.age && <span className="race-stat-chip">📅 Edad: {rdef.age}</span>}
+                  {rdef.alignment && <span className="race-stat-chip">⚖️ Tendencia: {rdef.alignment}</span>}
+                </div>
+
+                {/* Languages */}
+                {rdef.languages && rdef.languages.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🗣️ Idiomas</div>
+                    <div className="prof-chips-row">
+                      {rdef.languages.map((l: string) => (
+                        <span key={l} className="prof-chip lang-chip">{l}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Resistances */}
+                {rdef.resistances && rdef.resistances.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🛡️ Resistencias</div>
+                    <div className="prof-chips-row">
+                      {rdef.resistances.map((res: string) => (
+                        <span key={res} className="prof-chip resist-chip">✓ {res}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Weapon Proficiencies */}
+                {rdef.weaponProf && rdef.weaponProf.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">⚔️ Competencias de armas raciales</div>
+                    <div className="prof-chips-row">
+                      {rdef.weaponProf.map((w: string) => (
+                        <span key={w} className="prof-chip weapon-chip active">{w}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Armor Proficiencies */}
+                {rdef.armorProf && rdef.armorProf.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🛡️ Competencias de armadura raciales</div>
+                    <div className="prof-chips-row">
+                      {rdef.armorProf.map((a: string) => (
+                        <span key={a} className="prof-chip armor-chip active">{a}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Tool Proficiencies */}
+                {rdef.toolProf && rdef.toolProf.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🔧 Competencias de herramientas raciales</div>
+                    <div className="prof-chips-row">
+                      {rdef.toolProf.map((t: string) => (
+                        <span key={t} className="prof-chip tool-chip active">{t}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+{/* Skill Proficiencies */}
+                {rdef.skillProf && rdef.skillProf.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🎯 Competencias de habilidad raciales</div>
+                    <div className="prof-chips-row">
+                      {rdef.skillProf.map((s: string) => (
+                        <span key={s} className="prof-chip skill-chip">✓ {s}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Traits */}
+                {rdef.traits && rdef.traits.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">✨ Rasgos Raciales</div>
+                    <div className="race-traits-list">
+                      {rdef.traits.map((trait: RaceTrait, idx: number) => (
+                        <div key={idx} className="race-trait-card">
+                          <div className="trait-card-name">{trait.name}</div>
+                          <p className="trait-card-desc">{trait.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* ══════ RACIAL CHOICE SELECTORS ══════ */}
+
+                {/* Extra Language (Humano, Semielfo, etc.) */}
+                {(rdef.extraLanguages && rdef.extraLanguages > 0) && (
+                  <div className="race-choice-row">
+                    <label>🗣️ Idioma adicional ({rdef.extraLanguages} a elección)</label>
+                    <select
+                      value={raceExtraLanguage}
+                      onChange={e => setRaceExtraLanguage(e.target.value)}
+                    >
+                      <option value="">— Elegir idioma —</option>
+                      {LANGUAGE_OPTIONS.filter(l => l !== 'Común' && !(rdef.languages || []).includes(l)).map(l => (
+                        <option key={l} value={l}>{l}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Skill choices (Semielfo: +2 skills) */}
+                {(rdef.skillChoices && rdef.skillChoices.options && rdef.skillChoices.options.length > 0) && (
+                  <div className="race-choice-row">
+                    <label>🎯 Competencias de habilidad adicionales (elige {rdef.skillChoices.count})</label>
+                    <div className="race-skill-choices">
+                      {SKILLS.filter(s => rdef.skillChoices!.options.includes(s.name)).map(s => (
+                        <label key={s.name} className={`tool-chip ${raceSkillChoices.includes(s.name) ? 'selected' : ''}`}>
+                          <input
+                            type="checkbox"
+                            checked={raceSkillChoices.includes(s.name)}
+                            onChange={() => {
+                              setRaceSkillChoices(prev =>
+                                prev.includes(s.name)
+                                  ? prev.filter(x => x !== s.name)
+                                  : prev.length < (rdef.skillChoices?.count || 2)
+                                    ? [...prev, s.name]
+                                    : prev
+                              );
+                            }}
+                          />
+                          <span>{s.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Ancestry choice (Dracónido: tipo de dragón) */}
+                {(rdef.ancestryChoices && rdef.ancestryChoices.options && rdef.ancestryChoices.options.length > 0) && (
+                  <div className="race-choice-row">
+                    <label>🐉 Ascendencia dracónica</label>
+                    <select value={raceAncestry} onChange={e => setRaceAncestry(e.target.value)}>
+                      <option value="">— Elegir ascendencia —</option>
+                      {rdef.ancestryChoices.options.map(a => (
+                        <option key={a.name} value={a.name}>{a.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Tool choice (Enano: herramienta de artesano) */}
+                {(rdef.toolChoices && rdef.toolChoices.options && rdef.toolChoices.options.length > 0) && (
+                  <div className="race-choice-row">
+                    <label>🔧 Herramienta de artesano (a elección)</label>
+                    <select value={raceToolChoice} onChange={e => setRaceToolChoice(e.target.value)}>
+                      <option value="">— Elegir herramienta —</option>
+                      {rdef.toolChoices.options.map(t => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Cantrip choice (Alto Elfo: 1 truco de mago) */}
+                {(rdef.traits && rdef.traits.some(t => t.name === 'Truco' && t.type === 'spell')) && (
+                  <div className="race-choice-row">
+                    <label>✨ Truco de mago (rasgo élfico)</label>
+                    <select value={raceCantrip} onChange={e => setRaceCantrip(e.target.value)}>
+                      <option value="">— Elegir truco —</option>
+                      {WIZARD_CANTRIPS.map(c => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           <div className="step-nav">
             <span />

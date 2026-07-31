@@ -3,6 +3,7 @@ import {
   CharacterSheet as CharacterType,
   ABILITIES,
   SKILLS,
+  RACES,
   CLASSES,
   FULL_SLOTS,
   HALF_SLOTS,
@@ -31,6 +32,8 @@ import {
   getSpellcastingLimits,
   WARLOCK_INVOCATIONS_CATALOG,
   getWarlockInvocationsLimit,
+  RaceDef,
+  RaceTrait,
 } from '../types';
 import { SUBCLASS_CATALOG } from '../data/subclasses';
 import { BASE_CLASSES_CATALOG, FIGHTING_STYLES } from '../data/baseClasses';
@@ -243,6 +246,38 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                       <span key={l} className="prof-chip lang-chip">{l}</span>
                     ))}
                   </div>
+
+                  {/* ── RASGOS RACIALES ── */}
+                  {(() => {
+                    const rdef: RaceDef | undefined = RACES[c.race];
+                    if (!rdef || !rdef.traits || rdef.traits.length === 0) return null;
+                    return (
+                      <>
+                        <div className="block-label" style={{ marginTop: '10px' }}>🧬 Rasgos Raciales: {c.race}</div>
+                        <div className="race-traits-list-compact">
+                          {rdef.traits.map((trait: RaceTrait, idx: number) => {
+                            // Determine if trait is level-locked (e.g. Dwarf at level 4+)
+                            let isUnlocked = true;
+                            let unlockNote = '';
+                            if (trait.name === 'Dureza Enana' && c.level >= 4) {
+                              isUnlocked = true;
+                              unlockNote = `✓ Activo (Nv ${c.level}) — +${c.level} PG máximos`;
+                            } else if (trait.name === 'Dureza Enana' && c.level < 4) {
+                              isUnlocked = false;
+                              unlockNote = `🔒 Se desbloquea en Nivel 4: +Nivel PG máximos`;
+                            }
+                            return (
+                              <div key={idx} className={`race-trait-card-compact ${isUnlocked ? 'unlocked' : 'locked'}`}>
+                                <div className="trait-compact-name">{trait.name}</div>
+                                <p className="trait-compact-desc">{trait.description}</p>
+                                {unlockNote && <div className="trait-compact-status">{unlockNote}</div>}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   <div className="prof-lock-note">
                     🔒 Las competencias se asignan por clase, raza y trasfondo. Solo pueden expandirse durante la aventura.
