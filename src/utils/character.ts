@@ -28,6 +28,8 @@ export function blankCharacter(): CharacterSheet {
     inspiration: false,
     conditions: '',
     deathSaves: { success: 0, fail: 0 },
+    conditionDurations: {},
+    turnCounter: 0,
     hitDiceRemaining: 1,
     proficientSkills: [],
     armorProf: [],

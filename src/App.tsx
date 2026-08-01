@@ -9,7 +9,11 @@ import {
   abilityMod,
   profBonus,
   rollD20,
-  fmtSigned
+  rollFormula,
+  fmtSigned,
+  WeaponItem,
+  SpellItem,
+  CLASSES
 } from './types';
 import { Header } from './components/Header';
 import { CharacterCreation } from './components/CharacterCreation';
@@ -29,6 +33,7 @@ export function App() {
   const [pendingRolls, setPendingRolls] = useState<PendingRoll[]>([]);
   const [isThinking, setIsThinking] = useState<boolean>(false);
   const [activeAnimation, setActiveAnimation] = useState<ActiveRollAnimation | null>(null);
+  const [sheetFocusSection, setSheetFocusSection] = useState<string>('');
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -88,9 +93,31 @@ export function App() {
       ...anim,
       onComplete: () => {
         anim.onComplete();
-        setActiveAnimation(null);
+        setActiveAnimation(current => current?.label === anim.label && current?.finalResult === anim.finalResult ? null : current);
       }
     });
+  };
+
+  const handleFocusSheetSection = (section: string) => {
+    setSheetFocusSection(section);
+  };
+
+  const parseDamageFormula = (value?: string): string | null => {
+    const text = (value || '').trim();
+    if (!text) return null;
+    const match = text.match(/(\d+)?d(\d+)([+-]\d+)?/i);
+    if (!match) return null;
+    return `${match[1] || '1'}d${match[2]}${match[3] || ''}`;
+  };
+
+  const getDieTypeFromFormula = (formula: string): ActiveRollAnimation['dieType'] => {
+    if (formula.includes('d20')) return 'd20';
+    if (formula.includes('d12')) return 'd12';
+    if (formula.includes('d10')) return 'd10';
+    if (formula.includes('d8')) return 'd8';
+    if (formula.includes('d6')) return 'd6';
+    if (formula.includes('d4')) return 'd4';
+    return 'd6';
   };
 
   const handleQuickSkillRoll = (skillName: string, ability: AbilityKey) => {
@@ -114,6 +141,134 @@ export function App() {
         handleAddPendingRoll({
           text: `🎲 ${skillName}: [${result}] ${fmtSigned(mod)}(${ability.toUpperCase()})${proficient ? fmtSigned(pb) + '(comp)' : ''} = ${total}${critLabel}`,
           cls: crit
+        });
+      }
+    });
+  };
+
+  const handleRollSave = (ability: AbilityKey) => {
+    const mod = abilityMod(character.abilities[ability]);
+    const { result } = rollD20({});
+    const total = result + mod;
+    const critLabel = result === 20 ? ' (¡20 natural!)' : result === 1 ? ' (1 natural)' : '';
+    const crit = result === 20 ? 'crit' : result === 1 ? 'fail' : '';
+    const labelMap: Record<AbilityKey, string> = {
+      str: 'FUE',
+      dex: 'DES',
+      con: 'CON',
+      int: 'INT',
+      wis: 'SAB',
+      cha: 'CAR'
+    };
+
+    handleTriggerAnimation({
+      dieType: 'd20',
+      label: `Salvación de ${labelMap[ability]}`,
+      rolls: [result],
+      finalResult: result,
+      mod,
+      total,
+      crit,
+      onComplete: () => {
+        handleAddPendingRoll({
+          text: `🛡️ Salvación ${labelMap[ability]}: [${result}] ${fmtSigned(mod)} = ${total}${critLabel}`,
+          cls: crit
+        });
+      }
+    });
+  };
+
+  const handleRollWeapon = (weapon: WeaponItem) => {
+    const mod = abilityMod(character.abilities[weapon.ability]) + (weapon.proficient ? profBonus(character.level) : 0);
+    const { rolls, result } = rollD20({});
+    const total = result + mod;
+    const critLabel = result === 20 ? ' (¡20 natural!)' : result === 1 ? ' (1 natural)' : '';
+    const crit = result === 20 ? 'crit' : result === 1 ? 'fail' : '';
+    const formula = parseDamageFormula(weapon.dice);
+
+    handleTriggerAnimation({
+      dieType: 'd20',
+      label: `Ataque con ${weapon.name || 'arma'}`,
+      rolls,
+      finalResult: result,
+      mod,
+      total,
+      crit,
+      onComplete: () => {
+        const attackText = `⚔️ ${weapon.name}: [${result}] ${fmtSigned(mod)}(${weapon.ability.toUpperCase()})${weapon.proficient ? fmtSigned(profBonus(character.level)) + '(comp)' : ''} = ${total}${critLabel}`;
+
+        if (!formula) {
+          handleAddPendingRoll({ text: attackText, cls: crit });
+          return;
+        }
+
+        const damageRes = rollFormula(formula);
+        if (!damageRes) {
+          handleAddPendingRoll({ text: attackText, cls: crit });
+          return;
+        }
+
+        handleTriggerAnimation({
+          dieType: getDieTypeFromFormula(formula),
+          label: `Daño de ${weapon.name}`,
+          rolls: damageRes.rolls,
+          finalResult: damageRes.rolls[0] || damageRes.total,
+          mod: damageRes.mod,
+          total: damageRes.total,
+          crit: 'crit',
+          onComplete: () => {
+            const damageText = `💥 ${weapon.name}: (${formula}) [${damageRes.rolls.join(', ')}]${damageRes.mod ? fmtSigned(damageRes.mod) : ''} = ${damageRes.total}`;
+            handleAddPendingRoll({ text: `${attackText} | ${damageText}`, cls: crit });
+          }
+        });
+      }
+    });
+  };
+
+  const handleRollSpell = (spell: SpellItem) => {
+    const spellcasting = CLASSES[character.className]?.spellcasting;
+    const spellAbility = spellcasting?.ability || 'int';
+    const mod = abilityMod(character.abilities[spellAbility]) + profBonus(character.level);
+    const { rolls, result } = rollD20({});
+    const total = result + mod;
+    const critLabel = result === 20 ? ' (¡20 natural!)' : result === 1 ? ' (1 natural)' : '';
+    const crit = result === 20 ? 'crit' : result === 1 ? 'fail' : '';
+    const formula = parseDamageFormula(spell.notes || spell.name);
+
+    handleTriggerAnimation({
+      dieType: 'd20',
+      label: `Conjuro: ${spell.name || 'hechizo'}`,
+      rolls,
+      finalResult: result,
+      mod,
+      total,
+      crit,
+      onComplete: () => {
+        const attackText = `✨ ${spell.name}: [${result}] ${fmtSigned(mod)}(${spellAbility.toUpperCase()}) = ${total}${critLabel}`;
+
+        if (!formula) {
+          handleAddPendingRoll({ text: attackText, cls: crit });
+          return;
+        }
+
+        const damageRes = rollFormula(formula);
+        if (!damageRes) {
+          handleAddPendingRoll({ text: attackText, cls: crit });
+          return;
+        }
+
+        handleTriggerAnimation({
+          dieType: getDieTypeFromFormula(formula),
+          label: `Daño de ${spell.name}`,
+          rolls: damageRes.rolls,
+          finalResult: damageRes.rolls[0] || damageRes.total,
+          mod: damageRes.mod,
+          total: damageRes.total,
+          crit: 'crit',
+          onComplete: () => {
+            const damageText = `💥 ${spell.name}: (${formula}) [${damageRes.rolls.join(', ')}]${damageRes.mod ? fmtSigned(damageRes.mod) : ''} = ${damageRes.total}`;
+            handleAddPendingRoll({ text: `${attackText} | ${damageText}`, cls: crit });
+          }
         });
       }
     });
@@ -206,7 +361,11 @@ export function App() {
             character={character}
             onUpdateCharacter={handleUpdateCharacter}
             onQuickSkillRoll={handleQuickSkillRoll}
-            readOnly={started}
+            onRollSave={handleRollSave}
+            onRollWeapon={handleRollWeapon}
+            onRollSpell={handleRollSpell}
+            readOnly={false}
+            focusSection={sheetFocusSection}
           />
 
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
@@ -222,6 +381,8 @@ export function App() {
               pendingRolls={pendingRolls}
               onAddPendingRoll={handleAddPendingRoll}
               onTriggerAnimation={handleTriggerAnimation}
+              onFocusSheetSection={handleFocusSheetSection}
+              onRollSave={handleRollSave}
             />
           </div>
         </div>

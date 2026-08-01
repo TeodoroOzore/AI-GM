@@ -251,6 +251,7 @@ export type EquipmentItem = {
   name: string;
   qty: number;
   notes: string;
+  category?: string;
 };
 
 export type EquippedGearItem = {
@@ -326,6 +327,8 @@ export type CharacterSheet = {
   inspiration: boolean;
   conditions: string;
   deathSaves: { success: number; fail: number };
+  conditionDurations?: Record<string, number>;
+  turnCounter?: number;
   hitDiceRemaining: number;
   proficientSkills: string[];
   armorProf: string[];

@@ -2016,6 +2016,43 @@ input:focus, textarea:focus, select:focus {
   border-radius: 2px;
 }
 
+/* ─── STATUS & CONDITION STYLES ──────────────────────────────── */
+.value-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 54px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--ink);
+  border: 1px solid var(--brass-dim);
+  color: var(--brass);
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.status-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.status-hint {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--parchment-dim);
+}
+
+.condition-duration {
+  margin-left: auto;
+  font-size: 0.62rem;
+  color: var(--brass);
+  font-family: var(--font-mono);
+}
+
 /* ─── GOLD & INVENTORY STYLES ──────────────────────────────────── */
 .gold-card-panel {
   display: flex;
@@ -2052,9 +2089,10 @@ input:focus, textarea:focus, select:focus {
   margin-bottom: 6px;
 }
 
-.inventory-table-header .col-name { flex: 2; }
-.inventory-table-header .col-qty { width: 70px; text-align: center; }
-.inventory-table-header .col-notes { flex: 3; }
+.inventory-table-header .col-name { flex: 1.4; }
+.inventory-table-header .col-category { width: 95px; }
+.inventory-table-header .col-qty { width: 54px; text-align: center; }
+.inventory-table-header .col-notes { flex: 2.2; }
 .inventory-table-header .col-actions { width: 24px; }
 
 .inventory-sheet-row {
@@ -2073,18 +2111,49 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--brass-dim);
 }
 
+.inventory-sheet-row.equipped {
+  border-color: var(--brass);
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.10), rgba(212, 175, 55, 0.02) 55%, transparent);
+}
+
+.equipped-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--brass);
+  border: 1px solid var(--brass-dim);
+  border-radius: 3px;
+  padding: 2px 6px;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.equipped-legend {
+  font-size: 0.72rem;
+  color: var(--brass-dim);
+  margin: 6px 0 6px 2px;
+}
+
 .inv-name-input {
-  flex: 2;
+  flex: 1.4;
   font-weight: 500;
 }
 
+.inv-category-input {
+  width: 95px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--brass-dim);
+}
+
 .inv-qty-input {
-  width: 70px;
+  width: 54px;
   text-align: center;
 }
 
 .inv-notes-input {
-  flex: 3;
+  flex: 2.2;
   color: var(--parchment-dim);
   font-size: 0.78rem;
 }

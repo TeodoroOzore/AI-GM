@@ -28,6 +28,11 @@ npm run dev      # Arranca sin abrir el navegador
 - Catálogo completo de D&D 5e: armas, armaduras, herramientas, conjuros, dotes, condiciones, razas, clases, subclases.
 - Diseño pensado para integrar una IA que genere escenarios, NPCs y resultados de acción.
 
+## ⚖️ Aviso de licencia y cumplimiento
+Este proyecto es una herramienta de referencia fan-made para D&D 5e. El contenido de reglas y el texto de sistema usados aquí se han tomado como inspiración del SRD 5.1 de Wizards of the Coast, publicado bajo Creative Commons Attribution 4.0 International (CC-BY-4.0).
+
+Si se distribuye públicamente, conviene conservar la atribución correspondiente a Wizards of the Coast y al SRD 5.1. Este repositorio no es un producto oficial ni está afiliado a Wizards of the Coast.
+
 ## 🏗️ Estructura del Proyecto
 
 ```

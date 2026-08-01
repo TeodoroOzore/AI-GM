@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { getSpellcastingLimits } from '../utils/spellcasting';
 import {
   ABILITIES,
   SKILLS,
@@ -91,6 +92,51 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   const rec = CLASS_RECOMMENDATIONS[className];
   const cdef = CLASSES[className];
 
+  const calculateFinalAbilities = (): Record<AbilityKey, number> => {
+    let base: Record<AbilityKey, number>;
+    if (method === 'manual') {
+      base = { ...manual };
+    } else if (method === 'pointbuy') {
+      base = { ...pointBuy };
+    } else {
+      base = {
+        str: assignments.str || 10,
+        dex: assignments.dex || 10,
+        con: assignments.con || 10,
+        int: assignments.int || 10,
+        wis: assignments.wis || 10,
+        cha: assignments.cha || 10
+      };
+    }
+
+    const rdef = RACES[race];
+    const final = { ...base };
+    if (rdef?.fixed) {
+      Object.entries(rdef.fixed).forEach(([k, v]) => {
+        const key = k as AbilityKey;
+        final[key] = (final[key] || 10) + (v || 0);
+      });
+    }
+    if (rdef?.choice) {
+      final[raceChoiceA] = (final[raceChoiceA] || 10) + rdef.choice.amount;
+      if (raceChoiceB !== raceChoiceA) {
+        final[raceChoiceB] = (final[raceChoiceB] || 10) + rdef.choice.amount;
+      }
+    }
+    return final;
+  };
+
+  const finalAbilities = useMemo(() => calculateFinalAbilities(), [method, manual, pointBuy, assignments, race, raceChoiceA, raceChoiceB]);
+  const spellLimits = useMemo(() => {
+    const previewCharacter: CharacterSheet = {
+      ...blankCharacter(),
+      className,
+      level,
+      abilities: finalAbilities,
+    };
+    return getSpellcastingLimits(previewCharacter);
+  }, [className, level, finalAbilities]);
+
   const rollAbilityScore4d6 = () => {
     const rolls = [secureRandInt(6), secureRandInt(6), secureRandInt(6), secureRandInt(6)];
     rolls.sort((a, b) => a - b);
@@ -141,41 +187,6 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     return available;
   };
 
-  const calculateFinalAbilities = (): Record<AbilityKey, number> => {
-    let base: Record<AbilityKey, number>;
-    if (method === 'manual') {
-      base = { ...manual };
-    } else if (method === 'pointbuy') {
-      base = { ...pointBuy };
-    } else {
-      base = {
-        str: assignments.str || 10,
-        dex: assignments.dex || 10,
-        con: assignments.con || 10,
-        int: assignments.int || 10,
-        wis: assignments.wis || 10,
-        cha: assignments.cha || 10
-      };
-    }
-
-    const rdef = RACES[race];
-    const final = { ...base };
-    if (rdef?.fixed) {
-      Object.entries(rdef.fixed).forEach(([k, v]) => {
-        const key = k as AbilityKey;
-        final[key] = (final[key] || 10) + (v || 0);
-      });
-    }
-    if (rdef?.choice) {
-      final[raceChoiceA] = (final[raceChoiceA] || 10) + rdef.choice.amount;
-      if (raceChoiceB !== raceChoiceA) {
-        final[raceChoiceB] = (final[raceChoiceB] || 10) + rdef.choice.amount;
-      }
-    }
-    return final;
-  };
-
-  const finalAbilities = useMemo(() => calculateFinalAbilities(), [method, manual, pointBuy, assignments, race, raceChoiceA, raceChoiceB]);
 
   const handleToggleSkill = (skillName: string) => {
     setProficientSkills(prev =>
@@ -184,9 +195,10 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   };
 
   const handleToggleTool = (toolName: string) => {
-    setSelectedTools(prev =>
-      prev.includes(toolName) ? prev.filter(t => t !== toolName) : [...prev, toolName]
-    );
+    setSelectedTools(prev => {
+      const next = prev.includes(toolName) ? prev.filter(t => t !== toolName) : [...prev, toolName];
+      return Array.from(new Set(next.filter(Boolean)));
+    });
   };
 
   const handleToggleWeapon = (weaponName: string) => {
@@ -196,15 +208,27 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   };
 
   const handleToggleCantrip = (name: string) => {
-    setSelectedCantrips(prev =>
-      prev.includes(name) ? prev.filter(c => c !== name) : [...prev, name]
-    );
+    setSelectedCantrips(prev => {
+      if (prev.includes(name)) {
+        return prev.filter(c => c !== name);
+      }
+      if (spellLimits.cantripsKnownMax > 0 && prev.length >= spellLimits.cantripsKnownMax) {
+        return prev;
+      }
+      return [...prev, name];
+    });
   };
 
   const handleToggleSpell = (name: string) => {
-    setSelectedSpells(prev =>
-      prev.includes(name) ? prev.filter(s => s !== name) : [...prev, name]
-    );
+    setSelectedSpells(prev => {
+      if (prev.includes(name)) {
+        return prev.filter(s => s !== name);
+      }
+      if (spellLimits.spellsKnownOrPreparedMax > 0 && prev.length >= spellLimits.spellsKnownOrPreparedMax) {
+        return prev;
+      }
+      return [...prev, name];
+    });
   };
 
   const handlePointBuyChange = (key: AbilityKey, delta: number) => {
@@ -231,7 +255,10 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   const handleApplyRecommendedTools = () => {
     if (rec) {
       setSelectedTools(prev => {
-        const merged = new Set([...prev, ...rec.tools]);
+        const merged = new Set(prev);
+        for (const toolName of rec.tools) {
+          merged.add(toolName);
+        }
         return Array.from(merged);
       });
     }
@@ -249,11 +276,19 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   const handleApplyRecommendedSpells = () => {
     if (rec) {
       setSelectedCantrips(prev => {
-        const merged = new Set([...prev, ...rec.cantrips]);
+        const merged = new Set(prev);
+        for (const name of rec.cantrips) {
+          if (spellLimits.cantripsKnownMax > 0 && merged.size >= spellLimits.cantripsKnownMax) break;
+          merged.add(name);
+        }
         return Array.from(merged);
       });
       setSelectedSpells(prev => {
-        const merged = new Set([...prev, ...rec.spells]);
+        const merged = new Set(prev);
+        for (const name of rec.spells) {
+          if (spellLimits.spellsKnownOrPreparedMax > 0 && merged.size >= spellLimits.spellsKnownOrPreparedMax) break;
+          merged.add(name);
+        }
         return Array.from(merged);
       });
     }
@@ -325,7 +360,8 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     const conMod = abilityMod(abilities.con);
 
     // Auto-derive proficiencies from class + race + background + selectedTools
-    const profs = getCharacterProficiencies(className, race, background, selectedTools);
+    const normalizedSelectedTools = Array.from(new Set([...selectedTools, ...(raceToolChoice ? [raceToolChoice] : [])].filter(Boolean)));
+    const profs = getCharacterProficiencies(className, race, background, normalizedSelectedTools);
 
     const c = blankCharacter();
     c.name = finalName;
@@ -345,11 +381,11 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     c.hpCur = c.hpMax;
     c.hitDiceRemaining = level;
     c.proficientSkills = [...proficientSkills];
-    c.selectedTools = [...selectedTools];
+    c.selectedTools = normalizedSelectedTools;
     c.armorProf = profs.armor;
     c.weaponProf = profs.weapons;
     c.toolProf = profs.tools.join(', ');
-    c.languages = profs.languages.join(', ');
+    c.languages = Array.from(new Set([...(profs.languages || []), ...(raceExtraLanguage ? [raceExtraLanguage] : [])])).join(', ');
     c.equippedArmor = selectedArmor;
     c.equippedShield = selectedShield;
     c.ac = computeAC(abilities, selectedArmor, selectedShield);
@@ -363,8 +399,11 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     });
 
     // Build spells from selection
+    const allowedCantrips = spellLimits.cantripsKnownMax > 0 ? selectedCantrips.slice(0, spellLimits.cantripsKnownMax) : [];
+    const allowedSpells = spellLimits.spellsKnownOrPreparedMax > 0 ? selectedSpells.slice(0, spellLimits.spellsKnownOrPreparedMax) : [];
+
     const spells: SpellItem[] = [];
-    for (const cName of selectedCantrips) {
+    for (const cName of allowedCantrips) {
       const cantrip = CANTRIPS_CATALOG.find(c => c.name === cName);
       spells.push({
         name: cName,
@@ -374,7 +413,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
         school: cantrip?.school,
       });
     }
-    for (const sName of selectedSpells) {
+    for (const sName of allowedSpells) {
       const spell = SPELLS_LV1_CATALOG.find(s => s.name === sName);
       spells.push({
         name: sName,
@@ -388,65 +427,60 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
 
     // 1. Build Equipment list for Inventory (Nombre, Cantidad, Descripción/Notas)
     const equipList: EquipmentItem[] = [];
+    const seenEquipment = new Set<string>();
+    const addEquipmentItem = (name: string, qty: number, notes: string) => {
+      const key = name.trim().toLowerCase();
+      if (!key || seenEquipment.has(key)) return;
+      seenEquipment.add(key);
+      equipList.push({ name, qty, notes });
+    };
+
     const packDef = STARTING_PACKS.find(p => p.name === selectedPack) || STARTING_PACKS[0];
     if (packDef) {
-      equipList.push(...packDef.items.map(item => ({ ...item })));
+      packDef.items.forEach(item => addEquipmentItem(item.name, item.qty, item.notes));
     }
-    for (const toolName of selectedTools) {
-      equipList.push({ name: toolName, qty: 1, notes: 'Herramienta de competencia' });
+    for (const toolName of normalizedSelectedTools) {
+      addEquipmentItem(toolName, 1, 'Herramienta de competencia');
     }
     if (selectedArmor) {
       const a = ARMOR_CATALOG.find(x => x.name === selectedArmor);
-      equipList.push({ name: selectedArmor, qty: 1, notes: a ? `Armadura ${a.type} (CA ${a.acBase})` : 'Armadura' });
+      addEquipmentItem(selectedArmor, 1, a ? `Armadura ${a.type} (CA ${a.acBase})` : 'Armadura');
     }
     if (selectedShield) {
-      equipList.push({ name: 'Escudo', qty: 1, notes: '+2 a la CA' });
+      addEquipmentItem('Escudo', 1, '+2 a la CA');
     }
     for (const wName of selectedWeapons) {
       const w = WEAPONS_CATALOG.find(x => x.name === wName);
-      equipList.push({ name: wName, qty: 1, notes: w ? `${w.dice} ${w.damageType}` : 'Arma' });
+      addEquipmentItem(wName, 1, w ? `${w.dice} ${w.damageType}` : 'Arma');
     }
     c.equipment = equipList;
     c.gold = startingGold;
 
     // 2. Build Equipped Gear list (Nombre, Ubicación/Zona equipada, Descripción, Propiedades)
     const gearList: EquippedGearItem[] = [];
+    const seenGear = new Set<string>();
+    const addGearItem = (name: string, slot: string, notes: string, properties: string, magical?: boolean) => {
+      const key = name.trim().toLowerCase();
+      if (!key || seenGear.has(key)) return;
+      seenGear.add(key);
+      gearList.push({ name, slot, notes, properties, magical });
+    };
+
     if (selectedArmor) {
       const a = ARMOR_CATALOG.find(x => x.name === selectedArmor);
       const propsStr = a ? `CA ${a.acBase}${a.addDex ? ' + DES' : ''}${a.stealthDisadvantage ? ', Desventaja sigilo' : ''}` : '';
-      gearList.push({
-        name: selectedArmor,
-        slot: 'Torso',
-        notes: a ? `Armadura ${a.type}` : 'Armadura equipada',
-        properties: propsStr
-      });
+      addGearItem(selectedArmor, 'Torso', a ? `Armadura ${a.type}` : 'Armadura equipada', propsStr);
     }
     if (selectedShield) {
-      gearList.push({
-        name: 'Escudo',
-        slot: 'Mano Secundaria',
-        notes: 'Escudo protector',
-        properties: 'CA +2'
-      });
+      addGearItem('Escudo', 'Mano Secundaria', 'Escudo protector', 'CA +2');
     }
     selectedWeapons.forEach((wName, idx) => {
       const w = WEAPONS_CATALOG.find(x => x.name === wName);
       const slot = idx === 0 ? 'Mano Principal' : (w?.range === 'a distancia' ? 'Espalda' : 'Mano Secundaria');
-      gearList.push({
-        name: wName,
-        slot,
-        notes: w ? `${w.dice} ${w.damageType}` : '',
-        properties: w ? w.properties.join(', ') : '',
-        magical: w?.magical || false
-      });
+      addGearItem(wName, slot, w ? `${w.dice} ${w.damageType}` : '', w ? w.properties.join(', ') : '', w?.magical || false);
     });
-    selectedTools.forEach(tName => {
-      gearList.push({
-        name: tName,
-        slot: 'Cintura',
-        notes: 'Herramienta activa',
-        properties: 'Competencia'
-      });
+    normalizedSelectedTools.forEach(tName => {
+      addGearItem(tName, 'Cintura', 'Herramienta activa', 'Competencia');
     });
     c.equippedGear = gearList;
 
@@ -1025,6 +1059,9 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
           {cdef.spellcasting && (
             <div className="subsection">
               <div className="block-label">Trucos y hechizos iniciales</div>
+              <div className="small-note" style={{ marginBottom: '8px' }}>
+                Selección actual: {selectedCantrips.length} truco(s) / {selectedSpells.length} hechizo(s). Límite por nivel: {spellLimits.cantripsKnownMax > 0 ? `${spellLimits.cantripsKnownMax} truco(s)` : '0 trucos'} y {spellLimits.spellsKnownOrPreparedMax > 0 ? `${spellLimits.spellsKnownOrPreparedMax} hechizo(s)` : '0 hechizos'}.
+              </div>
               {rec && (rec.cantrips.length > 0 || rec.spells.length > 0) && (
                 <button className="rec-apply-btn" onClick={handleApplyRecommendedSpells}>
                   ✨ Aplicar recomendados para {className}
@@ -1033,7 +1070,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
 
               {classCantrips.length > 0 && (
                 <>
-                  <div className="spell-section-label">Trucos (nivel 0)</div>
+                  <div className="spell-section-label">Trucos (nivel 0) {spellLimits.cantripsKnownMax > 0 ? `· máx. ${spellLimits.cantripsKnownMax}` : ''}</div>
                   <div className="spell-grid">
                     {classCantrips.map(c => {
                       const isRecCantrip = rec?.cantrips.includes(c.name);
@@ -1042,6 +1079,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
                           <input
                             type="checkbox"
                             checked={selectedCantrips.includes(c.name)}
+                            disabled={!selectedCantrips.includes(c.name) && spellLimits.cantripsKnownMax > 0 && selectedCantrips.length >= spellLimits.cantripsKnownMax}
                             onChange={() => handleToggleCantrip(c.name)}
                           />
                           <div className="spell-chip-content">
@@ -1066,7 +1104,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
 
               {classSpells.length > 0 && (
                 <>
-                  <div className="spell-section-label">Hechizos de nivel 1</div>
+                  <div className="spell-section-label">Hechizos de nivel 1 {spellLimits.spellsKnownOrPreparedMax > 0 ? `· máx. ${spellLimits.spellsKnownOrPreparedMax}` : ''}</div>
                   <div className="spell-grid">
                     {classSpells.map(s => {
                       const isRecSpell = rec?.spells.includes(s.name);
@@ -1075,6 +1113,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
                           <input
                             type="checkbox"
                             checked={selectedSpells.includes(s.name)}
+                            disabled={!selectedSpells.includes(s.name) && spellLimits.spellsKnownOrPreparedMax > 0 && selectedSpells.length >= spellLimits.spellsKnownOrPreparedMax}
                             onChange={() => handleToggleSpell(s.name)}
                           />
                           <div className="spell-chip-content">

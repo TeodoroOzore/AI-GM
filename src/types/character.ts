@@ -73,6 +73,8 @@ export type CharacterSheet = {
   inspiration: boolean;
   conditions: string;
   deathSaves: { success: number; fail: number };
+  conditionDurations?: Record<string, number>;
+  turnCounter?: number;
   hitDiceRemaining: number;
   proficientSkills: string[];
   armorProf: string[];

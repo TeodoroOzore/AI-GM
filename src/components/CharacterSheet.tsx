@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CharacterSheet as CharacterType,
   ABILITIES,
   SKILLS,
   RACES,
   CLASSES,
+  WeaponItem,
+  SpellItem,
   FULL_SLOTS,
   HALF_SLOTS,
   PACT_SLOTS,
@@ -42,7 +44,11 @@ type CharacterSheetProps = {
   character: CharacterType;
   onUpdateCharacter: (updated: CharacterType) => void;
   onQuickSkillRoll: (skillName: string, ability: AbilityKey) => void;
+  onRollSave: (ability: AbilityKey) => void;
+  onRollWeapon: (weapon: WeaponItem) => void;
+  onRollSpell: (spell: SpellItem) => void;
   readOnly?: boolean;
+  focusSection?: string;
 };
 
 type TabKey = 'stats' | 'status' | 'inventory' | 'dynamic' | 'proficiencies' | 'class' | 'gear' | 'feats' | 'companions' | 'familiars';
@@ -51,11 +57,16 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   character: c,
   onUpdateCharacter,
   onQuickSkillRoll,
-  readOnly = false
+  onRollSave,
+  onRollWeapon,
+  onRollSpell,
+  readOnly = false,
+  focusSection
 }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('stats');
   const [previewSubclass, setPreviewSubclass] = useState<string>('');
-  const canEdit = !readOnly;
+  const [sheetFocus, setSheetFocus] = useState<string>('');
+  const canEdit = true;
 
   const cdef = CLASSES[c.className] || CLASSES['Guerrero'];
 
@@ -131,8 +142,53 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
     { key: 'familiars', label: 'Familiares' }
   ];
 
+  useEffect(() => {
+    if (!focusSection) return;
+    setActiveTab((prev) => {
+      const mapped = focusSection === 'stats' || focusSection === 'status' || focusSection === 'inventory' || focusSection === 'dynamic' || focusSection === 'gear'
+        ? focusSection as TabKey
+        : prev;
+      return mapped;
+    });
+    setSheetFocus(focusSection);
+  }, [focusSection]);
+
+  useEffect(() => {
+    if (!sheetFocus) return;
+    const target = document.getElementById(`sheet-section-${sheetFocus}`);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    const timer = window.setTimeout(() => setSheetFocus(''), 600);
+    return () => window.clearTimeout(timer);
+  }, [sheetFocus]);
+
+  const handleConditionToggle = (condName: string) => {
+    const activeConditions = (c.conditions || '').split(',').map(s => s.trim()).filter(Boolean);
+    const isActive = activeConditions.includes(condName);
+    const next = isActive
+      ? activeConditions.filter(x => x !== condName)
+      : [...activeConditions, condName];
+    const dur = c.conditionDurations?.[condName] ?? 1;
+    update({
+      conditions: next.join(', '),
+      conditionDurations: { ...c.conditionDurations, [condName]: isActive ? 0 : dur }
+    });
+  };
+
+  const handleConditionAdvance = () => {
+    const nextDurations = { ...(c.conditionDurations || {}) };
+    Object.keys(nextDurations).forEach(key => {
+      if (nextDurations[key] > 0) nextDurations[key] -= 1;
+      if (nextDurations[key] <= 0) delete nextDurations[key];
+    });
+    update({ conditionDurations: nextDurations });
+  };
+
   // Find equipped armor details
   const equippedArmorEntry = c.equippedArmor ? ARMOR_CATALOG.find(a => a.name === c.equippedArmor) : null;
+
+  const activeConditions = (c.conditions || '').split(',').map(s => s.trim()).filter(Boolean);
 
   return (
     <aside id="sheet-panel">
@@ -162,14 +218,9 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
       </div>
 
       <div className="tab-panel active">
-        {readOnly && (
-          <div className="readonly-banner">
-            🔒 Hoja de personaje bloqueada. Los cambios solo se aplican a través de la narración de la aventura.
-          </div>
-        )}
-        <fieldset disabled={readOnly} className="sheet-fieldset">
+        <fieldset className="sheet-fieldset">
           {activeTab === 'stats' && (
-            <>
+            <div id="sheet-section-stats">
               <div className="block-label">Atributos Principales</div>
               <div className="grid3">
                 {ABILITIES.map(a => (
@@ -177,6 +228,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                   <div className="name">{a.label}</div>
                   <div className="mod">{fmtSigned(abilityMod(c.abilities[a.key]))}</div>
                   <div className="score">{c.abilities[a.key]}</div>
+                  <button className="roll-btn" onClick={() => onRollSave(a.key as AbilityKey)} title={`Salvación de ${a.label}`}>🛡️</button>
                 </div>
               ))}
             </div>
@@ -252,9 +304,11 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
 
                   <div className="block-label" style={{ marginTop: '10px' }}>Idiomas</div>
                   <div className="prof-chips-row">
-                    {profs.languages.map(l => (
-                      <span key={l} className="prof-chip lang-chip">{l}</span>
-                    ))}
+                    {Array.from(new Set([...(c.languages ? c.languages.split(',').map(l => l.trim()) : []), ...(c.raceExtraLanguage ? [c.raceExtraLanguage] : []), ...profs.languages]))
+                      .filter(Boolean)
+                      .map(l => (
+                        <span key={l} className="prof-chip lang-chip">{l}</span>
+                      ))}
                   </div>
 
                   {/* ── RASGOS RACIALES ── */}
@@ -295,34 +349,34 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                 </>
               );
             })()}
-          </>
-        )}
+            </div>
+          )}
 
         {activeTab === 'status' && (
-          <>
+          <div id="sheet-section-status">
             <div className="block-label">Vitalidad</div>
             <div className="row">
               <div className="field">
                 <label>PG actuales</label>
-                <input type="number" value={c.hpCur} onChange={e => update({ hpCur: parseInt(e.target.value) || 0 })} />
+                <div className="value-pill">{c.hpCur}/{c.hpMax}</div>
               </div>
               <div className="field">
                 <label>PG máximos</label>
-                <input type="number" value={c.hpMax} onChange={e => update({ hpMax: parseInt(e.target.value) || 0 })} />
+                <div className="value-pill">{c.hpMax}</div>
               </div>
               <div className="field">
                 <label>PG temporales</label>
-                <input type="number" value={c.tempHp} onChange={e => update({ tempHp: parseInt(e.target.value) || 0 })} />
+                <div className="value-pill">{c.tempHp}</div>
               </div>
             </div>
             <div className="row">
               <div className="field">
                 <label>Clase de Armadura</label>
-                <input type="number" value={c.ac} onChange={e => update({ ac: parseInt(e.target.value) || 10 })} />
+                <div className="value-pill">{c.ac}</div>
               </div>
               <div className="field">
                 <label>Dados de golpe restantes</label>
-                <input type="number" value={c.hitDiceRemaining} onChange={e => update({ hitDiceRemaining: parseInt(e.target.value) || 0 })} />
+                <div className="value-pill">{c.hitDiceRemaining}</div>
               </div>
             </div>
 
@@ -340,11 +394,11 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
             <div className="row">
               <div className="field">
                 <label>Éxitos (0-3)</label>
-                <input type="number" min={0} max={3} value={c.deathSaves.success} onChange={e => update({ deathSaves: { ...c.deathSaves, success: parseInt(e.target.value) || 0 } })} />
+                <div className="value-pill">{c.deathSaves.success}</div>
               </div>
               <div className="field">
                 <label>Fallos (0-3)</label>
-                <input type="number" min={0} max={3} value={c.deathSaves.fail} onChange={e => update({ deathSaves: { ...c.deathSaves, fail: parseInt(e.target.value) || 0 } })} />
+                <div className="value-pill">{c.deathSaves.fail}</div>
               </div>
             </div>
 
@@ -355,36 +409,36 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
               </label>
             </div>
 
-            {/* Interactive D&D Conditions Selection */}
+            <div className="status-actions-row">
+              <button className="add-row-btn" onClick={handleConditionAdvance}>⏭️ Avanzar turno / limpiar duraciones</button>
+              <span className="status-hint">Las condiciones se activan desde la narrativa y se desactivan automáticamente cuando su duración termina.</span>
+            </div>
+
             <div className="block-label" style={{ marginTop: '10px' }}>⚡ Condiciones Activas (D&D 5e)</div>
             <div className="conditions-grid">
               {DND_CONDITIONS.map(cond => {
-                const activeConditions = (c.conditions || '').split(',').map(s => s.trim()).filter(Boolean);
                 const isActive = activeConditions.includes(cond.name);
+                const turnsLeft = c.conditionDurations?.[cond.name] ?? 0;
                 return (
                   <button
                     key={cond.name}
                     type="button"
                     className={`condition-chip-btn ${isActive ? 'active' : ''}`}
                     title={`${cond.name}: ${cond.description}`}
-                    onClick={() => {
-                      const next = isActive
-                        ? activeConditions.filter(x => x !== cond.name)
-                        : [...activeConditions, cond.name];
-                      update({ conditions: next.join(', ') });
-                    }}
+                    onClick={() => handleConditionToggle(cond.name)}
                   >
                     <span>{cond.emoji}</span>
                     <span>{cond.name}</span>
+                    {isActive && turnsLeft > 0 && <span className="condition-duration">{turnsLeft}t</span>}
                   </button>
                 );
               })}
             </div>
-          </>
+          </div>
         )}
 
         {activeTab === 'inventory' && (
-          <>
+          <div id="sheet-section-inventory">
             <div className="block-label">💰 Monedas y Riquezas</div>
             <div className="gold-card-panel">
               <div className="field" style={{ flex: 1, maxWidth: '220px' }}>
@@ -403,57 +457,93 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
             </div>
 
             <div className="block-label" style={{ marginTop: '12px' }}>🎒 Objetos e Inventario General</div>
-            <div className="inventory-table-header">
-              <span className="col-name">Nombre del Objeto</span>
-              <span className="col-qty">Cantidad</span>
-              <span className="col-notes">Descripción / Notas</span>
-              <span className="col-actions"></span>
-            </div>
-            <div className="list-rows">
-              {(c.equipment || []).map((item, i) => (
-                <div key={i} className="inventory-sheet-row">
-                  <input
-                    type="text"
-                    placeholder="Nombre del objeto"
-                    value={item.name}
-                    onChange={e => {
-                      const next = [...(c.equipment || [])];
-                      next[i].name = e.target.value;
-                      update({ equipment: next });
-                    }}
-                    className="inv-name-input"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    placeholder="Cant."
-                    value={item.qty}
-                    onChange={e => {
-                      const next = [...(c.equipment || [])];
-                      next[i].qty = parseInt(e.target.value) || 1;
-                      update({ equipment: next });
-                    }}
-                    className="inv-qty-input"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Descripción o notas del objeto"
-                    value={item.notes}
-                    onChange={e => {
-                      const next = [...(c.equipment || [])];
-                      next[i].notes = e.target.value;
-                      update({ equipment: next });
-                    }}
-                    className="inv-notes-input"
-                  />
-                  <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, idx) => idx !== i) })}>✕</button>
-                </div>
-              ))}
-            </div>
-            <button className="add-row-btn" onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '' }] })} style={{ marginTop: '8px' }}>
+            {(() => {
+              const equippedNames = new Set([
+                ...(c.equippedGear || []).map(g => (g.name || '').trim().toLowerCase()).filter(Boolean),
+                ...(c.weapons || []).map(w => (w.name || '').trim().toLowerCase()).filter(Boolean),
+                ...(c.equippedArmor ? [c.equippedArmor.trim().toLowerCase()] : []),
+                ...(c.equippedShield ? ['escudo'] : [])
+              ]);
+              const sortedEquipment = (c.equipment || [])
+                .map((item, idx) => ({ item, idx }))
+                .sort((a, b) => {
+                  const ae = equippedNames.has((a.item.name || '').trim().toLowerCase()) ? 0 : 1;
+                  const be = equippedNames.has((b.item.name || '').trim().toLowerCase()) ? 0 : 1;
+                  return ae - be;
+                });
+              return (
+                <>
+                  <div className="equipped-legend">⚔️ Equipado — los objetos en uso aparecen primero</div>
+                  <div className="inventory-table-header">
+                    <span className="col-name">Objeto</span>
+                    <span className="col-category">Categoría</span>
+                    <span className="col-qty">Cant.</span>
+                    <span className="col-notes">Descripción</span>
+                    <span className="col-actions"></span>
+                  </div>
+                  <div className="list-rows">
+                    {sortedEquipment.map(({ item, idx }) => {
+                      const isEquipped = equippedNames.has((item.name || '').trim().toLowerCase());
+                      return (
+                        <div key={idx} className={`inventory-sheet-row ${isEquipped ? 'equipped' : ''}`}>
+                          {isEquipped && <span className="equipped-badge">⚔️ equipado</span>}
+                          <input
+                            type="text"
+                            placeholder="Nombre del objeto"
+                            value={item.name}
+                            onChange={e => {
+                              const next = [...(c.equipment || [])];
+                              next[idx].name = e.target.value;
+                              update({ equipment: next });
+                            }}
+                            className="inv-name-input"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Categoría"
+                            value={item.category || ''}
+                            onChange={e => {
+                              const next = [...(c.equipment || [])];
+                              next[idx].category = e.target.value;
+                              update({ equipment: next });
+                            }}
+                            className="inv-category-input"
+                          />
+                          <input
+                            type="number"
+                            min={1}
+                            placeholder="Cant."
+                            value={item.qty}
+                            onChange={e => {
+                              const next = [...(c.equipment || [])];
+                              next[idx].qty = parseInt(e.target.value) || 1;
+                              update({ equipment: next });
+                            }}
+                            className="inv-qty-input"
+                          />
+                          <input
+                            type="text"
+                            placeholder="Descripción o notas"
+                            value={item.notes}
+                            onChange={e => {
+                              const next = [...(c.equipment || [])];
+                              next[idx].notes = e.target.value;
+                              update({ equipment: next });
+                            }}
+                            className="inv-notes-input"
+                          />
+                          <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              );
+            })()}
+            <button className="add-row-btn" onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Equipo' }] })} style={{ marginTop: '8px' }}>
               + añadir objeto al inventario
             </button>
-          </>
+          </div>
         )}
 
         {activeTab === 'dynamic' && (() => {
@@ -462,7 +552,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
           const currentSpellsCount = (c.spellsKnown || []).length - currentCantripsCount;
 
           return (
-            <div className="spellcasting-tab-container">
+            <div id="sheet-section-dynamic" className="spellcasting-tab-container">
               {limits.isSpellcaster && (
                 <>
                   {/* MAGICAL LIMITS DASHBOARD */}
@@ -663,6 +753,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                       </div>
 
                       <div className="spell-sheet-meta">
+                        <button className="roll-btn" title={`Lanzar ${sp.name || 'conjuro'}`} onClick={() => onRollSpell(sp)}>🎲</button>
                         <span className={`spell-level-chip ${isCantrip ? 'cantrip' : 'spell'}`}>
                           {isCantrip ? '✨ Truco (Nvl 0)' : `🔮 Nivel ${sp.level || '1'}`}
                         </span>
@@ -1174,8 +1265,84 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
         })()}
 
         {activeTab === 'gear' && (
-          <>
-            <div className="block-label">🛡️ Equipo Equipado (por Zonas)</div>
+<div id="sheet-section-gear">
+            <div className="block-label">⚔️ Armas y ataques</div>
+            <div className="list-rows">
+              {c.weapons.map((w, i) => {
+                const mod = abilityMod(c.abilities[w.ability]) + (w.proficient ? profBonus(c.level) : 0);
+                return (
+                  <div key={i} className="weapon-sheet-card">
+                    <div className="weapon-sheet-header">
+                      <input type="text" placeholder="Arma" value={w.name} onChange={e => {
+                        const next = [...c.weapons];
+                        next[i].name = e.target.value;
+                        update({ weapons: next });
+                      }} className="weapon-name-input" />
+                      {w.magical && <span className="magical-badge">✨ Mágica</span>}
+                      <button className="rm" onClick={() => update({ weapons: c.weapons.filter((_, idx) => idx !== i) })}>✕</button>
+                    </div>
+                    <div className="weapon-sheet-stats">
+                      <button className="roll-btn" title={`Atacar con ${w.name || 'arma'}`} onClick={() => onRollWeapon(w)}>🎲</button>
+                      <select value={w.ability} onChange={e => {
+                        const next = [...c.weapons];
+                        next[i].ability = e.target.value as AbilityKey;
+                        update({ weapons: next });
+                      }}>
+                        <option value="str">FUE</option>
+                        <option value="dex">DES</option>
+                      </select>
+                      <input type="text" placeholder="Dado daño" value={w.dice} onChange={e => {
+                        const next = [...c.weapons];
+                        next[i].dice = e.target.value;
+                        update({ weapons: next });
+                      }} style={{ width: '60px' }} />
+                      <span className="weapon-sheet-attack">
+                        Ataque {fmtSigned(mod)}
+                      </span>
+                      <label className="weapon-prof-label">
+                        <input
+                          type="checkbox"
+                          checked={w.proficient}
+                          onChange={e => {
+                            const next = [...c.weapons];
+                            next[i].proficient = e.target.checked;
+                            update({ weapons: next });
+                          }}
+                          style={{ width: 'auto', verticalAlign: 'middle' }}
+                        />
+                        Comp.
+                      </label>
+                    </div>
+                    <div className="weapon-sheet-badges">
+                      {w.category && (
+                        <span className={`weapon-cat-badge ${w.category}`}>
+                          {w.category === 'simple' ? 'Simple' : 'Marcial'}
+                        </span>
+                      )}
+                      {w.range && (
+                        <span className="weapon-range-badge">{w.range}</span>
+                      )}
+                      {w.damageType && (
+                        <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--parchment-dim)' }}>
+                          {DAMAGE_TYPE_EMOJI[w.damageType] || ''} {w.damageType}
+                        </span>
+                      )}
+                      {w.properties && w.properties.map(p => (
+                        <span key={p} className="weapon-prop-badge">{p}</span>
+                      ))}
+                      {w.versatileDice && (
+                        <span className="weapon-prop-badge">versátil {w.versatileDice}</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <button className="add-row-btn" onClick={() => update({ weapons: [...c.weapons, { name: '', ability: 'str', dice: '1d6', type: 'contundente', proficient: true, notes: '' }] })}>
+              + añadir arma
+            </button>
+
+            <div className="block-label" style={{ marginTop: '16px' }}>🛡️ Equipo (por Zonas)</div>
             <div className="list-rows" style={{ marginBottom: '16px' }}>
               {(c.equippedGear || []).length === 0 ? (
                 <div className="flavor">No hay objetos equipados por el momento. Podés añadir o sincronizar desde armas y armaduras.</div>
@@ -1288,82 +1455,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                 🔄 Sincronizar desde armas y armadura
               </button>
             </div>
-
-            <div className="block-label">⚔️ Armas y ataques</div>
-            <div className="list-rows">
-              {c.weapons.map((w, i) => {
-                const mod = abilityMod(c.abilities[w.ability]) + (w.proficient ? profBonus(c.level) : 0);
-                return (
-                  <div key={i} className="weapon-sheet-card">
-                    <div className="weapon-sheet-header">
-                      <input type="text" placeholder="Arma" value={w.name} onChange={e => {
-                        const next = [...c.weapons];
-                        next[i].name = e.target.value;
-                        update({ weapons: next });
-                      }} className="weapon-name-input" />
-                      {w.magical && <span className="magical-badge">✨ Mágica</span>}
-                      <button className="rm" onClick={() => update({ weapons: c.weapons.filter((_, idx) => idx !== i) })}>✕</button>
-                    </div>
-                    <div className="weapon-sheet-stats">
-                      <select value={w.ability} onChange={e => {
-                        const next = [...c.weapons];
-                        next[i].ability = e.target.value as AbilityKey;
-                        update({ weapons: next });
-                      }}>
-                        <option value="str">FUE</option>
-                        <option value="dex">DES</option>
-                      </select>
-                      <input type="text" placeholder="Dado daño" value={w.dice} onChange={e => {
-                        const next = [...c.weapons];
-                        next[i].dice = e.target.value;
-                        update({ weapons: next });
-                      }} style={{ width: '60px' }} />
-                      <span className="weapon-sheet-attack">
-                        Ataque {fmtSigned(mod)}
-                      </span>
-                      <label className="weapon-prof-label">
-                        <input
-                          type="checkbox"
-                          checked={w.proficient}
-                          onChange={e => {
-                            const next = [...c.weapons];
-                            next[i].proficient = e.target.checked;
-                            update({ weapons: next });
-                          }}
-                          style={{ width: 'auto', verticalAlign: 'middle' }}
-                        />
-                        Comp.
-                      </label>
-                    </div>
-                    <div className="weapon-sheet-badges">
-                      {w.category && (
-                        <span className={`weapon-cat-badge ${w.category}`}>
-                          {w.category === 'simple' ? 'Simple' : 'Marcial'}
-                        </span>
-                      )}
-                      {w.range && (
-                        <span className="weapon-range-badge">{w.range}</span>
-                      )}
-                      {w.damageType && (
-                        <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--parchment-dim)' }}>
-                          {DAMAGE_TYPE_EMOJI[w.damageType] || ''} {w.damageType}
-                        </span>
-                      )}
-                      {w.properties && w.properties.map(p => (
-                        <span key={p} className="weapon-prop-badge">{p}</span>
-                      ))}
-                      {w.versatileDice && (
-                        <span className="weapon-prop-badge">versátil {w.versatileDice}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <button className="add-row-btn" onClick={() => update({ weapons: [...c.weapons, { name: '', ability: 'str', dice: '1d6', type: 'contundente', proficient: true, notes: '' }] })}>
-              + añadir arma
-            </button>
-          </>
+          </div>
         )}
 
         {activeTab === 'feats' && (
