@@ -252,6 +252,34 @@ input:focus, textarea:focus, select:focus {
   border-color: var(--brass-dim);
 }
 
+.sheet-fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sheet-fieldset:disabled {
+  opacity: 0.95;
+}
+
+.sheet-fieldset:disabled input,
+.sheet-fieldset:disabled textarea,
+.sheet-fieldset:disabled select,
+.sheet-fieldset:disabled button {
+  cursor: not-allowed;
+}
+
+.readonly-banner {
+  background: rgba(201, 162, 39, 0.12);
+  border: 1px solid rgba(201, 162, 39, 0.28);
+  color: var(--parchment);
+  padding: 10px 12px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  margin-bottom: 12px;
+}
+
 .row {
   display: flex;
   gap: 8px;

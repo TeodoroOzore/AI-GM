@@ -206,6 +206,7 @@ export function App() {
             character={character}
             onUpdateCharacter={handleUpdateCharacter}
             onQuickSkillRoll={handleQuickSkillRoll}
+            readOnly={started}
           />
 
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>

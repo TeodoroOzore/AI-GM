@@ -42,6 +42,7 @@ type CharacterSheetProps = {
   character: CharacterType;
   onUpdateCharacter: (updated: CharacterType) => void;
   onQuickSkillRoll: (skillName: string, ability: AbilityKey) => void;
+  readOnly?: boolean;
 };
 
 type TabKey = 'stats' | 'status' | 'inventory' | 'dynamic' | 'proficiencies' | 'class' | 'gear' | 'feats' | 'companions' | 'familiars';
@@ -49,14 +50,17 @@ type TabKey = 'stats' | 'status' | 'inventory' | 'dynamic' | 'proficiencies' | '
 export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   character: c,
   onUpdateCharacter,
-  onQuickSkillRoll
+  onQuickSkillRoll,
+  readOnly = false
 }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('stats');
   const [previewSubclass, setPreviewSubclass] = useState<string>('');
+  const canEdit = !readOnly;
 
   const cdef = CLASSES[c.className] || CLASSES['Guerrero'];
 
   const update = (partial: Partial<CharacterType>) => {
+    if (!canEdit) return;
     onUpdateCharacter({ ...c, ...partial });
   };
 
@@ -158,11 +162,17 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
       </div>
 
       <div className="tab-panel active">
-        {activeTab === 'stats' && (
-          <>
-            <div className="block-label">Atributos Principales</div>
-            <div className="grid3">
-              {ABILITIES.map(a => (
+        {readOnly && (
+          <div className="readonly-banner">
+            🔒 Hoja de personaje bloqueada. Los cambios solo se aplican a través de la narración de la aventura.
+          </div>
+        )}
+        <fieldset disabled={readOnly} className="sheet-fieldset">
+          {activeTab === 'stats' && (
+            <>
+              <div className="block-label">Atributos Principales</div>
+              <div className="grid3">
+                {ABILITIES.map(a => (
                 <div key={a.key} className="ability-box">
                   <div className="name">{a.label}</div>
                   <div className="mod">{fmtSigned(abilityMod(c.abilities[a.key]))}</div>
@@ -2191,6 +2201,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
             </button>
           </>
         )}
+        </fieldset>
       </div>
     </aside>
   );
