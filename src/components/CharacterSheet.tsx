@@ -103,10 +103,10 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   const handleAddProficientSkill = () => {
     const remaining = SKILLS.filter(s => !c.proficientSkills.includes(s.name));
     if (!remaining.length) {
-      alert('Ya tenés todas las competencias disponibles.');
+      alert('Ya tienes todas las competencias disponibles.');
       return;
     }
-    const chosen = prompt('¿Qué competencia nueva querés agregar?\n' + remaining.map(s => s.name).join(', '));
+    const chosen = prompt('¿Qué competencia nueva quieres agregar?\n' + remaining.map(s => s.name).join(', '));
     if (!chosen) return;
     const match = remaining.find(s => s.name.toLowerCase() === chosen.trim().toLowerCase());
     if (!match) {
@@ -635,7 +635,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                           ⚡ MANTENIENDO CONCENTRACIÓN EN: <strong>"{c.concentratingOnSpell}"</strong>
                         </div>
                         <p className="concentration-save-reminder">
-                          ⚠️ <strong>Al recibir daño en combate:</strong> Debés realizar una tirada de salvación de Constitución (CD 10 o la mitad del daño sufrido, lo que sea mayor). Si la fallás, perdés el conjuro.
+                          ⚠️ <strong>Al recibir daño en combate:</strong> Debes realizar una tirada de salvación de Constitución (CD 10 o la mitad del daño sufrido, lo que sea mayor). Si la fallas, pierdes el conjuro.
                         </p>
                         <button
                           className="cancel-concentration-btn"
@@ -646,7 +646,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                       </div>
                     ) : (
                       <div className="concentration-idle-note">
-                        Actualmente no estás manteniendo la concentración en ningún hechizo. Al lanzar un hechizo de concentración, seleccionalo arriba para activar el monitoreo de salvación por daño.
+                        Actualmente no estás manteniendo la concentración en ningún hechizo. Al lanzar un hechizo de concentración, selecciónalo arriba para activar el monitoreo de salvación por daño.
                       </div>
                     )}
                   </div>
@@ -895,7 +895,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                 <div className="class-section-box">
                   <div className="block-label">⚔️ Estilos de Combate de {baseDetail.name}</div>
                   <p className="section-subtitle-text">
-                    Como {c.className}, podés adoptar un estilo de combate especializado para potenciar tus ataques y defensa.
+                    Como {c.className}, puedes adoptar un estilo de combate especializado para potenciar tus ataques y defensa.
                   </p>
 
                   <div className="fighting-style-selector-row">
@@ -1057,7 +1057,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                     <span className="warning-icon">💡</span>
                     <div>
                       <strong>Senda en desarrollo (Nivel {c.level})</strong>
-                      <p>Las subclases para <em>{c.className}</em> se desbloquean en <strong>Nivel {cdef.unlockLevel}</strong>. A continuación podés previsualizar las opciones disponibles para planificar la evolución de tu personaje.</p>
+                      <p>Las subclases para <em>{c.className}</em> se desbloquean en <strong>Nivel {cdef.unlockLevel}</strong>. A continuación puedes previsualizar las opciones disponibles para planificar la evolución de tu personaje.</p>
                     </div>
                   </div>
                 )}
@@ -1245,7 +1245,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                   </div>
                 ) : (
                   <div className="flavor" style={{ marginTop: '16px', textAlign: 'center', padding: '20px' }}>
-                    Elegí una subclase arriba para ver toda su descripción, mecánicas únicas, conjuros, auras y progresión por nivel.
+                    Elige una subclase arriba para ver toda su descripción, mecánicas únicas, conjuros, auras y progresión por nivel.
                   </div>
                 )}
 
@@ -1256,7 +1256,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                     rows={5}
                     value={c.subclassNotes || ''}
                     onChange={e => update({ subclassNotes: e.target.value })}
-                    placeholder="Escribí aquí tus votos sagrados, patrón del brujo, libro de sombras o anotaciones sobre tu subclase..."
+                    placeholder="Escribe aquí tus votos sagrados, patrón del brujo, libro de sombras o anotaciones sobre tu subclase..."
                   />
                 </div>
               </div>
@@ -1345,7 +1345,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
             <div className="block-label" style={{ marginTop: '16px' }}>🛡️ Equipo (por Zonas)</div>
             <div className="list-rows" style={{ marginBottom: '16px' }}>
               {(c.equippedGear || []).length === 0 ? (
-                <div className="flavor">No hay objetos equipados por el momento. Podés añadir o sincronizar desde armas y armaduras.</div>
+                <div className="flavor">No hay objetos equipados por el momento. Puedes añadir o sincronizar desde armas y armaduras.</div>
               ) : (
                 (c.equippedGear || []).map((eg, i) => (
                   <div key={i} className="gear-sheet-card">
@@ -1484,11 +1484,11 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                     </div>
                     {remaining > 0 ? (
                       <div className="feat-unlocked-msg">
-                        ✨ ¡Tenés <strong>{remaining}</strong> dote(s) disponible(s) para elegir! Elegí una dote del catálogo para bloquearla en tu personaje.
+                        ✨ ¡Tienes <strong>{remaining}</strong> dote(s) disponible(s) para elegir! Elige una dote del catálogo para bloquearla en tu personaje.
                       </div>
                     ) : (
                       <div className="feat-locked-msg">
-                        🔒 No tenés dotes disponibles en este momento. Alcanzarás tu siguiente dote al nivel <strong>{getNextFeatLevel(c.level, c.className)}</strong>.
+                        🔒 No tienes dotes disponibles en este momento. Alcanzarás tu siguiente dote al nivel <strong>{getNextFeatLevel(c.level, c.className)}</strong>.
                       </div>
                     )}
                   </div>
@@ -1604,7 +1604,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                           name: 'Caballo de Guerra',
                           type: 'Montura (Corcel)',
                           hp: 19,
-                          notes: `CA 11 | Velocidad 18m | Inteligencia 6 | Vínculo telepático 1.5km | Montura leal, lucha solo si la montás.`
+                          notes: `CA 11 | Velocidad 18m | Inteligencia 6 | Vínculo telepático 1.5km | Montura leal, lucha solo si la montas.`
                         }]
                       });
                     }}

@@ -20,7 +20,7 @@ export const RACES: Record<string, RaceDef> = {
     extraLanguages: 1,
     traits: [
       { name: 'Versátil', description: 'Tus puntuaciones de habilidad aumentan cada una en +1. Esto ya está reflejado en tus bonificadores raciales.', type: 'feature' },
-      { name: 'Idioma adicional', description: 'Podés hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
+      { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
     ]
   },
 
@@ -38,12 +38,12 @@ export const RACES: Record<string, RaceDef> = {
     darkvision: 36,
     weaponProf: ['Espada larga', 'Espada corta', 'Arco corto', 'Ballesta de mano'],
     traits: [
-      { name: 'Visión en la Oscuridad Superior', description: 'Tu visión en la oscuridad tiene un alcance de 36 metros. Podés ver en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no podés distinguir colores, solo tonos de gris.', type: 'senses' },
-      { name: 'Ascendencia Feérica', description: 'Tenés ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
-      { name: 'Trance', description: 'Los elfos no duermen. En su lugar meditan profundamente durante 4 horas al día (palabra común: "trance"). Mientras meditás, podés soñar con visiones de tu pasado. Después de este descanso, obtenés los mismos beneficios que un humano después de 8 horas de sueño.', type: 'feature' },
-      { name: 'Entrenamiento Élfico', description: 'Tenés competencia con la espada larga, la espada corta, el arco corto y la ballesta de mano.', type: 'proficiency' },
-      { name: 'Magia Drow', description: 'Conocés el truco Taumaturgia. Al alcanzar el nivel 3, podés lanzar Rayo de Fuego una vez por descanso largo. Al alcanzar el nivel 5, podés lanzar el conjuro Oscuridad una vez por descanso largo. El Carisma es tu habilidad para lanzar estos conjuros.', type: 'spell' },
-      { name: 'Sensibilidad a la Luz Solar', description: 'Tenés desventaja en las tiradas de ataque y en las pruebas de Percepción que dependan de la vista cuando tú, tu objetivo o lo que intentés percibir está bajo la luz solar directa.', type: 'feature' }
+      { name: 'Visión en la Oscuridad Superior', description: 'Tu visión en la oscuridad tiene un alcance de 36 metros. Puedes ver en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no puedes distinguir colores, solo tonos de gris.', type: 'senses' },
+      { name: 'Ascendencia Feérica', description: 'Tienes ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
+      { name: 'Trance', description: 'Los elfos no duermen. En su lugar meditan profundamente durante 4 horas al día (palabra común: "trance"). Mientras meditas, puedes soñar con visiones de tu pasado. Después de este descanso, obtienes los mismos beneficios que un humano después de 8 horas de sueño.', type: 'feature' },
+      { name: 'Entrenamiento Élfico', description: 'Tienes competencia con la espada larga, la espada corta, el arco corto y la ballesta de mano.', type: 'proficiency' },
+      { name: 'Magia Drow', description: 'Conoces el truco Taumaturgia. Al alcanzar el nivel 3, puedes lanzar Rayo de Fuego una vez por descanso largo. Al alcanzar el nivel 5, puedes lanzar el conjuro Oscuridad una vez por descanso largo. El Carisma es tu habilidad para lanzar estos conjuros.', type: 'spell' },
+      { name: 'Sensibilidad a la Luz Solar', description: 'Tienes desventaja en las tiradas de ataque y en las pruebas de Percepción que dependan de la vista cuando tú, tu objetivo o lo que intentes percibir está bajo la luz solar directa.', type: 'feature' }
     ]
   },
 
@@ -62,12 +62,12 @@ export const RACES: Record<string, RaceDef> = {
     darkvision: 18,
     weaponProf: ['Espada larga', 'Espada corta', 'Arco largo', 'Arco corto'],
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a los bosques y cielos nocturnos, tenés una visión superior en la oscuridad y en condiciones de poca luz. Podés ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no podés distinguir colores, solo tonos de gris.', type: 'senses' },
-      { name: 'Ascendencia Feérica', description: 'Tenés ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
-      { name: 'Trance', description: 'Los elfos no duermen. En su lugar meditan profundamente durante 4 horas al día (palabra común: "trance"). Mientras meditás, podés soñar con visiones de tu pasado. Después de este descanso, obtenés los mismos beneficios que un humano después de 8 horas de sueño.', type: 'feature' },
-      { name: 'Entrenamiento Élfico', description: 'Tenés competencia con la espada larga, la espada corta, el arco largo y el arco corto.', type: 'proficiency' },
-      { name: 'Truco', description: 'Conocés un truco de tu elección de la lista de conjuros de mago. La Inteligencia es tu habilidad para lanzarlo.', type: 'spell' },
-      { name: 'Idioma adicional', description: 'Podés hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
+      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a los bosques y cielos nocturnos, tienes una visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no puedes distinguir colores, solo tonos de gris.', type: 'senses' },
+      { name: 'Ascendencia Feérica', description: 'Tienes ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
+      { name: 'Trance', description: 'Los elfos no duermen. En su lugar meditan profundamente durante 4 horas al día (palabra común: "trance"). Mientras meditas, puedes soñar con visiones de tu pasado. Después de este descanso, obtienes los mismos beneficios que un humano después de 8 horas de sueño.', type: 'feature' },
+      { name: 'Entrenamiento Élfico', description: 'Tienes competencia con la espada larga, la espada corta, el arco largo y el arco corto.', type: 'proficiency' },
+      { name: 'Truco', description: 'Conoces un truco de tu elección de la lista de conjuros de mago. La Inteligencia es tu habilidad para lanzarlo.', type: 'spell' },
+      { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
     ]
   },
 
@@ -87,12 +87,12 @@ export const RACES: Record<string, RaceDef> = {
     weaponProf: ['Hacha de batalla', 'Hacha de mano', 'Martillo de guerra', 'Martillo ligero'],
     toolChoices: { count: 1, options: ['Herramientas de herrero', 'Herramientas de cervecero', 'Herramientas de cantero'] },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a la vida bajo tierra, tenés visión superior en la oscuridad y en condiciones de poca luz. Podés ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no podés distinguir colores, solo tonos de gris.', type: 'senses' },
-      { name: 'Resistencia Enana', description: 'Tenés ventaja en las tiradas de salvación contra veneno y tenés resistencia al daño de veneno.', type: 'defense' },
-      { name: 'Entrenamiento de Combate Enano', description: 'Tenés competencia con el hacha de batalla, el hacha de mano, el martillo de guerra y el martillo ligero.', type: 'proficiency' },
-      { name: 'Competencia con Herramientas', description: 'Tenés competencia con una herramienta de artesano a tu elección (herrero, cervecero o cantero).', type: 'proficiency' },
-      { name: 'Conocimiento de la Piedra', description: 'Siempre que hagas una prueba de Inteligencia (Historia) relacionada con el origen de un trabajo de piedra, se te considera competente y sumás el doble de tu bonificador de competencia.', type: 'skill' },
-      { name: 'Robustez Enana', description: 'Tu máximo de Puntos de Golpe aumenta en 1, y aumenta en 1 cada vez que subís de nivel.', type: 'feature' }
+      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a la vida bajo tierra, tienes visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no puedes distinguir colores, solo tonos de gris.', type: 'senses' },
+      { name: 'Resistencia Enana', description: 'Tienes ventaja en las tiradas de salvación contra veneno y tienes resistencia al daño de veneno.', type: 'defense' },
+      { name: 'Entrenamiento de Combate Enano', description: 'Tienes competencia con el hacha de batalla, el hacha de mano, el martillo de guerra y el martillo ligero.', type: 'proficiency' },
+      { name: 'Competencia con Herramientas', description: 'Tienes competencia con una herramienta de artesano a tu elección (herrero, cervecero o cantero).', type: 'proficiency' },
+      { name: 'Conocimiento de la Piedra', description: 'Siempre que hagas una prueba de Inteligencia (Historia) relacionada con el origen de un trabajo de piedra, se te considera competente y sumas el doble de tu bonificador de competencia.', type: 'skill' },
+      { name: 'Robustez Enana', description: 'Tu máximo de Puntos de Golpe aumenta en 1, y aumenta en 1 cada vez que subes de nivel.', type: 'feature' }
     ]
   },
 
@@ -108,10 +108,10 @@ export const RACES: Record<string, RaceDef> = {
     alignment: 'Suelen ser legales y buenos. Rara vez son malvados o caóticos, aunque los piesligeros a veces se inclinan al caos por su amor a la diversión.',
     languages: ['Común', 'Mediano'],
     traits: [
-      { name: 'Suerte', description: 'Cuando tirás un 1 en un d20 para una tirada de ataque, prueba de habilidad o tirada de salvación, podés volver a tirar el dado y debés usar el nuevo resultado.', type: 'feature' },
-      { name: 'Coraje', description: 'Tenés ventaja en las tiradas de salvación contra asustado.', type: 'defense' },
-      { name: 'Agilidad Mediana', description: 'Podés moverte a través del espacio de cualquier criatura de tamaño mayor al tuyo.', type: 'movement' },
-      { name: 'Sigiloso por Naturaleza', description: 'Podés intentar ocultarte incluso cuando solo te obstruye una criatura que sea al menos un tamaño más grande que tú.', type: 'skill' }
+      { name: 'Suerte', description: 'Cuando tiras un 1 en un d20 para una tirada de ataque, prueba de habilidad o tirada de salvación, puedes volver a tirar el dado y debes usar el nuevo resultado.', type: 'feature' },
+      { name: 'Coraje', description: 'Tienes ventaja en las tiradas de salvación contra asustado.', type: 'defense' },
+      { name: 'Agilidad Mediana', description: 'Puedes moverte a través del espacio de cualquier criatura de tamaño mayor al tuyo.', type: 'movement' },
+      { name: 'Sigiloso por Naturaleza', description: 'Puedes intentar ocultarte incluso cuando solo te obstruye una criatura que sea al menos un tamaño más grande que tú.', type: 'skill' }
     ]
   },
 
@@ -142,9 +142,9 @@ export const RACES: Record<string, RaceDef> = {
       ]
     },
     traits: [
-      { name: 'Ancestro Dracónico', description: 'Tenés un ancestro dracónico que determina el tipo de tu arma de aliento y de tu resistencia al daño.', type: 'choice' },
-      { name: 'Arma de Aliento', description: 'Podés usar tu acción para exhalar energía destructiva de tu ancestro. Tu arma de aliento inflige 2d6 de daño al nivel 1, y aumenta a 3d6 a nivel 6, 4d6 a nivel 11 y 5d6 a nivel 16. Después de usarla, no podés volver a usarla hasta completar un descanso corto o largo.', type: 'damage' },
-      { name: 'Resistencia al Daño', description: 'Tenés resistencia al tipo de daño asociado a tu ancestro dracónico.', type: 'defense' }
+      { name: 'Ancestro Dracónico', description: 'Tienes un ancestro dracónico que determina el tipo de tu arma de aliento y de tu resistencia al daño.', type: 'choice' },
+      { name: 'Arma de Aliento', description: 'Puedes usar tu acción para exhalar energía destructiva de tu ancestro. Tu arma de aliento inflige 2d6 de daño al nivel 1, y aumenta a 3d6 a nivel 6, 4d6 a nivel 11 y 5d6 a nivel 16. Después de usarla, no puedes volver a usarla hasta completar un descanso corto o largo.', type: 'damage' },
+      { name: 'Resistencia al Daño', description: 'Tienes resistencia al tipo de daño asociado a tu ancestro dracónico.', type: 'defense' }
     ]
   },
 
@@ -161,10 +161,10 @@ export const RACES: Record<string, RaceDef> = {
     languages: ['Común', 'Gnomo'],
     darkvision: 18,
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a la vida bajo tierra, tenés visión superior en la oscuridad y en condiciones de poca luz. Podés ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue.', type: 'senses' },
-      { name: 'Astucia Gnoma', description: 'Tenés ventaja en todas las tiradas de salvación de Inteligencia, Sabiduría y Carisma contra la magia.', type: 'defense' },
-      { name: 'Artificio', description: 'Siempre que hagas una prueba de Inteligencia (Historia) relacionada con objetos mágicos, alquímicos o tecnológicos, podés sumar el doble de tu bonificador de competencia.', type: 'skill' },
-      { name: 'Inventor', description: 'Cuando hacés una prueba de Inteligencia (Investigación) o una prueba de Destreza (Juego de Manos) para armar o desarmar un mecanismo, podés sumar el doble de tu bonificador de competencia.', type: 'skill' }
+      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a la vida bajo tierra, tienes visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue.', type: 'senses' },
+      { name: 'Astucia Gnoma', description: 'Tienes ventaja en todas las tiradas de salvación de Inteligencia, Sabiduría y Carisma contra la magia.', type: 'defense' },
+      { name: 'Artificio', description: 'Siempre que hagas una prueba de Inteligencia (Historia) relacionada con objetos mágicos, alquímicos o tecnológicos, puedes sumar el doble de tu bonificador de competencia.', type: 'skill' },
+      { name: 'Inventor', description: 'Cuando haces una prueba de Inteligencia (Investigación) o una prueba de Destreza (Juego de Manos) para armar o desarmar un mecanismo, puedes sumar el doble de tu bonificador de competencia.', type: 'skill' }
     ]
   },
 
@@ -184,10 +184,10 @@ export const RACES: Record<string, RaceDef> = {
     darkvision: 18,
     skillChoices: { count: 2, options: ['Atletismo', 'Acrobacias', 'Juego de Manos', 'Sigilo', 'Arcanos', 'Historia', 'Investigación', 'Naturaleza', 'Religión', 'Trato con Animales', 'Perspicacia', 'Medicina', 'Percepción', 'Supervivencia', 'Engaño', 'Intimidación', 'Interpretación', 'Persuasión'] },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Podés ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. No podés distinguir colores en la oscuridad, solo tonos de gris.', type: 'senses' },
-      { name: 'Ascendencia Feérica', description: 'Tenés ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
-      { name: 'Versatilidad de Habilidades', description: 'Ganás competencia en dos habilidades a tu elección.', type: 'skill' },
-      { name: 'Idioma adicional', description: 'Podés hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
+      { name: 'Visión en la Oscuridad', description: 'Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. No puedes distinguir colores en la oscuridad, solo tonos de gris.', type: 'senses' },
+      { name: 'Ascendencia Feérica', description: 'Tienes ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
+      { name: 'Versatilidad de Habilidades', description: 'Ganas competencia en dos habilidades a tu elección.', type: 'skill' },
+      { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
     ]
   },
 
@@ -205,10 +205,10 @@ export const RACES: Record<string, RaceDef> = {
     darkvision: 18,
     skillProf: ['Intimidación'],
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Podés ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. No distinguís colores en la oscuridad, solo tonos de gris.', type: 'senses' },
-      { name: 'Ataques Salvajes', description: 'Cuando conseguís un golpe crítico con un ataque con arma cuerpo a cuerpo, podés tirar uno de los dados de daño del arma adicionalmente y sumarlo al daño extra del crítico.', type: 'damage' },
-      { name: 'Resistencia Implacable', description: 'Cuando te reducen a 0 Puntos de Golpe pero no te matan, podés quedarte con 1 Punto de Golpe en su lugar. No podés volver a usar este rasgo hasta completar un descanso largo.', type: 'defense' },
-      { name: 'Amenazas Poderosas', description: 'Ganás competencia en la habilidad Intimidación.', type: 'skill' }
+      { name: 'Visión en la Oscuridad', description: 'Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. No distingues colores en la oscuridad, solo tonos de gris.', type: 'senses' },
+      { name: 'Ataques Salvajes', description: 'Cuando consigues un golpe crítico con un ataque con arma cuerpo a cuerpo, puedes tirar uno de los dados de daño del arma adicionalmente y sumarlo al daño extra del crítico.', type: 'damage' },
+      { name: 'Resistencia Implacable', description: 'Cuando te reducen a 0 Puntos de Golpe pero no te matan, puedes quedarte con 1 Punto de Golpe en su lugar. No puedes volver a usar este rasgo hasta completar un descanso largo.', type: 'defense' },
+      { name: 'Amenazas Poderosas', description: 'Ganas competencia en la habilidad Intimidación.', type: 'skill' }
     ]
   },
 
@@ -226,9 +226,9 @@ export const RACES: Record<string, RaceDef> = {
     darkvision: 18,
     resistances: ['fuego'],
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Gracias a tu herencia infernal, tenés visión superior en la oscuridad y en condiciones de poca luz. Podés ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue.', type: 'senses' },
-      { name: 'Resistencia Infernal', description: 'Tenés resistencia al daño de fuego.', type: 'defense' },
-      { name: 'Legado Infernal', description: 'Conocés el truco Taumaturgia. Cuando alcanzás el nivel 3, podés lanzar el conjuro Rayo de Fuego una vez por descanso largo. Cuando alcanzás el nivel 5, podés lanzar el conjuro Oscuridad una vez por descanso largo. El Carisma es tu habilidad para lanzar estos conjuros.', type: 'spell' }
+      { name: 'Visión en la Oscuridad', description: 'Gracias a tu herencia infernal, tienes visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue.', type: 'senses' },
+      { name: 'Resistencia Infernal', description: 'Tienes resistencia al daño de fuego.', type: 'defense' },
+      { name: 'Legado Infernal', description: 'Conoces el truco Taumaturgia. Cuando alcanzas el nivel 3, puedes lanzar el conjuro Rayo de Fuego una vez por descanso largo. Cuando alcanzas el nivel 5, puedes lanzar el conjuro Oscuridad una vez por descanso largo. El Carisma es tu habilidad para lanzar estos conjuros.', type: 'spell' }
     ]
   }
 };

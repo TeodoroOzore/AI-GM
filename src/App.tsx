@@ -21,6 +21,7 @@ import { CharacterSheetPanel } from './components/CharacterSheet';
 import { DiceTray } from './components/DiceTray';
 import { JournalConsole } from './components/JournalConsole';
 import { DiceAnimationOverlay, ActiveRollAnimation } from './components/DiceAnimationOverlay';
+import { BestiaryPanel } from './components/BestiaryPanel';
 import './styles.css';
 
 const STORAGE_KEY = 'campaign:main';
@@ -34,6 +35,7 @@ export function App() {
   const [isThinking, setIsThinking] = useState<boolean>(false);
   const [activeAnimation, setActiveAnimation] = useState<ActiveRollAnimation | null>(null);
   const [sheetFocusSection, setSheetFocusSection] = useState<string>('');
+  const [bestiaryOpen, setBestiaryOpen] = useState<boolean>(false);
 
   // Load state from localStorage on mount
   useEffect(() => {
@@ -349,7 +351,10 @@ export function App() {
       <Header
         onSummarize={handleSummarizeCronica}
         onReset={handleResetCampaign}
+        onOpenBestiary={() => setBestiaryOpen(true)}
       />
+
+      <BestiaryPanel open={bestiaryOpen} onClose={() => setBestiaryOpen(false)} />
 
       <DiceAnimationOverlay animationData={activeAnimation} />
 

@@ -68,6 +68,15 @@ export type {
   CampaignState as CampaignState2,
 } from './types/character';
 
+// Bestiary types
+export type {
+  MonsterSize,
+  MonsterType,
+  MonsterAbilities,
+  BestiaryEntry,
+  BestiaryTier,
+} from './types/core';
+
 // Data constants
 export { ABILITIES, SKILLS, POINTBUY_COST, abilityMod, fmtSigned, DAMAGE_TYPE_EMOJI, DAMAGE_TYPE_COLOR } from './data/abilities';
 export { RACES, RACE_LANGUAGES } from './data/races';
@@ -85,6 +94,18 @@ export { FAMILIAR_FORMS } from './data/familiars';
 export { WARLOCK_INVOCATIONS_CATALOG, getWarlockInvocationsLimit } from './data/invocations';
 export { CLASS_RECOMMENDATIONS } from './data/recommendations';
 export { STARTING_PACKS, EQUIPMENT_SLOTS } from './data/startingPacks';
+
+// Bestiary data
+export {
+  BESTIARY,
+  BESTIARY_TIERS,
+  BESTIARY_BY_TIER,
+  searchBestiary,
+  getBestiaryById,
+  getBestiaryTypes,
+  getBestiaryByChallenge,
+} from './data/bestiary';
+export type { BestiaryFilter } from './data/bestiary';
 
 // Utility functions
 export { secureRandInt, rollD20, rollFormula } from './utils/dice';

@@ -484,7 +484,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     });
     c.equippedGear = gearList;
 
-    const intro = `${finalName}, ${race.toLowerCase()} de vocación ${className.toLowerCase()}, se detiene un instante antes del umbral. La aventura todavía no tiene forma — decidí vos cómo empieza.`;
+    const intro = `${finalName}, ${race.toLowerCase()} de vocación ${className.toLowerCase()}, se detiene un instante antes del umbral. La aventura todavía no tiene forma — decide tú cómo empieza.`;
     const memory = `La crónica de ${finalName} (${race}, ${className}, nivel ${level}) está por comenzar.`;
     onCreateCharacter(c, intro, memory);
   };
@@ -535,7 +535,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
       { name: 'Arco corto', ability: 'dex', dice: '1d6', type: 'perforante', proficient: true, notes: 'munición: 20 flechas', category: 'simple', damageType: 'perforante', properties: ['munición', 'a dos manos'], range: 'a distancia' }
     ];
 
-    const intro = 'La niebla del amanecer cubre el sendero que sale de Umbraluz. Cargás tu arco al hombro y el bosque empieza a susurrar. ¿Qué hacés?';
+    const intro = 'La niebla del amanecer cubre el sendero que sale de Umbraluz. Cargas tu arco al hombro y el bosque empieza a susurrar. ¿Qué haces?';
     const memory = 'La crónica comienza en las afueras del pueblo de Umbraluz, al amanecer, en el límite de un bosque.';
     onCreateCharacter(c, intro, memory);
   };
@@ -559,7 +559,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
   return (
     <div id="creation">
       <h2>Antes de cruzar el umbral…</h2>
-      <p className="lead">Creá tu personaje. Todo lo que definas acá va a vivir después en tu hoja, organizada en solapas, y va a guiar cómo tira los dados el motor y cómo narra el DM.</p>
+      <p className="lead">Crea tu personaje. Todo lo que definas aquí va a vivir después en tu hoja, organizada en solapas, y va a guiar cómo tira los dados el motor y cómo narra el DM.</p>
 
       {/* Step navigation */}
       <div className="creation-steps">

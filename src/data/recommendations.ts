@@ -73,7 +73,7 @@ export const CLASS_RECOMMENDATIONS: Record<string, ClassRecommendation> = {
     spells: ['Proyectil Mágico', 'Escudo', 'Detectar Magia', 'Manos Ardientes', 'Armadura de Mago', 'Dormir'],
     weapons: ['Bastón', 'Daga', 'Ballesta ligera'],
     armor: [],
-    description: 'Sin competencia en armaduras. Conoce 3 trucos y 6 hechizos de nivel 1 en tu grimorio al inicio. Preparás INT + nivel cada día.'
+    description: 'Sin competencia en armaduras. Conoces 3 trucos y 6 hechizos de nivel 1 en tu grimorio al inicio. Preparas INT + nivel cada día.'
   },
   'Monje': {
     skills: ['Acrobacias', 'Atletismo', 'Sigilo', 'Historia', 'Perspicacia'],

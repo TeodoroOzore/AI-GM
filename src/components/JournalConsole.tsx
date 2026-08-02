@@ -42,7 +42,7 @@ export const JournalConsole: React.FC<JournalConsoleProps> = ({
         {log.map((e, idx) => (
           <div key={idx} className={`entry ${e.role === 'player' ? 'player' : 'dm'}`}>
             <div className="who">
-              {e.role === 'player' ? (characterName || 'Vos') : 'El Dungeon Master'}
+              {e.role === 'player' ? (characterName || 'Tú') : 'El Dungeon Master'}
             </div>
             <div className="text">{e.text}</div>
             {e.rolls && e.rolls.length > 0 && (
@@ -67,7 +67,7 @@ export const JournalConsole: React.FC<JournalConsoleProps> = ({
       <div id="input-bar">
         <textarea
           id="player-input"
-          placeholder="¿Qué hacés? (Presioná Enter para enviar, Shift+Enter para nueva línea)"
+          placeholder="¿Qué haces? (Presiona Enter para enviar, Shift+Enter para nueva línea)"
           value={inputText}
           onChange={e => setInputText(e.target.value)}
           onKeyDown={handleKeyDown}

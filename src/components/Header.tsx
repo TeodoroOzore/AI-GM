@@ -3,9 +3,10 @@ import React from 'react';
 type HeaderProps = {
   onSummarize: () => void;
   onReset: () => void;
+  onOpenBestiary: () => void;
 };
 
-export const Header: React.FC<HeaderProps> = ({ onSummarize, onReset }) => {
+export const Header: React.FC<HeaderProps> = ({ onSummarize, onReset, onOpenBestiary }) => {
   return (
     <header>
       <div>
@@ -16,9 +17,11 @@ export const Header: React.FC<HeaderProps> = ({ onSummarize, onReset }) => {
         </div>
       </div>
       <div className="actions">
+        <button onClick={onOpenBestiary}>📖 Bestiario</button>
         <button onClick={onSummarize}>Resumir crónica</button>
         <button onClick={onReset}>Nueva campaña</button>
       </div>
     </header>
   );
 };
+

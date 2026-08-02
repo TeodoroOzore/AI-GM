@@ -42,7 +42,7 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
       labelText = 'Conjuros Preparados (Grimorio)';
       maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
       ritual = true;
-      ritualDesc = 'Podés lanzar cualquier conjuro con la etiqueta [Ritual] de tu grimorio sin tenerlo preparado y sin gastar espacios de conjuro (+10 minutos).';
+      ritualDesc = 'Puedes lanzar cualquier conjuro con la etiqueta [Ritual] de tu grimorio sin tenerlo preparado y sin gastar espacios de conjuro (+10 minutos).';
       break;
 
     case 'Clérigo':
@@ -51,7 +51,7 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
       labelText = 'Dones Divinos Preparados';
       maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
       ritual = true;
-      ritualDesc = 'Podés lanzar cualquier conjuro preparado con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
+      ritualDesc = 'Puedes lanzar cualquier conjuro preparado con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
       break;
 
     case 'Druida':
@@ -61,7 +61,7 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
       labelText = 'Cantos de la Naturaleza Preparados';
       maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
       ritual = true;
-      ritualDesc = 'Podés lanzar cualquier conjuro preparado con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
+      ritualDesc = 'Puedes lanzar cualquier conjuro preparado con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
       break;
 
     case 'Bardo':
@@ -72,7 +72,7 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
       labelText = 'Repertorio Conocido';
       maxLvl = getMaxSlotLevel(FULL_SLOTS[lvl]);
       ritual = true;
-      ritualDesc = 'Podés lanzar cualquier conjuro conocido de Bardo con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
+      ritualDesc = 'Puedes lanzar cualquier conjuro conocido de Bardo con la etiqueta [Ritual] sin gastar espacios de conjuro (+10 minutos).';
       break;
 
     case 'Hechicero':
@@ -93,7 +93,7 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
       pactCnt = PACT_SLOTS[lvl]?.count || 1;
       maxLvl = pactLvl;
       ritual = c.classChoices?.['pactBoon'] === 'Pacto del Tomo';
-      if (ritual) ritualDesc = 'Con el Pacto del Tomo, podés lanzar conjuros rituales inscritos en tu Libro de Sombras.';
+      if (ritual) ritualDesc = 'Con el Pacto del Tomo, puedes lanzar conjuros rituales inscritos en tu Libro de Sombras.';
       break;
 
     case 'Paladín':

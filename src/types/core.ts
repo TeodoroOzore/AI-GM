@@ -420,3 +420,71 @@ export type BaseClassDetail = {
   featuresTimeline: BaseClassFeature[];
 };
 
+// ─── Bestiary (Codex de Monstruos y Enemigos) ────────────────────
+
+export type MonsterSize =
+  | 'Diminuto'
+  | 'Pequeño'
+  | 'Mediano'
+  | 'Grande'
+  | 'Enorme'
+  | 'Colosal';
+
+export type MonsterType =
+  | 'bestia'
+  | 'humanoide'
+  | 'no-muerto'
+  | 'monstruosidad'
+  | 'dragón'
+  | 'gigante'
+  | 'elemental'
+  | 'demonio'
+  | 'diablo'
+  | 'celestial'
+  | 'fey'
+  | 'planta'
+  | 'constructo'
+  | 'aberración'
+  | 'baba'
+  | 'titán'
+  | 'sombra';
+
+export type MonsterAbilities = Record<'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha', number>;
+
+export type BestiaryEntry = {
+  id: string;
+  name: string;
+  emoji: string;
+  size: MonsterSize;
+  type: MonsterType;
+  alignment: string;
+  hp: number;          // puntos de golpe promedio
+  hitDice: string;     // fórmula de dados de golpe, p. ej. '2d8+4'
+  ac: number;          // clase de armadura
+  acNotes?: string;    // p. ej. 'armadura natural'
+  speed: string;       // p. ej. '9 m, nado 9 m'
+  abilities: MonsterAbilities;
+  challenge: number;   // CR (0.125 = 1/8, 0.25 = 1/4, 0.5 = 1/2, luego enteros 1–30)
+  xp: number;
+  resistances?: string[];
+  immunities?: string[];
+  vulnerabilities?: string[];
+  conditionImmunities?: string[];
+  senses?: string[];
+  languages?: string[];
+  traits?: string[];
+  actions?: string[];
+  weaknesses: string[];   // debilidades tácticas para el DM
+  strengths: string[];    // fortalezas / tácticas destacadas
+  habitat?: string;
+  lore: string;           // contexto narrativo básico
+};
+
+export type BestiaryTier = {
+  key: string;
+  label: string;
+  crRange: string;
+  description: string;
+  emoji: string;
+};
+
