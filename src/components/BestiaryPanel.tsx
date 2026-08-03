@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { BestiaryEntry } from '../types/core';
 import { BESTIARY_TIERS, searchBestiary, getBestiaryTypes } from '../data/bestiary';
 import { abilityMod } from '../data/abilities';
@@ -11,6 +11,9 @@ const ABILITY_LABELS: Record<string, string> = {
   wis: 'SAB',
   cha: 'CAR',
 };
+
+// NOTA: Cada criatura tiene su propio emoji específico en entry.emoji,
+// usado directamente en la tarjeta. No usamos símbolos genéricos por tipo.
 
 function formatCr(cr: number): string {
   if (cr === 0.125) return '1/8';
@@ -28,8 +31,9 @@ export const BestiaryPanel: React.FC<BestiaryPanelProps> = ({ open, onClose }) =
   const [query, setQuery] = useState('');
   const [tierKey, setTierKey] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
-  // Ahora todas las tarjetas se muestran expandidas por defecto (sin colapso)
-  // Se mantiene el estado para compatibilidad pero siempre se pasa expanded=true
+  // Todas las tarjetas aparecen contraídas por defecto.
+  // Solo las criaturas cuyo id está en expandedIds muestran su ficha completa.
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   const types = useMemo(() => getBestiaryTypes(), []);
 
@@ -37,6 +41,18 @@ export const BestiaryPanel: React.FC<BestiaryPanelProps> = ({ open, onClose }) =
     () => searchBestiary({ query, tierKey, type: typeFilter }),
     [query, tierKey, typeFilter]
   );
+
+  const toggleEntry = useCallback((id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
 
   const clearFilters = () => {
     setQuery('');
@@ -107,12 +123,7 @@ export const BestiaryPanel: React.FC<BestiaryPanelProps> = ({ open, onClose }) =
           )}
 
           {results.map((entry) => (
-            <BestiaryCard
-              key={entry.id}
-              entry={entry}
-              expanded={true}
-              onToggle={() => {}}
-            />
+            <BestiaryCard key={entry.id} entry={entry} expanded={expandedIds.has(entry.id)} onToggle={() => toggleEntry(entry.id)} />
           ))}
         </div>
       </aside>
@@ -239,7 +250,7 @@ const BestiaryCard: React.FC<BestiaryCardProps> = ({ entry, expanded, onToggle }
           <div className="bestiary-tactics">
             {entry.weaknesses.length > 0 && (
               <div className="bestiary-tactic weakness">
-                <span className="tactic-icon">⚠️</span>
+                <span className="tactic-icon">⌦</span>
                 <div>
                   <div className="tactic-title">Debilidades</div>
                   <p>{entry.weaknesses.join(' ')}</p>
@@ -248,7 +259,7 @@ const BestiaryCard: React.FC<BestiaryCardProps> = ({ entry, expanded, onToggle }
             )}
             {entry.strengths.length > 0 && (
               <div className="bestiary-tactic strength">
-                <span className="tactic-icon">💪</span>
+                <span className="tactic-icon">⌭</span>
                 <div>
                   <div className="tactic-title">Fortalezas</div>
                   <p>{entry.strengths.join(' ')}</p>

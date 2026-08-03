@@ -20,4 +20,13 @@
 - [x] 15. Convertir voseo → neutro en catálogos de datos (conditions, races, classes, spells, feats, subclasses, backgrounds, etc.)
 - [x] 16. Verificar build final — 389 reemplazos totales, build sin errores
 
+## Fase 3 — Bestiario expandido por defecto
+- [x] 1. Eliminar mecanismo de colapso en `src/components/BestiaryPanel.tsx` (tarjetas siempre expandidas, sin clic)
+- [x] 2. Verificar build (`npm run build`) sin errores
+
+## Fase 4 — Fix renderizado del bestiario (solapamiento + scroll)
+- [ ] 1. Eliminar `content-visibility: auto` y `contain-intrinsic-size` de `.bestiary-card` en `src/styles.css` (causa del solapamiento y tarjetas que no aparecen con todos los tipos)
+- [ ] 2. Agregar `flex-shrink: 0` a `.bestiary-card` para que conserve su altura real dentro del contenedor con scroll
+- [ ] 3. Reforzar la barra de desplazamiento visible en `.bestiary-list` (WebKit + Firefox con `scrollbar-width`/`scrollbar-color`)
+- [ ] 4. Verificar build (`npm run build`) sin errores
 

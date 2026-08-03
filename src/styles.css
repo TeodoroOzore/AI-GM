@@ -4383,11 +4383,13 @@ input:focus, textarea:focus, select:focus {
 .bestiary-drawer {
   width: min(520px, 92vw);
   height: 100%;
+  min-height: 0;
   background: var(--leather);
   border-left: 1px solid var(--brass-dim);
   box-shadow: -8px 0 30px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   transform: translateX(100%);
   transition: transform 0.28s ease;
 }
@@ -4502,11 +4504,36 @@ input:focus, textarea:focus, select:focus {
 
 .bestiary-list {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   padding: 14px 16px 30px;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--brass-dim) var(--leather-2);
+}
+
+.bestiary-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.bestiary-list::-webkit-scrollbar-track {
+  background: var(--leather-2);
+  border-left: 1px solid var(--seam);
+}
+
+.bestiary-list::-webkit-scrollbar-thumb {
+  background: var(--brass-dim);
+  border-radius: 5px;
+  border: 2px solid var(--leather-2);
+}
+
+.bestiary-list::-webkit-scrollbar-thumb:hover {
+  background: var(--brass);
 }
 
 .bestiary-empty {
@@ -4533,6 +4560,7 @@ input:focus, textarea:focus, select:focus {
   border-radius: 4px;
   overflow: hidden;
   transition: border-color 0.2s ease;
+  flex-shrink: 0;
 }
 
 .bestiary-card.expanded {
@@ -4558,10 +4586,20 @@ input:focus, textarea:focus, select:focus {
 }
 
 .bestiary-card-emoji {
-  font-size: 1.5rem;
-  width: 32px;
+  font-size: 1.6rem;
+  width: 36px;
   text-align: center;
   flex-shrink: 0;
+  font-family: 'Times New Roman', 'Cormorant Garamond', serif;
+  font-weight: 400;
+  color: var(--brass-dim);
+  line-height: 1;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+  transition: color 0.2s ease;
+}
+
+.bestiary-card.expanded .bestiary-card-emoji {
+  color: var(--brass);
 }
 
 .bestiary-card-info {
