@@ -23,12 +23,14 @@ import {
   secureRandInt,
   WeaponCatalogEntry,
   ArmorCatalogEntry,
-  STARTING_PACKS,
+STARTING_PACKS,
   EquipmentItem,
   EquippedGearItem,
   getCharacterProficiencies,
   RaceDef,
   RaceTrait,
+  BACKGROUND_EXTRAS,
+  BACKGROUND_OPTIONS,
 } from '../types';
 
 // ─── Catálogo de idiomas del mundo de D&D 5e ───
@@ -50,13 +52,16 @@ type CreationStep = 'identity' | 'abilities' | 'skills' | 'equipment' | 'review'
 
 export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCharacter }) => {
   const [name, setName] = useState('Kaelen Vent');
+  const [gender, setGender] = useState('Masculino');
   const [level, setLevel] = useState(1);
   const [race, setRace] = useState('Humano');
   const [className, setClassName] = useState('Guerrero');
   const [background, setBackground] = useState('Forastero');
-  const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
+  const [bgSearch, setBgSearch] = useState('');
+  const [bgOpen, setBgOpen] = useState(false);
+const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
   const [raceChoiceB, setRaceChoiceB] = useState<AbilityKey>('dex');
-  const [raceExtraLanguage, setRaceExtraLanguage] = useState<string>('');
+  const [extraLanguages, setExtraLanguages] = useState<string[]>([]);
   const [raceSkillChoices, setRaceSkillChoices] = useState<string[]>([]);
   const [raceAncestry, setRaceAncestry] = useState<string>('');
   const [raceToolChoice, setRaceToolChoice] = useState<string>('');
@@ -365,10 +370,12 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
 
     const c = blankCharacter();
     c.name = finalName;
+    c.gender = gender;
     c.race = race;
-    c.raceChoiceA = raceChoiceA;
+c.raceChoiceA = raceChoiceA;
     c.raceChoiceB = raceChoiceB;
-    c.raceExtraLanguage = raceExtraLanguage;
+    c.raceExtraLanguage = extraLanguages.join(', ');
+    c.extraLanguages = [...extraLanguages];
     c.raceSkillChoices = raceSkillChoices;
     c.raceAncestry = raceAncestry;
     c.raceToolChoice = raceToolChoice;
@@ -385,7 +392,7 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     c.armorProf = profs.armor;
     c.weaponProf = profs.weapons;
     c.toolProf = profs.tools.join(', ');
-    c.languages = Array.from(new Set([...(profs.languages || []), ...(raceExtraLanguage ? [raceExtraLanguage] : [])])).join(', ');
+c.languages = Array.from(new Set([...(profs.languages || []), ...extraLanguages])).join(', ');
     c.equippedArmor = selectedArmor;
     c.equippedShield = selectedShield;
     c.ac = computeAC(abilities, selectedArmor, selectedShield);
@@ -484,14 +491,15 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     });
     c.equippedGear = gearList;
 
-    const intro = `${finalName}, ${race.toLowerCase()} de vocación ${className.toLowerCase()}, se detiene un instante antes del umbral. La aventura todavía no tiene forma — decide tú cómo empieza.`;
-    const memory = `La crónica de ${finalName} (${race}, ${className}, nivel ${level}) está por comenzar.`;
+const intro = `${finalName}, ${gender.toLowerCase()} ${race.toLowerCase()} de vocación ${className.toLowerCase()}, se detiene un instante antes del umbral. La aventura todavía no tiene forma — decide tú cómo empieza.`;
+    const memory = `La crónica de ${finalName} (${gender}, ${race}, ${className}, nivel ${level}) está por comenzar.`;
     onCreateCharacter(c, intro, memory);
   };
 
-  const handleQuickStart = () => {
+const handleQuickStart = () => {
     const c = blankCharacter();
     c.name = 'Kaelen Vent';
+    c.gender = 'Masculino';
     c.race = 'Semielfo';
     c.raceChoiceA = 'str';
     c.raceChoiceB = 'dex';
@@ -540,9 +548,33 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
     onCreateCharacter(c, intro, memory);
   };
 
-  const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COST[v], 0);
+const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COST[v], 0);
   const remainingPoints = 27 - usedPoints;
   const isHalfElf = RACES[race]?.choice;
+
+  // ── Idiomas adicionales: raza + trasfondo ──
+  const raceExtraLangCount = RACES[race]?.extraLanguages || 0;
+  const bgDef = BACKGROUND_EXTRAS[background];
+  const bgExtraLangCount = (bgDef?.languages || []).reduce((sum, l) => {
+    const m = l.match(/(\d+|Un|Dos|Tres|Cuatro|Cinco|Seis)\s*(idioma|idiomas)/i) || l.match(/(\d+|Un|Dos|Tres|Cuatro|Cinco|Seis)\s*(idioma|idiomas)/i);
+    if (!m) return sum;
+    const word = m[1].toLowerCase();
+    const numMap: Record<string, number> = { un: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5, seis: 6 };
+    return sum + (parseInt(word) || numMap[word] || 0);
+  }, 0);
+  const totalExtraLanguages = raceExtraLangCount + bgExtraLangCount;
+
+  const toggleExtraLanguage = (lang: string) => {
+    setExtraLanguages(prev => {
+      if (prev.includes(lang)) {
+        return prev.filter(l => l !== lang);
+      }
+      if (prev.length >= totalExtraLanguages) {
+        return prev;
+      }
+      return [...prev, lang];
+    });
+  };
 
   // Filter cantrips/spells for current class
   const classCantrips = CANTRIPS_CATALOG.filter(c => c.classes.includes(className));
@@ -578,10 +610,19 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
       {currentStep === 'identity' && (
         <div className="creation-section">
           <h3>Identidad</h3>
-          <div className="row">
+<div className="row">
             <div className="field">
               <label>Nombre</label>
               <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Kaelen Vent" />
+            </div>
+            <div className="field">
+              <label>Género</label>
+              <select value={gender} onChange={e => setGender(e.target.value)}>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+                <option value="No binario">No binario</option>
+                <option value="Otro">Otro</option>
+              </select>
             </div>
             <div className="field">
               <label>Nivel inicial</label>
@@ -590,10 +631,10 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
           </div>
           <div className="row">
             <div className="field">
-              <label>Raza</label>
+<label>Raza</label>
               <select value={race} onChange={e => {
                 setRace(e.target.value);
-                setRaceExtraLanguage('');
+                setExtraLanguages([]);
                 setRaceSkillChoices([]);
                 setRaceAncestry('');
                 setRaceToolChoice('');
@@ -636,24 +677,81 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
             </div>
           )}
 
-          <div className="field" style={{ marginTop: '6px' }}>
+<div className="field" style={{ marginTop: '6px' }}>
             <label>Trasfondo</label>
-            <input type="text" list="bg-list" value={background} onChange={e => setBackground(e.target.value)} placeholder="Acólito, Soldado, Criminal..." />
-            <datalist id="bg-list">
-              <option value="Acólito" />
-              <option value="Criminal" />
-              <option value="Forastero" />
-              <option value="Sabio" />
-              <option value="Soldado" />
-              <option value="Charlatán" />
-              <option value="Ermitaño" />
-              <option value="Artesano Gremial" />
-              <option value="Héroe del Pueblo" />
-              <option value="Noble" />
-              <option value="Marino" />
-              <option value="Huérfano" />
-            </datalist>
+            <div className="bg-search-wrap">
+              <input
+                type="text"
+                className="bg-search-input"
+                placeholder="Buscar trasfondo: Acólito, Soldado, Criminal..."
+                value={bgOpen ? bgSearch : background}
+                onFocus={() => { setBgOpen(true); setBgSearch(background); }}
+                onClick={() => setBgOpen(true)}
+                onChange={e => { setBgSearch(e.target.value); setBgOpen(true); }}
+              />
+              {bgOpen && (
+                <div className="bg-search-dropdown">
+{BACKGROUND_OPTIONS.filter(bg =>
+                    bg.toLowerCase().includes(bgSearch.toLowerCase())
+                  ).map(bg => {
+                    return (
+                      <div
+                        key={bg}
+                        className={`bg-search-option ${background === bg ? 'selected' : ''}`}
+                        onMouseDown={() => {
+                          setBackground(bg);
+                          setExtraLanguages([]);
+                          setBgSearch(bg);
+                          setBgOpen(false);
+                        }}
+                      >
+                        <div className="bg-opt-name">{bg}</div>
+                      </div>
+                    );
+                  })}
+                  {BACKGROUND_OPTIONS.filter(bg =>
+                    bg.toLowerCase().includes(bgSearch.toLowerCase())
+                  ).length === 0 && (
+                    <div className="bg-search-empty">Sin coincidencias</div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Background info panel */}
+          {(() => {
+            const bgDef = BACKGROUND_EXTRAS[background];
+            if (!bgDef) return null;
+            return (
+              <div className="race-info-panel" style={{ marginTop: '10px' }}>
+                <div className="race-info-header">📜 Trasfondo: {background}</div>
+                <p className="race-description">{bgDef.description}</p>
+                <div className="race-detail-section">
+                  <div className="race-detail-label">🎯 Competencias de habilidades</div>
+                  <div className="prof-chips-row">
+                    {bgDef.skills.map(s => <span key={s} className="prof-chip skill-chip">✓ {s}</span>)}
+                  </div>
+                </div>
+                {bgDef.tools.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🔧 Herramientas</div>
+                    <div className="prof-chips-row">
+                      {bgDef.tools.map(t => <span key={t} className="prof-chip tool-chip">✓ {t}</span>)}
+                    </div>
+                  </div>
+                )}
+                {bgDef.languages.length > 0 && (
+                  <div className="race-detail-section">
+                    <div className="race-detail-label">🗣️ Idiomas</div>
+                    <div className="prof-chips-row">
+                      {bgDef.languages.map(l => <span key={l} className="prof-chip lang-chip">✓ {l}</span>)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Class recommendation summary */}
           {rec && (
@@ -769,19 +867,26 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
 
                 {/* ══════ RACIAL CHOICE SELECTORS ══════ */}
 
-                {/* Extra Language (Humano, Semielfo, etc.) */}
-                {(rdef.extraLanguages && rdef.extraLanguages > 0) && (
+{/* Extra Languages (raza + trasfondo) */}
+                {totalExtraLanguages > 0 && (
                   <div className="race-choice-row">
-                    <label>🗣️ Idioma adicional ({rdef.extraLanguages} a elección)</label>
-                    <select
-                      value={raceExtraLanguage}
-                      onChange={e => setRaceExtraLanguage(e.target.value)}
-                    >
-                      <option value="">— Elegir idioma —</option>
-                      {LANGUAGE_OPTIONS.filter(l => l !== 'Común' && !(rdef.languages || []).includes(l)).map(l => (
-                        <option key={l} value={l}>{l}</option>
-                      ))}
-                    </select>
+                    <label>🗣️ Idiomas adicionales a elección ({extraLanguages.length}/{totalExtraLanguages})</label>
+                    <div className="race-skill-choices">
+                      {LANGUAGE_OPTIONS.filter(l => l !== 'Común' && !(rdef.languages || []).includes(l)).map(l => {
+                        const isDisabled = !extraLanguages.includes(l) && extraLanguages.length >= totalExtraLanguages;
+                        return (
+                          <label key={l} className={`tool-chip ${extraLanguages.includes(l) ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}>
+                            <input
+                              type="checkbox"
+                              checked={extraLanguages.includes(l)}
+                              disabled={isDisabled}
+                              onChange={() => toggleExtraLanguage(l)}
+                            />
+                            <span>{l}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
@@ -1293,8 +1398,8 @@ export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCh
           <h3>Resumen del personaje</h3>
           <div className="review-grid">
             <div className="review-block">
-              <div className="review-label">Identidad</div>
-              <div className="review-value">{name || 'Sin nombre'} · {race} · {className} · Nivel {level}</div>
+<div className="review-label">Identidad</div>
+              <div className="review-value">{name || 'Sin nombre'} · {gender} · {race} · {className} · Nivel {level}</div>
               <div className="review-value" style={{ fontSize: '0.78rem' }}>Trasfondo: {background || '—'}</div>
             </div>
             <div className="review-block">

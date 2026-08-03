@@ -194,8 +194,8 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
     <aside id="sheet-panel">
       <div className="sheet-header">
         <div className="who-name">{c.name || '—'}</div>
-        <div className="who-sub">
-          {`${c.race} · ${c.className}${c.subclass ? ' (' + c.subclass + ')' : ''} · Nivel ${c.level}`}
+<div className="who-sub">
+          {`${c.gender || ''}${c.gender ? ' · ' : ''}${c.race} · ${c.className}${c.subclass ? ' (' + c.subclass + ')' : ''} · Nivel ${c.level}`}
         </div>
         <div className="who-vitals">
           <span>PG <b>{`${c.hpCur}/${c.hpMax}`}</b></span>

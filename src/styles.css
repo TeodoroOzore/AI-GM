@@ -4356,6 +4356,68 @@ input:focus, textarea:focus, select:focus {
   gap: 6px;
 }
 
+/* ── Desplegable de búsqueda de trasfondo ── */
+.bg-search-wrap {
+  position: relative;
+  width: 100%;
+}
+.bg-search-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--seam);
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--parchment);
+  font-size: 0.9rem;
+}
+.bg-search-input:focus {
+  outline: none;
+  border-color: var(--brass-dim);
+}
+.bg-search-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 40;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+.bg-search-option {
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--seam);
+  transition: background 0.15s ease;
+}
+.bg-search-option:last-child {
+  border-bottom: none;
+}
+.bg-search-option:hover,
+.bg-search-option.selected {
+  background: var(--leather-2);
+}
+.bg-opt-name {
+  font-weight: 600;
+  color: var(--brass);
+  font-size: 0.85rem;
+}
+.bg-opt-desc {
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  margin-top: 3px;
+  line-height: 1.35;
+}
+.bg-search-empty {
+  padding: 10px;
+  color: var(--parchment-dim);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    BESTIARY PANEL (Drawer)
    ═══════════════════════════════════════════════════════════════ */

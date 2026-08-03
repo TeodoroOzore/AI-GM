@@ -6,11 +6,13 @@ import { profBonus, hpMaxFor } from '../data/classes';
 
 export function blankCharacter(): CharacterSheet {
   return {
-    name: '',
+name: '',
+    gender: 'Masculino',
     race: 'Humano',
     raceChoiceA: 'str',
     raceChoiceB: 'dex',
-    raceExtraLanguage: '',
+raceExtraLanguage: '',
+    extraLanguages: [],
     raceSkillChoices: [],
     raceAncestry: '',
     raceToolChoice: '',

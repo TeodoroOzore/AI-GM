@@ -26,8 +26,15 @@ export function getCharacterProficiencies(
   const bgLangs = bgExtras.languages || [];
   const languages = [...new Set([...raceLangs, ...bgLangs])];
 
-  // ── Habilidades: rasgos raciales fijos (p.ej. Semiorco → Intimidación) ──
+// ── Habilidades: rasgos raciales fijos (p.ej. Semiorco → Intimidación) ──
   const skills = [...(raceDef?.skillProf || [])];
+
+  // ── Habilidades del trasfondo: competencias otorgadas por el trasfondo ──
+  if (bgExtras.skills && bgExtras.skills.length > 0) {
+    for (const s of bgExtras.skills) {
+      if (!skills.includes(s)) skills.push(s);
+    }
+  }
 
   // ── Competencias raciales de armas específicas (para mostrar como chips) ──
   // Se añaden como armas "Marciales"/"Simples" si la clase aún no las tiene.

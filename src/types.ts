@@ -82,7 +82,7 @@ export { ABILITIES, SKILLS, POINTBUY_COST, abilityMod, fmtSigned, DAMAGE_TYPE_EM
 export { RACES, RACE_LANGUAGES } from './data/races';
 export { CLASSES, FULL_SLOTS, HALF_SLOTS, PACT_SLOTS, profBonus, hpMaxFor, classResources } from './data/classes';
 export { CLASS_ARMOR_PROF, CLASS_WEAPON_PROF, CLASS_TOOL_PROF } from './data/classProficiencies';
-export { BACKGROUND_EXTRAS } from './data/backgrounds';
+export { BACKGROUND_EXTRAS, BACKGROUND_OPTIONS } from './data/backgrounds';
 export { getCharacterProficiencies } from './data/proficiencies';
 export { WEAPONS_CATALOG } from './data/weapons';
 export { ARMOR_CATALOG } from './data/armor';

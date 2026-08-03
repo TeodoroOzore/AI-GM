@@ -52,10 +52,12 @@ export type FamiliarItem = {
 
 export type CharacterSheet = {
   name: string;
+  gender: string;
   race: string;
   raceChoiceA: AbilityKey;
   raceChoiceB: AbilityKey;
-  raceExtraLanguage?: string;
+raceExtraLanguage?: string;
+  extraLanguages?: string[];
   raceSkillChoices?: string[];
   raceAncestry?: string;
   raceToolChoice?: string;
