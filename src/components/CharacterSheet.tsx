@@ -307,6 +307,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                   <div className="prof-chips-row">
                     {Array.from(new Set([...(c.languages ? c.languages.split(',').map(l => l.trim()) : []), ...(c.raceExtraLanguage ? [c.raceExtraLanguage] : []), ...profs.languages]))
                       .filter(Boolean)
+                      .filter(l => !/\(a elección\)/i.test(l) && !/idioma[s]? adicional(es)?/i.test(l))
                       .map(l => (
                         <span key={l} className="prof-chip lang-chip">{l}</span>
                       ))}

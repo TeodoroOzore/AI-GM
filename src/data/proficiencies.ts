@@ -15,16 +15,19 @@ export function getCharacterProficiencies(
   const armor: ArmorProfType[] = [...(CLASS_ARMOR_PROF[className] || [])];
   const weapons: WeaponProfType[] = [...(CLASS_WEAPON_PROF[className] || [])];
 
-  const classTools = CLASS_TOOL_PROF[className] || [];
+const classTools = CLASS_TOOL_PROF[className] || [];
   const bgExtras = BACKGROUND_EXTRAS[background] || { tools: [], languages: [] };
-  const tools = [...new Set([...classTools, ...bgExtras.tools, ...extraTools])];
+  // Filtra los textos indicativos "a elección": los espacios ya fueron
+  // llenados con elecciones concretas durante la creación del personaje.
+  const isConcrete = (s: string) => !/\(a elección\)/i.test(s) && !/idioma[s]? adicional(es)?/i.test(s);
+  const tools = [...new Set([...classTools, ...bgExtras.tools, ...extraTools].filter(isConcrete))];
 
   const raceDef = RACES[race];
 
   // ── Idiomas: raza (desde RACES.languages) + trasfondo ──
   const raceLangs = raceDef?.languages || RACE_LANGUAGES[race] || ['Común'];
   const bgLangs = bgExtras.languages || [];
-  const languages = [...new Set([...raceLangs, ...bgLangs])];
+  const languages = [...new Set([...raceLangs, ...bgLangs].filter(isConcrete))];
 
 // ── Habilidades: rasgos raciales fijos (p.ej. Semiorco → Intimidación) ──
   const skills = [...(raceDef?.skillProf || [])];
