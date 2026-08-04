@@ -74,7 +74,7 @@ export function classResources(className: string, level: number): ClassResource[
       break;
     }
     case 'Guerrero': {
-      res.push({ key: 'secondwind', label: 'Aliento de Combate (1/descanso corto)', max: 1 });
+      res.push({ key: 'secondwind', label: 'Segundo Aliento (rasgo de clase Guerrero, 1/descanso corto)', max: 1 });
       if (level >= 2) res.push({ key: 'actionsurge', label: 'Acción Adicional', max: level >= 17 ? 2 : 1 });
       break;
     }

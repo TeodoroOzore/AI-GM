@@ -27,6 +27,10 @@ STARTING_PACKS,
   EquipmentItem,
   EquippedGearItem,
   getCharacterProficiencies,
+  getToolCategoryLimits,
+  getRacialSpells,
+  getRacialResistances,
+  resolveToolCategory,
   RaceDef,
   RaceTrait,
   BACKGROUND_EXTRAS,
@@ -201,8 +205,16 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
 
   const handleToggleTool = (toolName: string) => {
     setSelectedTools(prev => {
-      const next = prev.includes(toolName) ? prev.filter(t => t !== toolName) : [...prev, toolName];
-      return Array.from(new Set(next.filter(Boolean)));
+      if (prev.includes(toolName)) {
+        return prev.filter(t => t !== toolName);
+      }
+      const limits = getToolCategoryLimits(className, race, background);
+      const cat = resolveToolCategory(toolName);
+      const currentCount = prev.filter(t => resolveToolCategory(t) === cat).length;
+      if (currentCount >= (limits[cat] || 1)) {
+        return prev; // bloqueado: se superaría el límite de la categoría
+      }
+      return Array.from(new Set([...prev, toolName].filter(Boolean)));
     });
   };
 
@@ -258,15 +270,18 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
   };
 
   const handleApplyRecommendedTools = () => {
-    if (rec) {
-      setSelectedTools(prev => {
-        const merged = new Set(prev);
-        for (const toolName of rec.tools) {
-          merged.add(toolName);
-        }
-        return Array.from(merged);
-      });
-    }
+    if (!rec) return;
+    const limits = getToolCategoryLimits(className, race, background);
+    setSelectedTools(prev => {
+      const merged = new Set(prev);
+      for (const toolName of rec.tools) {
+        const cat = resolveToolCategory(toolName);
+        const currentCount = Array.from(merged).filter(t => resolveToolCategory(t) === cat).length;
+        if (currentCount >= (limits[cat] || 1)) continue;
+        merged.add(toolName);
+      }
+      return Array.from(merged);
+    });
   };
 
   const handleApplyRecommendedWeapons = () => {
@@ -365,7 +380,14 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
     const conMod = abilityMod(abilities.con);
 
     // Auto-derive proficiencies from class + race + background + selectedTools
-    const normalizedSelectedTools = Array.from(new Set([...selectedTools, ...(raceToolChoice ? [raceToolChoice] : [])].filter(Boolean)));
+    // Incluye herramientas del trasfondo (auto-equipo) y la opción racial de herramienta
+    const bgDef = BACKGROUND_EXTRAS[background];
+    const bgTools = (bgDef?.tools || []).filter(t => !t.toLowerCase().includes('a elección'));
+    const normalizedSelectedTools = Array.from(new Set([
+      ...selectedTools,
+      ...bgTools,
+      ...(raceToolChoice ? [raceToolChoice] : [])
+    ].filter(Boolean)));
     const profs = getCharacterProficiencies(className, race, background, normalizedSelectedTools);
 
     const c = blankCharacter();
@@ -429,6 +451,12 @@ c.languages = Array.from(new Set([...(profs.languages || []), ...extraLanguages]
         damageType: spell?.damageType,
         school: spell?.school,
       });
+    }
+
+    // ── Hechizos/acciones raciales (Dracónido, Tiefling, Drow, Alto Elfo) ──
+    const racialSpells = getRacialSpells(race, raceAncestry, raceCantrip, level);
+    for (const rspell of racialSpells) {
+      spells.push(rspell);
     }
     c.spellsKnown = spells;
 
@@ -689,11 +717,9 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 onClick={() => setBgOpen(true)}
                 onChange={e => { setBgSearch(e.target.value); setBgOpen(true); }}
               />
-              {bgOpen && (
+{bgOpen && (
                 <div className="bg-search-dropdown">
-{BACKGROUND_OPTIONS.filter(bg =>
-                    bg.toLowerCase().includes(bgSearch.toLowerCase())
-                  ).map(bg => {
+                  {BACKGROUND_OPTIONS.map(bg => {
                     return (
                       <div
                         key={bg}
@@ -709,11 +735,6 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                       </div>
                     );
                   })}
-                  {BACKGROUND_OPTIONS.filter(bg =>
-                    bg.toLowerCase().includes(bgSearch.toLowerCase())
-                  ).length === 0 && (
-                    <div className="bg-search-empty">Sin coincidencias</div>
-                  )}
                 </div>
               )}
             </div>
@@ -790,17 +811,21 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                   </div>
                 )}
 
-                {/* Resistances */}
-                {rdef.resistances && rdef.resistances.length > 0 && (
-                  <div className="race-detail-section">
-                    <div className="race-detail-label">🛡️ Resistencias</div>
-                    <div className="prof-chips-row">
-                      {rdef.resistances.map((res: string) => (
-                        <span key={res} className="prof-chip resist-chip">✓ {res}</span>
-                      ))}
+{/* Resistances (incluye ancestro dracónico) */}
+                {(() => {
+                  const derived = getRacialResistances(race, raceAncestry);
+                  if (derived.length === 0) return null;
+                  return (
+                    <div className="race-detail-section">
+                      <div className="race-detail-label">🛡️ Resistencias</div>
+                      <div className="prof-chips-row">
+                        {derived.map((res: string) => (
+                          <span key={res} className="prof-chip resist-chip">✓ {res}</span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Weapon Proficiencies */}
                 {rdef.weaponProf && rdef.weaponProf.length > 0 && (
@@ -1118,7 +1143,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
             </div>
           </div>
 
-          {/* Tools selection */}
+{/* Tools selection */}
           <div className="subsection">
             <div className="block-label">Herramientas</div>
             {rec && rec.tools.length > 0 && (
@@ -1126,6 +1151,24 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 ✨ Aplicar recomendadas para {className}
               </button>
             )}
+
+            {/* Herramientas fijas del trasfondo (auto-equipadas) */}
+            {(() => {
+              const bgDef = BACKGROUND_EXTRAS[background];
+              if (!bgDef || !bgDef.tools || bgDef.tools.length === 0) return null;
+              return (
+                <div className="bg-fixed-tools-row" style={{ marginBottom: '10px' }}>
+                  <div className="small-note" style={{ fontWeight: 600, marginBottom: '4px' }}>
+                    🔧 Herramientas del trasfondo «{background}» (fijas, se equipan automáticamente):
+                  </div>
+                  <div className="prof-chips-row">
+                    {bgDef.tools.map(t => (
+                      <span key={t} className="prof-chip tool-chip fixed">✓ {t}</span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
             <div className="tools-grid">
               {(['kit', 'instrumento', 'artesano', 'juego'] as const).map(cat => {
                 const tools = TOOLS_CATALOG.filter(t => t.category === cat);
@@ -1135,17 +1178,29 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                   artesano: '⚒️ Herramientas de artesano',
                   juego: '🎲 Juegos'
                 };
+                const limits = getToolCategoryLimits(className, race, background);
+                const catLimit = limits[cat] || 1;
+                const currentCount = selectedTools.filter(t => resolveToolCategory(t) === cat).length;
+                const atLimit = currentCount >= catLimit;
                 return (
                   <div key={cat} className="tool-category">
-                    <div className="tool-cat-label">{catLabels[cat]}</div>
+                    <div className="tool-cat-label">
+                      {catLabels[cat]}
+                      <span className="tool-limit-badge">
+                        {currentCount}/{catLimit}
+                      </span>
+                    </div>
                     <div className="tool-items">
                       {tools.map(t => {
                         const isRecTool = rec?.tools.includes(t.name);
+                        const isSelected = selectedTools.includes(t.name);
+                        const isDisabled = !isSelected && atLimit;
                         return (
-                          <label key={t.name} className={`tool-chip ${selectedTools.includes(t.name) ? 'selected' : ''} ${isRecTool ? 'recommended' : ''}`}>
+                          <label key={t.name} className={`tool-chip ${isSelected ? 'selected' : ''} ${isRecTool ? 'recommended' : ''} ${isDisabled ? 'disabled' : ''}`}>
                             <input
                               type="checkbox"
-                              checked={selectedTools.includes(t.name)}
+                              checked={isSelected}
+                              disabled={isDisabled}
                               onChange={() => handleToggleTool(t.name)}
                             />
                             <span>{t.name}</span>
@@ -1158,6 +1213,43 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 );
               })}
             </div>
+          </div>
+
+{/* Ventajas y bonificaciones raciales */}
+          <div className="subsection">
+            <div className="block-label">🛡️ Ventajas y Bonificaciones</div>
+            {(() => {
+              const rdef = RACES[race];
+              if (!rdef) return null;
+              const resistances = getRacialResistances(race, raceAncestry);
+              const items: { label: string; value: string }[] = [];
+              if (resistances.length > 0) {
+                items.push({ label: 'Resistencias al daño', value: resistances.join(', ') });
+              }
+              if (rdef.darkvision) {
+                items.push({ label: 'Visión en la oscuridad', value: `${rdef.darkvision} m` });
+              }
+              if (rdef.traits) {
+                for (const t of rdef.traits) {
+                  if (t.type === 'defense' || t.type === 'senses' || t.type === 'movement') {
+                    items.push({ label: t.name, value: t.description });
+                  }
+                }
+              }
+              if (items.length === 0) {
+                return <div className="flavor">Esta raza no otorga ventajas o bonificaciones adicionales.</div>;
+              }
+              return (
+                <div className="race-advantage-list">
+                  {items.map((it, idx) => (
+                    <div key={idx} className="race-advantage-item">
+                      <span className="advantage-label">{it.label}</span>
+                      <span className="advantage-value">{it.value}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Cantrips & Spells (only for spellcasters) */}
@@ -1416,12 +1508,22 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
               <div className="review-label">Competencias ({proficientSkills.length})</div>
               <div className="review-value">{proficientSkills.length > 0 ? proficientSkills.join(', ') : '— Ninguna seleccionada —'}</div>
             </div>
-            {selectedTools.length > 0 && (
+{selectedTools.length > 0 && (
               <div className="review-block">
                 <div className="review-label">Herramientas</div>
                 <div className="review-value">{selectedTools.join(', ')}</div>
               </div>
             )}
+            {(() => {
+              const resistances = getRacialResistances(race, raceAncestry);
+              if (resistances.length === 0) return null;
+              return (
+                <div className="review-block">
+                  <div className="review-label">🛡️ Ventajas y Resistencias</div>
+                  <div className="review-value">{resistances.join(', ')}</div>
+                </div>
+              );
+            })()}
             <div className="review-block">
               <div className="review-label">Armadura</div>
               <div className="review-value">

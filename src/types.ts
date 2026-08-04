@@ -109,5 +109,5 @@ export type { BestiaryFilter } from './data/bestiary';
 
 // Utility functions
 export { secureRandInt, rollD20, rollFormula } from './utils/dice';
-export { blankCharacter } from './utils/character';
+export { blankCharacter, resolveToolCategory, getToolCategoryLimits, getRacialSpells, getRacialResistances } from './utils/character';
 export { getSpellcastingLimits } from './utils/spellcasting';

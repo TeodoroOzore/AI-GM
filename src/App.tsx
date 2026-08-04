@@ -227,9 +227,17 @@ export function App() {
     });
   };
 
-  const handleRollSpell = (spell: SpellItem) => {
+const handleRollSpell = (spell: SpellItem) => {
     const spellcasting = CLASSES[character.className]?.spellcasting;
-    const spellAbility = spellcasting?.ability || 'int';
+    // Racial spells (Dracónido breath → CON; Tiefling/Drow → CHA; Alto Elfo → INT)
+    let spellAbility: AbilityKey;
+    if (spell.level === 'racial') {
+      if (spell.name === 'Arma de Aliento') spellAbility = 'con';
+      else if (character.race === 'Alto Elfo') spellAbility = 'int';
+      else spellAbility = 'cha';
+    } else {
+      spellAbility = spellcasting?.ability || 'int';
+    }
     const mod = abilityMod(character.abilities[spellAbility]) + profBonus(character.level);
     const { rolls, result } = rollD20({});
     const total = result + mod;

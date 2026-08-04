@@ -43,11 +43,11 @@ export const BASE_CLASSES_CATALOG: Record<string, BaseClassDetail> = {
     primaryAbilities: 'Fuerza o Destreza',
     saves: ['Fuerza', 'Constitución'],
     description: 'Maestros del combate militar, expertos en todo tipo de armas y armaduras. Combinan atletismo sobresaliente con tácticas letales en el campo de batalla.',
-    coreGimmick: 'Aliento de Combate (curación rápida), Acción Adicional (Action Surge) para turno doble, Estilos de Combate y hasta 4 ataques por turno.',
+    coreGimmick: 'Segundo Aliento (curación rápida), Acción Adicional (Action Surge) para turno doble, Estilos de Combate y hasta 4 ataques por turno.',
     fightingStyles: FIGHTING_STYLES.filter(fs => fs.classes.includes('Guerrero')),
     featuresTimeline: [
       { level: 1, title: 'Estilo de Combate', description: 'Adoptás una especialización en combate (Arquería, Defensa, Duelista, Armas Grandes, Protección o Dos Armas).' },
-      { level: 1, title: 'Aliento de Combate (Second Wind)', description: 'Recuperas 1d10 + nivel de Guerrero PG como Acción Bonus (1 uso por descanso corto o largo).' },
+{ level: 1, title: 'Segundo Aliento (Second Wind)', description: 'Recuperas 1d10 + nivel de Guerrero PG como Acción Bonus (1 uso por descanso corto o largo).' },
       { level: 2, title: 'Acción Adicional (Action Surge)', description: 'Puedes realizar una Acción extra adicional en tu turno (1 uso por descanso corto o largo; 2 usos a nivel 17).' },
       { level: 3, title: 'Arquetipo Marcial (Subclase)', description: 'Eliges tu subclase (Campeón, Maestro de Batalla o Caballero Arcano).' },
       { level: 4, title: 'Mejora de Característica / Dote', description: 'Aumentas un atributo en +2, dos en +1, o eliges una dote.' },

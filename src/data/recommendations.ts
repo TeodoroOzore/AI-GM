@@ -55,7 +55,7 @@ export const CLASS_RECOMMENDATIONS: Record<string, ClassRecommendation> = {
     spells: [],
     weapons: ['Espada larga', 'Espadón', 'Arco largo', 'Hacha de batalla', 'Escudo'],
     armor: ['Cota de malla', 'Cuero tachonado', 'Escudo'],
-    description: 'Competente en TODAS las armaduras, escudos, armas simples y marciales. Elige un estilo de combate al nivel 1. Aliento de combate 1d10+nivel PG.'
+description: 'Competente en TODAS las armaduras, escudos, armas simples y marciales. Elige un estilo de combate al nivel 1. Segundo Aliento: recupera 1d10+nivel PG.'
   },
   'Hechicero': {
     skills: ['Arcanos', 'Persuasión', 'Engaño', 'Intimidación', 'Religión'],

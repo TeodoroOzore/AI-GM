@@ -29,11 +29,12 @@ import {
   EquipmentSlot,
   WEAPONS_CATALOG,
   getCharacterProficiencies,
+  getRacialResistances,
   SubclassSpellGrant,
   SubclassCompanionGrant,
   getSpellcastingLimits,
   WARLOCK_INVOCATIONS_CATALOG,
-  getWarlockInvocationsLimit,
+getWarlockInvocationsLimit,
   RaceDef,
   RaceTrait,
 } from '../types';
@@ -343,6 +344,36 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                     );
                   })()}
 
+                  {/* ── RESISTENCIAS Y VENTAJAS RACIALES ── */}
+                  {(() => {
+                    const resistances = getRacialResistances(c.race, c.raceAncestry || '');
+                    const rdef: RaceDef | undefined = RACES[c.race];
+                    const defenseTraits = rdef?.traits?.filter(t => t.type === 'defense' || t.type === 'feature') || [];
+                    if (resistances.length === 0 && defenseTraits.length === 0) return null;
+                    return (
+                      <>
+                        <div className="block-label" style={{ marginTop: '10px' }}>🛡️ Resistencias y Ventajas Raciales</div>
+                        {resistances.length > 0 && (
+                          <div className="prof-chips-row">
+                            {resistances.map(res => (
+                              <span key={res} className="prof-chip resist-chip">✓ Resistencia a {res}</span>
+                            ))}
+                          </div>
+                        )}
+                        {defenseTraits.length > 0 && (
+                          <div className="race-traits-list-compact">
+                            {defenseTraits.map((trait, idx) => (
+                              <div key={idx} className="race-trait-card-compact unlocked">
+                                <div className="trait-compact-name">✨ {trait.name}</div>
+                                <p className="trait-compact-desc">{trait.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
+
                   <div className="prof-lock-note">
                     🔒 Las competencias se asignan por clase, raza y trasfondo. Solo pueden expandirse durante la aventura.
                   </div>
@@ -429,11 +460,41 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                   >
                     <span>{cond.emoji}</span>
                     <span>{cond.name}</span>
-                    {isActive && turnsLeft > 0 && <span className="condition-duration">{turnsLeft}t</span>}
+{isActive && turnsLeft > 0 && <span className="condition-duration">{turnsLeft}t</span>}
                   </button>
                 );
               })}
             </div>
+
+            {/* ── RESISTENCIAS Y VENTAJAS RACIALES ── */}
+            {(() => {
+              const resistances = getRacialResistances(c.race, c.raceAncestry || '');
+              const rdef: RaceDef | undefined = RACES[c.race];
+              const defenseTraits = rdef?.traits?.filter(t => t.type === 'defense' || t.type === 'feature') || [];
+              if (resistances.length === 0 && defenseTraits.length === 0) return null;
+              return (
+                <>
+                  <div className="block-label" style={{ marginTop: '10px' }}>🛡️ Resistencias y Ventajas Raciales</div>
+                  {resistances.length > 0 && (
+                    <div className="prof-chips-row">
+                      {resistances.map(res => (
+                        <span key={res} className="prof-chip resist-chip">✓ Resistencia a {res}</span>
+                      ))}
+                    </div>
+                  )}
+                  {defenseTraits.length > 0 && (
+                    <div className="race-traits-list-compact">
+                      {defenseTraits.map((trait, idx) => (
+                        <div key={idx} className="race-trait-card-compact unlocked">
+                          <div className="trait-compact-name">✨ {trait.name}</div>
+                          <p className="trait-compact-desc">{trait.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         )}
 
@@ -548,8 +609,9 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
 
         {activeTab === 'dynamic' && (() => {
           const limits = getSpellcastingLimits(c);
-          const currentCantripsCount = (c.spellsKnown || []).filter(s => s.level === '0' || s.level?.toLowerCase().includes('truco')).length;
-          const currentSpellsCount = (c.spellsKnown || []).length - currentCantripsCount;
+          const nonRacialSpells = (c.spellsKnown || []).filter(s => s.level !== 'racial');
+          const currentCantripsCount = nonRacialSpells.filter(s => s.level === '0' || s.level?.toLowerCase().includes('truco')).length;
+          const currentSpellsCount = nonRacialSpells.length - currentCantripsCount;
 
           return (
             <div id="sheet-section-dynamic" className="spellcasting-tab-container">
@@ -715,13 +777,44 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                 })}
               </div>
 
+{/* RACIAL SPELLS / ACTIONS SECTION */}
+              {(() => {
+                const racialSpells = (c.spellsKnown || []).filter(s => s.level === 'racial');
+                if (racialSpells.length === 0) return null;
+                return (
+                  <>
+                    <div className="block-label" style={{ marginTop: '12px' }}>✨ Rasgos Raciales / Acciones</div>
+                    <div className="list-rows">
+                      {racialSpells.map((sp, i) => (
+                        <div key={i} className="spell-sheet-row racial">
+                          <div className="spell-sheet-main">
+                            <span className="racial-spell-name">🐉 {sp.name}</span>
+                            <button className="rm" onClick={() => update({ spellsKnown: c.spellsKnown.filter((_, idx) => idx !== c.spellsKnown.indexOf(sp)) })}>✕</button>
+                          </div>
+                          <div className="spell-sheet-meta">
+                            <button className="roll-btn" title={`Usar ${sp.name || 'acción racial'}`} onClick={() => onRollSpell(sp)}>🎲</button>
+                            <span className="spell-level-chip racial-chip">✨ Racial</span>
+                            {sp.damageType && (
+                              <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[sp.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[sp.damageType] || 'var(--parchment-dim)' }}>
+                                {DAMAGE_TYPE_EMOJI[sp.damageType] || ''} {sp.damageType}
+                              </span>
+                            )}
+                            <span className="spell-notes-text">{sp.notes}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                );
+              })()}
+
               {/* SPELLS KNOWN / PREPARED LIST WITH LEVEL BADGES */}
               <div className="block-label" style={{ marginTop: '12px' }}>
                 {cdef.spellcasting ? 'Repertorio / Conjuros preparados' : 'Técnicas y maniobras conocidas'}
               </div>
 
               <div className="list-rows">
-                {c.spellsKnown.map((sp, i) => {
+                {c.spellsKnown.filter(sp => sp.level !== 'racial').map((sp, i) => {
                   const isCantrip = sp.level === '0' || sp.level?.toLowerCase().includes('truco');
                   const isWarlock = c.className === 'Brujo' && !isCantrip;
 

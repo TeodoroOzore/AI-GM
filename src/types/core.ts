@@ -356,6 +356,7 @@ raceExtraLanguage?: string;
   classChoices?: Record<string, string>;
   concentratingOnSpell?: string;
   warlockInvocations?: string[];
+  resistances?: string[];
 };
 
 export type SpellcastingLimits = {
