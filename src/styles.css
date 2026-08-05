@@ -1457,6 +1457,49 @@ input:focus, textarea:focus, select:focus {
   border-color: rgba(201, 162, 39, 0.3);
 }
 
+.skill-row-creation.locked-by-bg {
+  background: rgba(52, 211, 153, 0.07);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.skill-row-creation.at-limit {
+  pointer-events: none;
+}
+
+.locked-bg-tag {
+  font-size: 0.58rem;
+  font-family: var(--font-mono);
+  color: rgb(52, 211, 153);
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 3px;
+  padding: 1px 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bg-skills-note {
+  font-size: 0.68rem;
+  color: rgb(52, 211, 153);
+  background: rgba(52, 211, 153, 0.07);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+}
+
+.bg-skill-badge {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 0.58rem;
+  background: rgba(52, 211, 153, 0.15);
+  color: rgb(52, 211, 153);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  border-radius: 3px;
+  padding: 0 5px;
+  vertical-align: middle;
+}
+
 .skill-stat-badge {
   font-family: var(--font-mono);
   font-size: 0.62rem;
@@ -4941,4 +4984,698 @@ input:focus, textarea:focus, select:focus {
   color: var(--parchment-dim);
   font-style: italic;
   line-height: 1.5;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FORJA / CRAFTEO / MEJORAS / EQUIPAMIENTO
+   ════════════════════════════════════════════════════════════════ */
+#sheet-section-forge {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.forge-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--seam);
+  padding-bottom: 8px;
+}
+
+.forge-tabs button {
+  background: transparent;
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.forge-tabs button:hover {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+.forge-tabs button.active {
+  background: var(--brass-dim);
+  border-color: var(--brass);
+  color: #1d1a16;
+  font-weight: 700;
+}
+
+.forge-hint {
+  font-size: 0.75rem;
+  color: var(--parchment-dim);
+  font-style: italic;
+  margin: 0 0 8px;
+}
+
+/* ── Vista Jugador / DM (owner-based) ── */
+.view-toggle-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.view-mode-btn {
+  background: transparent;
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.view-mode-btn:hover {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+.view-mode-btn.active {
+  background: var(--brass-dim);
+  border-color: var(--brass);
+  color: #1d1a16;
+  font-weight: 700;
+}
+
+/* ── Badges de rareza ── */
+.rarity-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 1px 8px;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ── 1. Equipables por zona ── */
+.forge-slot-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.forge-slot-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--brass);
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.forge-slot-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+}
+
+.forge-equip-card {
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.forge-equip-card.equipped {
+  border-color: var(--brass);
+  background: rgba(176, 144, 86, 0.08);
+}
+
+.forge-equip-card.magical {
+  border-color: rgba(126, 184, 232, 0.5);
+}
+
+.forge-equip-name {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--parchment);
+}
+
+.magical-badge-inline {
+  margin-left: 4px;
+}
+
+.forge-equip-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+}
+
+.forge-equip-desc {
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.forge-equip-effect {
+  font-size: 0.72rem;
+  color: #8ebd63;
+}
+
+.forge-equip-req {
+  font-size: 0.7rem;
+  color: #c08af0;
+}
+
+.forge-btn {
+  border: 1px solid var(--seam);
+  background: transparent;
+  color: var(--parchment);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: auto;
+}
+
+.forge-btn:hover:not(:disabled) {
+  border-color: var(--brass);
+  color: var(--brass);
+}
+
+.forge-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.forge-btn.equip:hover:not(:disabled) {
+  background: rgba(176, 144, 86, 0.15);
+}
+
+.forge-btn.gather {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+}
+
+.forge-btn.craft {
+  width: 100%;
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.forge-btn.upgrade {
+  width: 100%;
+  margin-top: 6px;
+}
+
+/* ── 2. Recetas de crafteo ── */
+.forge-recipes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.forge-recipe-card {
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.forge-recipe-card.completed {
+  opacity: 0.6;
+}
+
+.forge-recipe-card.ready {
+  border-color: #8ebd63;
+}
+
+.forge-recipe-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.forge-recipe-name {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--parchment);
+}
+
+.forge-done-badge {
+  font-size: 0.68rem;
+  color: #8ebd63;
+  font-weight: 700;
+}
+
+.forge-recipe-desc {
+  font-size: 0.74rem;
+  color: var(--parchment-dim);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.forge-recipe-materials {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.forge-mats-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--brass-dim);
+}
+
+.forge-mat-row {
+  display: grid;
+  grid-template-columns: 20px 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+}
+
+.forge-mat-row.complete {
+  color: #8ebd63;
+}
+
+.forge-mat-name {
+  color: var(--parchment);
+}
+
+.forge-mat-count {
+  color: var(--parchment-dim);
+  font-family: monospace;
+}
+
+.forge-recipe-req {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+}
+
+.forge-recipe-req .ok {
+  color: #8ebd63;
+}
+
+.forge-recipe-req .missing {
+  color: #c05a5a;
+}
+
+.forge-recipe-result {
+  font-size: 0.74rem;
+  color: var(--brass);
+  border-top: 1px dashed var(--seam);
+  padding-top: 6px;
+}
+
+/* ── 3. Mejoras y encantamientos ── */
+.forge-upgrade-target {
+  margin-bottom: 10px;
+}
+
+.forge-weapon-select {
+  width: 100%;
+  background: var(--paper);
+  color: var(--parchment);
+  border: 1px solid var(--seam);
+  border-radius: 6px;
+  padding: 6px;
+  font-family: inherit;
+  font-size: 0.78rem;
+}
+
+.forge-mod-counter {
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  margin-top: 4px;
+}
+
+.forge-mods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.forge-mod-card {
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.forge-mod-name {
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: var(--parchment);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.forge-mod-desc {
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.forge-mod-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--parchment-dim);
+}
+
+.forge-mod-dc {
+  color: var(--brass);
+  font-weight: 700;
+}
+
+.forge-armor-box {
+  margin-top: 4px;
+}
+
+.forge-armor-current {
+  font-size: 0.78rem;
+  color: var(--parchment);
+  margin-bottom: 8px;
+}
+
+/* ── 4. Items de búsqueda ── */
+.forge-quest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.forge-quest-card {
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.forge-quest-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.forge-quest-name {
+  font-weight: 700;
+  font-size: 0.84rem;
+  color: var(--parchment);
+}
+
+.forge-quest-desc {
+  font-size: 0.74rem;
+  color: var(--parchment-dim);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.forge-quest-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.forge-quest-parts-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--brass-dim);
+}
+
+.forge-quest-parts ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+}
+
+.forge-quest-req {
+  font-size: 0.72rem;
+  color: #c08af0;
+}
+
+.forge-quest-reward {
+  font-size: 0.74rem;
+  color: var(--brass);
+  border-top: 1px dashed var(--seam);
+  padding-top: 6px;
+}
+
+/* ── Materiales de referencia ── */
+.forge-materials-ref {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.forge-material-chip {
+  font-size: 0.68rem;
+  border: 1px solid var(--seam);
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--parchment-dim);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.forge-material-chip.común { color: var(--parchment-dim); }
+.forge-material-chip.raro { color: #7eb8e8; border-color: #7eb8e8; }
+.forge-material-chip.legendario { color: #ffd700; border-color: #ffd700; }
+.forge-material-chip.artefacto { color: #ff8c5a; border-color: #ff8c5a; }
+
+/* ── Estilos de Secciones e Insumos de Inventario ── */
+.inventory-section-note {
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.inv-category-select {
+  background: var(--leather);
+  border: 1px solid var(--seam);
+  color: var(--brass);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  padding: 4px 6px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+.inv-category-select:focus {
+  border-color: var(--brass);
+}
+
+/* ── Combat Stats Row (Iniciativa, Velocidad, Percepción Pasiva) ── */
+.combat-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+
+.combat-stat-box {
+  background: linear-gradient(135deg, var(--leather-2), var(--leather));
+  border: 1px solid var(--seam);
+  border-radius: 6px;
+  padding: 8px 6px 6px;
+  text-align: center;
+  position: relative;
+  transition: border-color 0.15s;
+}
+
+.combat-stat-box:hover {
+  border-color: var(--brass-dim);
+}
+
+.combat-stat-box.warn {
+  border-color: #c9a227;
+  background: linear-gradient(135deg, rgba(201,162,39,0.12), var(--leather));
+}
+
+.combat-stat-box.danger {
+  border-color: #c0392b;
+  background: linear-gradient(135deg, rgba(192,57,43,0.15), var(--leather));
+}
+
+.combat-stat-value {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--brass);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.combat-stat-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--parchment-dim);
+}
+
+.combat-stat-note {
+  font-size: 0.58rem;
+  color: var(--brass-dim);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+/* ── Botones de Descanso ── */
+.rest-buttons-row {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 6px;
+}
+
+.rest-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid;
+  transition: all 0.18s ease;
+  letter-spacing: 0.3px;
+}
+
+.rest-btn-sub {
+  font-size: 0.6rem;
+  font-weight: normal;
+  opacity: 0.75;
+  letter-spacing: 0;
+}
+
+.rest-btn.short-rest {
+  background: linear-gradient(135deg, rgba(201,162,39,0.1), rgba(201,162,39,0.05));
+  border-color: var(--brass-dim);
+  color: var(--brass);
+}
+
+.rest-btn.short-rest:hover {
+  background: linear-gradient(135deg, rgba(201,162,39,0.22), rgba(201,162,39,0.1));
+  border-color: var(--brass);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(201,162,39,0.2);
+}
+
+.rest-btn.long-rest {
+  background: linear-gradient(135deg, rgba(100,120,200,0.12), rgba(80,100,180,0.05));
+  border-color: rgba(120,140,220,0.4);
+  color: #a0b4ff;
+}
+
+.rest-btn.long-rest:hover {
+  background: linear-gradient(135deg, rgba(100,120,200,0.24), rgba(80,100,180,0.12));
+  border-color: rgba(140,160,240,0.7);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(100,120,200,0.25);
+}
+
+/* ── Grilla Visual de Espacios de Conjuro ── */
+.spell-slots-visual-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 0;
+}
+
+.spell-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.slot-level-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--brass-dim);
+  text-transform: uppercase;
+  width: 28px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.slot-pips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.slot-pip {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.slot-pip.available {
+  background: radial-gradient(circle at 35% 35%, #b89aff, #7c5cbf);
+  border-color: #9d7fd4;
+  box-shadow: 0 0 6px rgba(158,120,255,0.5);
+}
+
+.slot-pip.available:hover {
+  background: radial-gradient(circle at 35% 35%, #c9b3ff, #8f6fd8);
+  box-shadow: 0 0 10px rgba(158,120,255,0.8);
+  transform: scale(1.15);
+}
+
+.slot-pip.used {
+  background: var(--leather-2);
+  border-color: var(--seam);
+  opacity: 0.5;
+}
+
+.slot-pip.used:hover {
+  border-color: var(--brass-dim);
+  opacity: 0.8;
+  transform: scale(1.1);
+}
+
+.slot-count-text {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--parchment-dim);
+  min-width: 28px;
+  text-align: left;
 }

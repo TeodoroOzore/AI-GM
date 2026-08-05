@@ -252,7 +252,8 @@ raceExtraLanguage: '',
     notes: '',
     equippedArmor: '',
     equippedShield: false,
-    selectedTools: [],
-    warlockInvocations: []
+selectedTools: [],
+    warlockInvocations: [],
+    craftingProgress: {}
   };
 }

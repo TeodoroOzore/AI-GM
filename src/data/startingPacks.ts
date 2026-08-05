@@ -2,19 +2,29 @@
 
 import { StartingPackDef, EquipmentSlot } from '../types/core';
 
+// Zonas canónicas del cuerpo: cada zona admite UN solo objeto equipado.
+// Los contenedores (morral, bandolera) y accesorios (broche) NO son zonas
+// equipables — van en el inventario/accesorios.
 export const EQUIPMENT_SLOTS: EquipmentSlot[] = [
   'Cabeza',
-  'Torso',
-  'Manos',
-  'Pies',
+  'Cuerpo',
+  'Espalda',
+  'Brazos',
+  'Piernas',
   'Cuello',
   'Anillo',
   'Cintura',
-  'Espalda',
   'Mano Principal',
-  'Mano Secundaria',
-  'Accesorio'
+  'Mano Secundaria'
 ];
+
+// Zonas extendidas para items equipables de todas las zonas del cuerpo
+export const EXTENDED_EQUIPMENT_SLOTS: string[] = [
+  'Cabeza', 'Cuerpo', 'Espalda', 'Brazos', 'Piernas',
+  'Cuello', 'Anillo', 'Cintura',
+  'Mano Principal', 'Mano Secundaria'
+];
+
 
 export const STARTING_PACKS: StartingPackDef[] = [
   {

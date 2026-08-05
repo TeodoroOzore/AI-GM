@@ -26,9 +26,21 @@ export type {
   WeaponCategory,
   WeaponRange,
   WeaponProperty,
-  WeaponCatalogEntry,
+WeaponCatalogEntry,
   ArmorType,
   ArmorCatalogEntry,
+  ItemRarity,
+  EquipmentCatalogEntry,
+  MaterialCategory,
+  MaterialDef,
+  MaterialNeed,
+  CraftingRecipe,
+  ModificationType,
+  WeaponModification,
+  ArmorModification,
+  QuestItemDef,
+  CraftingProgressEntry,
+  CraftingProgress,
   ToolCategory,
   ToolCatalogEntry,
   SpellSchool,
@@ -49,10 +61,13 @@ export type {
   JournalEntry,
   PendingRoll,
   CampaignState,
-  FightingStyleDef,
+FightingStyleDef,
   BaseClassFeature,
   BaseClassDetail,
 } from './types/core';
+
+// Core functions & constants
+export { BODY_ZONE_ALIASES, NON_EQUIPPABLE_SLOTS, getBodyZone } from './types/core';
 
 // Character-specific types
 export type {
@@ -86,6 +101,12 @@ export { BACKGROUND_EXTRAS, BACKGROUND_OPTIONS } from './data/backgrounds';
 export { getCharacterProficiencies } from './data/proficiencies';
 export { WEAPONS_CATALOG } from './data/weapons';
 export { ARMOR_CATALOG } from './data/armor';
+export { EQUIPMENT_CATALOG } from './data/equipment';
+export { MATERIALS_CATALOG } from './data/materials';
+export { CRAFTING_RECIPES } from './data/craftingRecipes';
+export { WEAPON_MODS, ARMOR_MODS } from './data/itemMods';
+export { QUEST_ITEMS } from './data/questItems';
+export { EXTENDED_EQUIPMENT_SLOTS } from './data/startingPacks';
 export { TOOLS_CATALOG } from './data/tools';
 export { CANTRIPS_CATALOG, SPELLS_LV1_CATALOG, SPELLS_LV1, SPELLS_LV2, SPELLS_LV3, SPELLS_LV4, SPELLS_LV5, SPELLS_LV6, SPELLS_LV7, SPELLS_LV8, SPELLS_LV9, ALL_SPELLS } from './data/spells';
 export { DND_CONDITIONS } from './data/conditions';
@@ -111,3 +132,24 @@ export type { BestiaryFilter } from './data/bestiary';
 export { secureRandInt, rollD20, rollFormula } from './utils/dice';
 export { blankCharacter, resolveToolCategory, getToolCategoryLimits, getRacialSpells, getRacialResistances } from './utils/character';
 export { getSpellcastingLimits } from './utils/spellcasting';
+// Crafting & Forge utilities
+export {
+  materialName,
+  getMaxMods,
+  getCraftingProgress,
+  gatherMaterial,
+  hasAllMaterialsForRecipe,
+  hasRequiredTool,
+  isCraftSuccess,
+  applyCraftRecipe,
+  improveWeapon,
+  improveArmor,
+  stepUpDice,
+  countWeaponMods,
+  getProgressForTarget,
+  isTargetCompleted,
+  getRecipeMaterialStatus,
+  getKnownItemNames,
+  addKnownItems,
+  isItemKnown,
+} from './utils/crafting';

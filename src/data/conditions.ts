@@ -20,4 +20,7 @@ export const DND_CONDITIONS: ConditionDef[] = [
   { name: 'Agotamiento 1', emoji: '🍖', description: 'Desventaja en pruebas de habilidad.' },
   { name: 'Agotamiento 2', emoji: '🍖🍖', description: 'Velocidad reducida a la mitad.' },
   { name: 'Agotamiento 3', emoji: '🍖🍖🍖', description: 'Desventaja en tiradas de ataque y salvaciones.' },
+  { name: 'Agotamiento 4', emoji: '💀', description: 'Máximo de Puntos de Golpe reducido a la mitad.' },
+  { name: 'Agotamiento 5', emoji: '💀💀', description: 'Velocidad reducida a 0.' },
+  { name: 'Agotamiento 6', emoji: '☠️', description: '⚠️ MUERTE. El personaje muere al alcanzar el nivel 6 de agotamiento.' },
 ];

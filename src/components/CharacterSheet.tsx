@@ -40,6 +40,7 @@ getWarlockInvocationsLimit,
 } from '../types';
 import { SUBCLASS_CATALOG } from '../data/subclasses';
 import { BASE_CLASSES_CATALOG, FIGHTING_STYLES } from '../data/baseClasses';
+import { EquipmentForgePanel } from './EquipmentForgePanel';
 
 type CharacterSheetProps = {
   character: CharacterType;
@@ -52,7 +53,7 @@ type CharacterSheetProps = {
   focusSection?: string;
 };
 
-type TabKey = 'stats' | 'status' | 'inventory' | 'dynamic' | 'proficiencies' | 'class' | 'gear' | 'feats' | 'companions' | 'familiars';
+type TabKey = 'stats' | 'gear' | 'class' | 'dynamic' | 'familiars' | 'companions';
 
 export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   character: c,
@@ -131,24 +132,84 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
     update({ classResourceUsed: { ...c.classResourceUsed, [key]: next } });
   };
 
+  // ─── Descanso Corto ───────────────────────────────────────────────
+  // Restaura recursos de descanso corto: Furias (Bárbaro ya las tiene),
+  // Ki (Monje), Segundo Aliento / Acción Adicional (Guerrero), Espacios
+  // de Pacto (Brujo), y lanza dados de golpe para recuperar PG.
+  const handleShortRest = () => {
+    const hitDie = cdef.hitDie;
+    const diceToRoll = Math.max(1, Math.floor(c.hitDiceRemaining / 2) || 1);
+    const hpGained = Array.from({ length: diceToRoll }, () => Math.ceil(Math.random() * hitDie) + abilityMod(c.abilities.con)).reduce((a, b) => a + b, 0);
+    const newHp = Math.min(c.hpMax, c.hpCur + Math.max(0, hpGained));
+    const newHitDice = Math.max(0, c.hitDiceRemaining - diceToRoll);
+    // Short rest resources: Warlock pact slots, some class resources
+    const newSlotsUsed = { ...c.spellSlotsUsed };
+    if (c.className === 'Brujo') newSlotsUsed['pact'] = 0;
+    const newResourceUsed = { ...c.classResourceUsed };
+    // Guerrero: Segundo Aliento, Acción Adicional
+    if (c.className === 'Guerrero') { delete newResourceUsed['secondwind']; }
+    // Monje: Puntos de Ki
+    if (c.className === 'Monje') { delete newResourceUsed['ki']; }
+    update({
+      hpCur: newHp,
+      hitDiceRemaining: newHitDice,
+      spellSlotsUsed: newSlotsUsed,
+      classResourceUsed: newResourceUsed,
+    });
+    alert(`⏰ Descanso Corto completado.\n🎲 Lanzaste ${diceToRoll}d${hitDie}: +${Math.max(0, hpGained)} PG recuperados (${c.hpCur} → ${newHp} PG).\n🎲 Dados de golpe restantes: ${newHitDice}.`);
+  };
+
+  // ─── Descanso Largo ───────────────────────────────────────────────
+  // Restaura PG completos, slots de conjuro, dados de golpe (mitad),
+  // todos los recursos de clase y reinicia salvaciones de muerte.
+  const handleLongRest = () => {
+    const maxHitDiceRestore = Math.max(1, Math.floor((cdef.hitDie === 0 ? 8 : 1) + c.level / 2));
+    const newHitDice = Math.min(c.level, c.hitDiceRemaining + maxHitDiceRestore);
+    update({
+      hpCur: c.hpMax,
+      hitDiceRemaining: newHitDice,
+      spellSlotsUsed: {},
+      classResourceUsed: {},
+      deathSaves: { success: 0, fail: 0 },
+      tempHp: 0,
+    });
+    alert(`🌙 Descanso Largo completado.\n❤️ PG restaurados al máximo (${c.hpMax}).\n✨ Todos los espacios de conjuro y recursos de clase restaurados.\n🎲 Dados de golpe recuperados: ${newHitDice}/${c.level}.`);
+  };
+
+  // ─── Estadísticas de Combate derivadas ──────────────────────────
+  const dexMod = abilityMod(c.abilities.dex);
+  const hasAlertFeat = c.feats.includes('Alerta');
+  const hasMobileFeat = c.feats.includes('Móvil');
+  const initiative = dexMod + (hasAlertFeat ? 5 : 0);
+  const baseSpeed = RACES[c.race]?.speed ?? 9;
+  const conditionList = (c.conditions || '').split(',').map(s => s.trim()).filter(Boolean);
+  const hasExhaustion2 = conditionList.includes('Agotamiento 2');
+  const hasExhaustion5 = conditionList.includes('Agotamiento 5');
+  const speedMultiplier = hasExhaustion5 ? 0 : hasExhaustion2 ? 0.5 : 1;
+  const speed = hasExhaustion5 ? 0 : Math.floor(baseSpeed * speedMultiplier) + (hasMobileFeat ? 3 : 0);
+  const isPercepProf = c.proficientSkills.includes('Percepción');
+  const passivePerception = 10 + abilityMod(c.abilities.wis) + (isPercepProf ? profBonus(c.level) : 0);
+
   const tabs: { key: TabKey; label: string }[] = [
-    { key: 'stats', label: 'Estadísticas y Comp.' },
-    { key: 'status', label: 'Estado' },
-    { key: 'inventory', label: 'Inventario' },
-    { key: 'dynamic', label: cdef.tabName },
+    { key: 'stats', label: 'Estado y Stats' },
+    { key: 'gear', label: 'Equipo e Inventario' },
     { key: 'class', label: 'Clase' },
-    { key: 'gear', label: 'Equipo' },
-    { key: 'feats', label: 'Dotes' },
-    { key: 'companions', label: 'Compañeros' },
-    { key: 'familiars', label: 'Familiares' }
+    { key: 'dynamic', label: cdef.tabName },
+    { key: 'familiars', label: 'Familiares' },
+    { key: 'companions', label: 'Compañeros' }
   ];
 
   useEffect(() => {
     if (!focusSection) return;
     setActiveTab((prev) => {
-      const mapped = focusSection === 'stats' || focusSection === 'status' || focusSection === 'inventory' || focusSection === 'dynamic' || focusSection === 'gear'
-        ? focusSection as TabKey
-        : prev;
+      let mapped: TabKey = prev;
+      if (['stats', 'status', 'proficiencies', 'feats'].includes(focusSection)) {
+        mapped = 'stats';
+      } else if (['gear', 'inventory'].includes(focusSection)) {
+        mapped = 'gear';
+      } else if (['class', 'dynamic', 'familiars', 'companions'].includes(focusSection)) {
+        mapped = focusSection as TabKey;
+      }
       return mapped;
     });
     setSheetFocus(focusSection);
@@ -201,9 +262,10 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
         <div className="who-vitals">
           <span>PG <b>{`${c.hpCur}/${c.hpMax}`}</b></span>
           <span>CA <b>{c.ac}</b></span>
-          <span>Comp. <b>{fmtSigned(profBonus(c.level))}</b></span>
-          <span>Insp. <b>{c.inspiration ? 'sí' : 'no'}</b></span>
+          <span>Bono de Competencia <b>{fmtSigned(profBonus(c.level))}</b></span>
+          <span>Inspiración <b>{c.inspiration ? 'Sí' : 'No'}</b></span>
         </div>
+
       </div>
 
       <div className="tabbar">
@@ -222,391 +284,408 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
         <fieldset className="sheet-fieldset">
           {activeTab === 'stats' && (
             <div id="sheet-section-stats">
-              <div className="block-label">Atributos Principales</div>
+              {/* ── VITALIDAD Y ESTADO ACTUAL ── */}
+              <div id="sheet-section-status">
+                <div className="block-label">Vitalidad y Estado Actual</div>
+                <div className="row">
+                  <div className="field">
+                    <label>PG actuales</label>
+                    <div className="value-pill">{c.hpCur}/{c.hpMax}</div>
+                  </div>
+                  <div className="field">
+                    <label>PG máximos</label>
+                    <div className="value-pill">{c.hpMax}</div>
+                  </div>
+                  <div className="field">
+                    <label>PG temporales</label>
+                    <div className="value-pill">{c.tempHp}</div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="field">
+                    <label>Clase de Armadura</label>
+                    <div className="value-pill">{c.ac}</div>
+                  </div>
+                  <div className="field">
+                    <label>Dados de golpe restantes</label>
+                    <div className="value-pill">{c.hitDiceRemaining}/{c.level}</div>
+                  </div>
+                </div>
+
+                {/* ── ESTADÍSTICAS DE COMBATE ── */}
+                <div className="combat-stats-row">
+                  <div className="combat-stat-box" title="Modificador DES + bonus de dotes (Alerta +5)">
+                    <div className="combat-stat-value">{fmtSigned(initiative)}</div>
+                    <div className="combat-stat-label">⚡ Iniciativa</div>
+                    {hasAlertFeat && <div className="combat-stat-note">+5 Alerta</div>}
+                  </div>
+                  <div className={`combat-stat-box ${hasExhaustion5 ? 'danger' : hasExhaustion2 ? 'warn' : ''}`} title="Velocidad de movimiento base de tu raza">
+                    <div className="combat-stat-value">{hasExhaustion5 ? '0' : `${speed}m`}</div>
+                    <div className="combat-stat-label">🏃 Velocidad</div>
+                    {hasExhaustion2 && !hasExhaustion5 && <div className="combat-stat-note">½ Agot.</div>}
+                    {hasMobileFeat && !hasExhaustion5 && <div className="combat-stat-note">+3m Móvil</div>}
+                  </div>
+                  <div className="combat-stat-box" title="Percepción pasiva = 10 + mod.SAB + (comp. si competente en Percepción)">
+                    <div className="combat-stat-value">{passivePerception}</div>
+                    <div className="combat-stat-label">👁️ Perc. Pasiva</div>
+                    {isPercepProf && <div className="combat-stat-note">con comp.</div>}
+                  </div>
+                  <div className="combat-stat-box" title="Bono de competencia por nivel">
+                    <div className="combat-stat-value">{fmtSigned(profBonus(c.level))}</div>
+                    <div className="combat-stat-label">📜 Bono Comp.</div>
+                  </div>
+                </div>
+
+                {/* Armor info */}
+                {equippedArmorEntry && (
+                  <div className="armor-info-box">
+                    <span className="armor-info-name">🛡️ {equippedArmorEntry.name}</span>
+                    <span className={`armor-type-badge ${equippedArmorEntry.type}`}>{equippedArmorEntry.type}</span>
+                    {equippedArmorEntry.stealthDisadvantage && <span className="armor-warn">⚠️ Sigilo</span>}
+                    {c.equippedShield && <span className="armor-info-shield">+ Escudo</span>}
+                  </div>
+                )}
+
+                <div className="block-label" style={{ marginTop: '6px' }}>Salvaciones de muerte</div>
+                <div className="row">
+                  <div className="field">
+                    <label>Éxitos (0-3)</label>
+                    <div className="value-pill">{c.deathSaves.success}</div>
+                  </div>
+                  <div className="field">
+                    <label>Fallos (0-3)</label>
+                    <div className="value-pill">{c.deathSaves.fail}</div>
+                  </div>
+                </div>
+
+                <div className="checks-row">
+                  <label>
+                    <input type="checkbox" checked={c.inspiration} onChange={e => update({ inspiration: e.target.checked })} />
+                    Inspiración
+                  </label>
+                </div>
+
+                {/* ── BOTONES DE DESCANSO ── */}
+                <div className="rest-buttons-row">
+                  <button className="rest-btn short-rest" onClick={handleShortRest} title="Descanso Corto: lanza dados de golpe para recuperar PG. Restaura recursos de descanso corto (Slots de Pacto, Ki, Segundo Aliento).">
+                    ⏱️ Descanso Corto
+                    <span className="rest-btn-sub">Recupera PG · Ki · Pacto</span>
+                  </button>
+                  <button className="rest-btn long-rest" onClick={handleLongRest} title="Descanso Largo: restaura todos los PG, slots de conjuro, recursos de clase y reinicia salvaciones de muerte.">
+                    🌙 Descanso Largo
+                    <span className="rest-btn-sub">Restaura todo · PG · Slots</span>
+                  </button>
+                </div>
+
+                <div className="status-actions-row">
+                  <button className="add-row-btn" onClick={handleConditionAdvance}>⏭️ Avanzar turno / limpiar duraciones</button>
+                  <span className="status-hint">Las condiciones se activan desde la narrativa y se desactivan automáticamente cuando su duración termina.</span>
+                </div>
+
+                <div className="block-label" style={{ marginTop: '10px' }}>⚡ Condiciones Activas (D&D 5e)</div>
+                <div className="conditions-grid">
+                  {DND_CONDITIONS.map(cond => {
+                    const isActive = activeConditions.includes(cond.name);
+                    const turnsLeft = c.conditionDurations?.[cond.name] ?? 0;
+                    return (
+                      <button
+                        key={cond.name}
+                        type="button"
+                        className={`condition-chip-btn ${isActive ? 'active' : ''}`}
+                        title={`${cond.name}: ${cond.description}`}
+                        onClick={() => handleConditionToggle(cond.name)}
+                      >
+                        <span>{cond.emoji}</span>
+                        <span>{cond.name}</span>
+                        {isActive && turnsLeft > 0 && <span className="condition-duration">{turnsLeft}t</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── ATRIBUTOS PRINCIPALES ── */}
+              <div className="block-label" style={{ marginTop: '14px' }}>Atributos Principales</div>
               <div className="grid3">
                 {ABILITIES.map(a => (
-                <div key={a.key} className="ability-box">
-                  <div className="name">{a.label}</div>
-                  <div className="mod">{fmtSigned(abilityMod(c.abilities[a.key]))}</div>
-                  <div className="score">{c.abilities[a.key]}</div>
-                  <button className="roll-btn" onClick={() => onRollSave(a.key as AbilityKey)} title={`Salvación de ${a.label}`}>🛡️</button>
-                </div>
-              ))}
-            </div>
+                  <div key={a.key} className="ability-box">
+                    <div className="name">{a.label}</div>
+                    <div className="mod">{fmtSigned(abilityMod(c.abilities[a.key]))}</div>
+                    <div className="score">{c.abilities[a.key]}</div>
+                    <button className="roll-btn" onClick={() => onRollSave(a.key as AbilityKey)} title={`Salvación de ${a.label}`}>🛡️</button>
+                  </div>
+                ))}
+              </div>
 
-            <div className="block-label" style={{ marginTop: '10px' }}>Habilidades de Personaje</div>
-            <div className="skills-grid-2col">
-              {SKILLS.map(s => {
-                const isProf = c.proficientSkills.includes(s.name);
-                const mod = abilityMod(c.abilities[s.ab]) + (isProf ? profBonus(c.level) : 0);
-                const abLabel = ABILITIES.find(a => a.key === s.ab)?.label || s.ab.toUpperCase();
+              {/* ── HABILIDADES DE PERSONAJE ── */}
+              <div className="block-label" style={{ marginTop: '10px' }}>Habilidades de Personaje</div>
+              <div className="skills-grid-2col">
+                {SKILLS.map(s => {
+                  const isProf = c.proficientSkills.includes(s.name);
+                  const mod = abilityMod(c.abilities[s.ab]) + (isProf ? profBonus(c.level) : 0);
+                  const abLabel = ABILITIES.find(a => a.key === s.ab)?.label || s.ab.toUpperCase();
+                  return (
+                    <div key={s.name} className={`skill-row-card ${isProf ? 'proficient' : ''}`}>
+                      <span className="abbr" title={ABILITIES.find(a => a.key === s.ab)?.full}>{abLabel}</span>
+                      <span className="skill-title">{s.name}</span>
+                      <span className="mod">{fmtSigned(mod)}</span>
+                      <span className="prof-check">{isProf ? '✓' : '·'}</span>
+                      <button className="roll-btn" onClick={() => onQuickSkillRoll(s.name, s.ab)}>🎲</button>
+                    </div>
+                  );
+                })}
+              </div>
+              <button className="add-row-btn" onClick={handleAddProficientSkill} style={{ marginTop: '8px' }}>
+                + añadir competencia de habilidad
+              </button>
+
+              {/* ── COMPETENCIAS: derived from class + race + background ── */}
+              {(() => {
+                const profs = getCharacterProficiencies(c.className, c.race, c.background, c.selectedTools);
                 return (
-                  <div key={s.name} className={`skill-row-card ${isProf ? 'proficient' : ''}`}>
-                    <span className="abbr" title={ABILITIES.find(a => a.key === s.ab)?.full}>{abLabel}</span>
-                    <span className="skill-title">{s.name}</span>
-                    <span className="mod">{fmtSigned(mod)}</span>
-                    <span className="prof-check">{isProf ? '✓' : '·'}</span>
-                    <button className="roll-btn" onClick={() => onQuickSkillRoll(s.name, s.ab)}>🎲</button>
-                  </div>
-                );
-              })}
-            </div>
-            <button className="add-row-btn" onClick={handleAddProficientSkill} style={{ marginTop: '8px' }}>
-              + añadir competencia de habilidad
-            </button>
-
-            {/* ── COMPETENCIAS: derived from class + race + background, read-only ── */}
-            {(() => {
-              const profs = getCharacterProficiencies(c.className, c.race, c.background, c.selectedTools);
-              return (
-                <>
-                  <div className="block-label" style={{ marginTop: '12px' }}>Salvaciones de Clase</div>
-                  <div className="prof-chips-row">
-                    {cdef.saves.map(s => (
-                      <span key={s} className="prof-chip save-chip">
-                        {s.toUpperCase()} {fmtSigned(abilityMod(c.abilities[s]) + profBonus(c.level))}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="block-label" style={{ marginTop: '10px' }}>Competencias de Armaduras</div>
-                  <div className="prof-chips-row">
-                    {['Ligera', 'Media', 'Pesada', 'Escudos'].map(o => {
-                      const has = profs.armor.includes(o as any);
-                      return (
-                        <span key={o} className={`prof-chip armor-chip ${has ? 'active' : 'inactive'}`}>
-                          {has ? '✓' : '✗'} {o}
+                  <>
+                    <div className="block-label" style={{ marginTop: '12px' }}>Salvaciones de Clase</div>
+                    <div className="prof-chips-row">
+                      {cdef.saves.map(s => (
+                        <span key={s} className="prof-chip save-chip">
+                          {s.toUpperCase()} {fmtSigned(abilityMod(c.abilities[s]) + profBonus(c.level))}
                         </span>
-                      );
-                    })}
-                  </div>
-
-                  <div className="block-label" style={{ marginTop: '10px' }}>Competencias de Armas</div>
-                  <div className="prof-chips-row">
-                    {['Simples', 'Marciales', 'Arrojadizas'].map(o => {
-                      const has = profs.weapons.includes(o as any);
-                      return (
-                        <span key={o} className={`prof-chip weapon-chip ${has ? 'active' : 'inactive'}`}>
-                          {has ? '✓' : '✗'} {o}
-                        </span>
-                      );
-                    })}
-                  </div>
-
-                  <div className="block-label" style={{ marginTop: '10px' }}>Herramientas</div>
-                  <div className="prof-chips-row">
-                    {profs.tools.length > 0
-                      ? profs.tools.map(t => (
-                          <span key={t} className="prof-chip tool-chip active">{t}</span>
-                        ))
-                      : <span className="prof-none">Ninguna</span>
-                    }
-                  </div>
-
-                  <div className="block-label" style={{ marginTop: '10px' }}>Idiomas</div>
-                  <div className="prof-chips-row">
-                    {Array.from(new Set([...(c.languages ? c.languages.split(',').map(l => l.trim()) : []), ...(c.raceExtraLanguage ? [c.raceExtraLanguage] : []), ...profs.languages]))
-                      .filter(Boolean)
-                      .filter(l => !/\(a elección\)/i.test(l) && !/idioma[s]? adicional(es)?/i.test(l))
-                      .map(l => (
-                        <span key={l} className="prof-chip lang-chip">{l}</span>
                       ))}
-                  </div>
+                    </div>
 
-                  {/* ── RASGOS RACIALES ── */}
-                  {(() => {
-                    const rdef: RaceDef | undefined = RACES[c.race];
-                    if (!rdef || !rdef.traits || rdef.traits.length === 0) return null;
-                    return (
-                      <>
-                        <div className="block-label" style={{ marginTop: '10px' }}>🧬 Rasgos Raciales: {c.race}</div>
-                        <div className="race-traits-list-compact">
-                          {rdef.traits.map((trait: RaceTrait, idx: number) => {
-                            // Determine if trait is level-locked (e.g. Dwarf at level 4+)
-                            let isUnlocked = true;
-                            let unlockNote = '';
-                            if (trait.name === 'Dureza Enana' && c.level >= 4) {
-                              isUnlocked = true;
-                              unlockNote = `✓ Activo (Nv ${c.level}) — +${c.level} PG máximos`;
-                            } else if (trait.name === 'Dureza Enana' && c.level < 4) {
-                              isUnlocked = false;
-                              unlockNote = `🔒 Se desbloquea en Nivel 4: +Nivel PG máximos`;
-                            }
-                            return (
-                              <div key={idx} className={`race-trait-card-compact ${isUnlocked ? 'unlocked' : 'locked'}`}>
-                                <div className="trait-compact-name">{trait.name}</div>
-                                <p className="trait-compact-desc">{trait.description}</p>
-                                {unlockNote && <div className="trait-compact-status">{unlockNote}</div>}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </>
-                    );
-                  })()}
+                    <div className="block-label" style={{ marginTop: '10px' }}>Competencias de Armaduras</div>
+                    <div className="prof-chips-row">
+                      {['Ligera', 'Media', 'Pesada', 'Escudos'].map(o => {
+                        const has = profs.armor.includes(o as any);
+                        return (
+                          <span key={o} className={`prof-chip armor-chip ${has ? 'active' : 'inactive'}`}>
+                            {has ? '✓' : '✗'} {o}
+                          </span>
+                        );
+                      })}
+                    </div>
 
-                  {/* ── RESISTENCIAS Y VENTAJAS RACIALES ── */}
-                  {(() => {
-                    const resistances = getRacialResistances(c.race, c.raceAncestry || '');
-                    const rdef: RaceDef | undefined = RACES[c.race];
-                    const defenseTraits = rdef?.traits?.filter(t => t.type === 'defense' || t.type === 'feature') || [];
-                    if (resistances.length === 0 && defenseTraits.length === 0) return null;
-                    return (
-                      <>
-                        <div className="block-label" style={{ marginTop: '10px' }}>🛡️ Resistencias y Ventajas Raciales</div>
-                        {resistances.length > 0 && (
-                          <div className="prof-chips-row">
-                            {resistances.map(res => (
-                              <span key={res} className="prof-chip resist-chip">✓ Resistencia a {res}</span>
-                            ))}
-                          </div>
-                        )}
-                        {defenseTraits.length > 0 && (
+                    <div className="block-label" style={{ marginTop: '10px' }}>Competencias de Armas</div>
+                    <div className="prof-chips-row">
+                      {['Simples', 'Marciales', 'Arrojadizas'].map(o => {
+                        const has = profs.weapons.includes(o as any);
+                        return (
+                          <span key={o} className={`prof-chip weapon-chip ${has ? 'active' : 'inactive'}`}>
+                            {has ? '✓' : '✗'} {o}
+                          </span>
+                        );
+                      })}
+                    </div>
+
+                    <div className="block-label" style={{ marginTop: '10px' }}>Herramientas</div>
+                    <div className="prof-chips-row">
+                      {profs.tools.length > 0
+                        ? profs.tools.map(t => (
+                            <span key={t} className="prof-chip tool-chip active">{t}</span>
+                          ))
+                        : <span className="prof-none">Ninguna</span>
+                      }
+                    </div>
+
+                    <div className="block-label" style={{ marginTop: '10px' }}>Idiomas</div>
+                    <div className="prof-chips-row">
+                      {Array.from(new Set([...(c.languages ? c.languages.split(',').map(l => l.trim()) : []), ...(c.raceExtraLanguage ? [c.raceExtraLanguage] : []), ...profs.languages]))
+                        .filter(Boolean)
+                        .filter(l => !/\(a elección\)/i.test(l) && !/idioma[s]? adicional(es)?/i.test(l))
+                        .map(l => (
+                          <span key={l} className="prof-chip lang-chip">{l}</span>
+                        ))}
+                    </div>
+
+                    {/* ── RASGOS RACIALES ── */}
+                    {(() => {
+                      const rdef: RaceDef | undefined = RACES[c.race];
+                      if (!rdef || !rdef.traits || rdef.traits.length === 0) return null;
+                      return (
+                        <>
+                          <div className="block-label" style={{ marginTop: '10px' }}>🧬 Rasgos Raciales: {c.race}</div>
                           <div className="race-traits-list-compact">
-                            {defenseTraits.map((trait, idx) => (
-                              <div key={idx} className="race-trait-card-compact unlocked">
-                                <div className="trait-compact-name">✨ {trait.name}</div>
-                                <p className="trait-compact-desc">{trait.description}</p>
-                              </div>
-                            ))}
+                            {rdef.traits.map((trait: RaceTrait, idx: number) => {
+                              let isUnlocked = true;
+                              let unlockNote = '';
+                              if (trait.name === 'Dureza Enana' && c.level >= 4) {
+                                isUnlocked = true;
+                                unlockNote = `✓ Activo (Nv ${c.level}) — +${c.level} PG máximos`;
+                              } else if (trait.name === 'Dureza Enana' && c.level < 4) {
+                                isUnlocked = false;
+                                unlockNote = `🔒 Se desbloquea en Nivel 4: +Nivel PG máximos`;
+                              }
+                              return (
+                                <div key={idx} className={`race-trait-card-compact ${isUnlocked ? 'unlocked' : 'locked'}`}>
+                                  <div className="trait-compact-name">{trait.name}</div>
+                                  <p className="trait-compact-desc">{trait.description}</p>
+                                  {unlockNote && <div className="trait-compact-status">{unlockNote}</div>}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      );
+                    })()}
+
+                    {/* ── RESISTENCIAS Y VENTAJAS RACIALES ── */}
+                    {(() => {
+                      const resistances = getRacialResistances(c.race, c.raceAncestry || '');
+                      const rdef: RaceDef | undefined = RACES[c.race];
+                      const defenseTraits = rdef?.traits?.filter(t => t.type === 'defense' || t.type === 'feature') || [];
+                      if (resistances.length === 0 && defenseTraits.length === 0) return null;
+                      return (
+                        <>
+                          <div className="block-label" style={{ marginTop: '10px' }}>🛡️ Resistencias y Ventajas Raciales</div>
+                          {resistances.length > 0 && (
+                            <div className="prof-chips-row">
+                              {resistances.map(res => (
+                                <span key={res} className="prof-chip resist-chip">✓ Resistencia a {res}</span>
+                              ))}
+                            </div>
+                          )}
+                          {defenseTraits.length > 0 && (
+                            <div className="race-traits-list-compact">
+                              {defenseTraits.map((trait, idx) => (
+                                <div key={idx} className="race-trait-card-compact unlocked">
+                                  <div className="trait-compact-name">✨ {trait.name}</div>
+                                  <p className="trait-compact-desc">{trait.description}</p>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+
+                    <div className="prof-lock-note">
+                      🔒 Las competencias se asignan por clase, raza y trasfondo. Solo pueden expandirse durante la aventura.
+                    </div>
+                  </>
+                );
+              })()}
+
+              {/* ── DOTES, TALENTOS Y PASIVAS ── */}
+              <div id="sheet-section-feats" style={{ marginTop: '16px' }}>
+                <div className="block-label">🎯 Dotes, Talentos y Rasgos Pasivos</div>
+                {(() => {
+                  const maxFeats = getMaxFeatsCount(c.className, c.level, c.race);
+                  const acquiredCount = c.feats.length;
+                  const remaining = Math.max(0, maxFeats - acquiredCount);
+                  const isSpellcaster = cdef.spellcasting !== null || (c.spellsKnown && c.spellsKnown.length > 0) || c.feats.includes('Iniciado en la Magia');
+                  const isMartial = ['Bárbaro', 'Guerrero', 'Paladín', 'Explorador', 'Monje'].includes(c.className) || (c.weaponProf && c.weaponProf.includes('Marciales'));
+
+                  const getNextFeatLevel = (lvl: number, cls: string): number => {
+                    const levels = [4, 8, 12, 16, 19];
+                    if (cls === 'Guerrero') levels.push(6, 14);
+                    if (cls === 'Pícaro') levels.push(10);
+                    levels.sort((a, b) => a - b);
+                    return levels.find(l => l > lvl) || 20;
+                  };
+
+                  return (
+                    <>
+                      <div className="feat-header-card">
+                        <div className="feat-counter-title">🎯 Progreso de Dotes (Nivel {c.level})</div>
+                        <div className="feat-counter-badge">
+                          Dotes adquiridas: <strong>{acquiredCount} / {maxFeats}</strong>
+                        </div>
+                        {remaining > 0 ? (
+                          <div className="feat-unlocked-msg">
+                            ✨ ¡Tienes <strong>{remaining}</strong> dote(s) disponible(s) para elegir! Elige una dote del catálogo para bloquearla en tu personaje.
+                          </div>
+                        ) : (
+                          <div className="feat-locked-msg">
+                            🔒 No tienes dotes disponibles en este momento. Alcanzarás tu siguiente dote al nivel <strong>{getNextFeatLevel(c.level, c.className)}</strong>.
                           </div>
                         )}
-                      </>
-                    );
-                  })()}
+                      </div>
 
-                  <div className="prof-lock-note">
-                    🔒 Las competencias se asignan por clase, raza y trasfondo. Solo pueden expandirse durante la aventura.
-                  </div>
-                </>
-              );
-            })()}
+                      {/* Acquired / Locked Feats */}
+                      {c.feats.length > 0 && (
+                        <>
+                          <div className="block-label" style={{ marginTop: '12px' }}>🔒 Dotes Adquiridas</div>
+                          <div className="acquired-feats-list">
+                            {c.feats.map(fName => {
+                              const fDef = FEAT_CATALOG.find(x => x.name === fName);
+                              return (
+                                <div key={fName} className="acquired-feat-card">
+                                  <div className="acquired-feat-header">
+                                    <span className="acquired-feat-title">✨ {fName}</span>
+                                    <span className="acquired-feat-locked-tag">🔒 Bloqueada en personaje</span>
+                                  </div>
+                                  <p className="acquired-feat-desc">{fDef?.description || 'Dote adquirida.'}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+
+                      {/* Feat Selection Catalog: ONLY displayed when player has a feat choice available (remaining > 0) */}
+                      {remaining > 0 && (
+                        <>
+                          <div className="block-label" style={{ marginTop: '12px' }}>✨ Elige una Nueva Dote para tu Personaje (Dotes Disponibles: {remaining})</div>
+                          <div className="feat-catalog-list">
+                            {FEAT_CATALOG.map(f => {
+                              const isAcquired = c.feats.includes(f.name);
+                              if (isAcquired) return null;
+
+                              let isEligible = true;
+                              let ineligibleReason = '';
+
+                              if (f.spellcasterOnly && !isSpellcaster) {
+                                isEligible = false;
+                                ineligibleReason = 'Requiere capacidad de lanzar conjuros (Brujo, Mago, Clérigo, Bardo, etc.)';
+                              }
+                              if (f.martialOnly && !isMartial) {
+                                isEligible = false;
+                                ineligibleReason = 'Requiere clase marcial o competencia en armas marciales';
+                              }
+
+                              return (
+                                <div key={f.name} className={`feat-catalog-card ${!isEligible ? 'ineligible' : ''}`}>
+                                  <div className="feat-card-header">
+                                    <span className="feat-card-name">{f.name}</span>
+                                    <span className={`feat-cat-chip ${f.category}`}>{f.category}</span>
+                                  </div>
+                                  {f.prerequisite && (
+                                    <div className="feat-prereq-note">Prerrequisito: {f.prerequisite}</div>
+                                  )}
+                                  <p className="feat-card-desc">{f.description}</p>
+
+                                  <div className="feat-card-footer">
+                                    {!isEligible ? (
+                                      <span className="feat-reason-badge">⚠️ {ineligibleReason}</span>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="choose-feat-btn"
+                                        onClick={() => {
+                                          update({ feats: [...c.feats, f.name] });
+                                        }}
+                                      >
+                                        ➕ Elegir Dote ({f.name})
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </>
+                      )}
+
+                      <div className="field" style={{ marginTop: '14px' }}>
+                        <label>Dotes personalizadas / notas caseras</label>
+                        <textarea rows={2} value={c.featsCustom} onChange={e => update({ featsCustom: e.target.value })} placeholder="Añade rasgos o reglas caseras de tu DM..." />
+                      </div>
+                    </>
+                  );
+                })()}
+              </div>
             </div>
           )}
-
-        {activeTab === 'status' && (
-          <div id="sheet-section-status">
-            <div className="block-label">Vitalidad</div>
-            <div className="row">
-              <div className="field">
-                <label>PG actuales</label>
-                <div className="value-pill">{c.hpCur}/{c.hpMax}</div>
-              </div>
-              <div className="field">
-                <label>PG máximos</label>
-                <div className="value-pill">{c.hpMax}</div>
-              </div>
-              <div className="field">
-                <label>PG temporales</label>
-                <div className="value-pill">{c.tempHp}</div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="field">
-                <label>Clase de Armadura</label>
-                <div className="value-pill">{c.ac}</div>
-              </div>
-              <div className="field">
-                <label>Dados de golpe restantes</label>
-                <div className="value-pill">{c.hitDiceRemaining}</div>
-              </div>
-            </div>
-
-            {/* Armor info */}
-            {equippedArmorEntry && (
-              <div className="armor-info-box">
-                <span className="armor-info-name">🛡️ {equippedArmorEntry.name}</span>
-                <span className={`armor-type-badge ${equippedArmorEntry.type}`}>{equippedArmorEntry.type}</span>
-                {equippedArmorEntry.stealthDisadvantage && <span className="armor-warn">⚠️ Sigilo</span>}
-                {c.equippedShield && <span className="armor-info-shield">+ Escudo</span>}
-              </div>
-            )}
-
-            <div className="block-label" style={{ marginTop: '6px' }}>Salvaciones de muerte</div>
-            <div className="row">
-              <div className="field">
-                <label>Éxitos (0-3)</label>
-                <div className="value-pill">{c.deathSaves.success}</div>
-              </div>
-              <div className="field">
-                <label>Fallos (0-3)</label>
-                <div className="value-pill">{c.deathSaves.fail}</div>
-              </div>
-            </div>
-
-            <div className="checks-row">
-              <label>
-                <input type="checkbox" checked={c.inspiration} onChange={e => update({ inspiration: e.target.checked })} />
-                Inspiración
-              </label>
-            </div>
-
-            <div className="status-actions-row">
-              <button className="add-row-btn" onClick={handleConditionAdvance}>⏭️ Avanzar turno / limpiar duraciones</button>
-              <span className="status-hint">Las condiciones se activan desde la narrativa y se desactivan automáticamente cuando su duración termina.</span>
-            </div>
-
-            <div className="block-label" style={{ marginTop: '10px' }}>⚡ Condiciones Activas (D&D 5e)</div>
-            <div className="conditions-grid">
-              {DND_CONDITIONS.map(cond => {
-                const isActive = activeConditions.includes(cond.name);
-                const turnsLeft = c.conditionDurations?.[cond.name] ?? 0;
-                return (
-                  <button
-                    key={cond.name}
-                    type="button"
-                    className={`condition-chip-btn ${isActive ? 'active' : ''}`}
-                    title={`${cond.name}: ${cond.description}`}
-                    onClick={() => handleConditionToggle(cond.name)}
-                  >
-                    <span>{cond.emoji}</span>
-                    <span>{cond.name}</span>
-{isActive && turnsLeft > 0 && <span className="condition-duration">{turnsLeft}t</span>}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* ── RESISTENCIAS Y VENTAJAS RACIALES ── */}
-            {(() => {
-              const resistances = getRacialResistances(c.race, c.raceAncestry || '');
-              const rdef: RaceDef | undefined = RACES[c.race];
-              const defenseTraits = rdef?.traits?.filter(t => t.type === 'defense' || t.type === 'feature') || [];
-              if (resistances.length === 0 && defenseTraits.length === 0) return null;
-              return (
-                <>
-                  <div className="block-label" style={{ marginTop: '10px' }}>🛡️ Resistencias y Ventajas Raciales</div>
-                  {resistances.length > 0 && (
-                    <div className="prof-chips-row">
-                      {resistances.map(res => (
-                        <span key={res} className="prof-chip resist-chip">✓ Resistencia a {res}</span>
-                      ))}
-                    </div>
-                  )}
-                  {defenseTraits.length > 0 && (
-                    <div className="race-traits-list-compact">
-                      {defenseTraits.map((trait, idx) => (
-                        <div key={idx} className="race-trait-card-compact unlocked">
-                          <div className="trait-compact-name">✨ {trait.name}</div>
-                          <p className="trait-compact-desc">{trait.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              );
-            })()}
-          </div>
-        )}
-
-        {activeTab === 'inventory' && (
-          <div id="sheet-section-inventory">
-            <div className="block-label">💰 Monedas y Riquezas</div>
-            <div className="gold-card-panel">
-              <div className="field" style={{ flex: 1, maxWidth: '220px' }}>
-                <label>🪙 Piezas de Oro (PO)</label>
-                <input
-                  type="number"
-                  min={0}
-                  value={c.gold || 0}
-                  onChange={e => update({ gold: parseInt(e.target.value) || 0 })}
-                  style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--brass)' }}
-                />
-              </div>
-              <div className="gold-summary-badge">
-                Tesoro actual: <strong>{c.gold || 0} PO</strong>
-              </div>
-            </div>
-
-            <div className="block-label" style={{ marginTop: '12px' }}>🎒 Objetos e Inventario General</div>
-            {(() => {
-              const equippedNames = new Set([
-                ...(c.equippedGear || []).map(g => (g.name || '').trim().toLowerCase()).filter(Boolean),
-                ...(c.weapons || []).map(w => (w.name || '').trim().toLowerCase()).filter(Boolean),
-                ...(c.equippedArmor ? [c.equippedArmor.trim().toLowerCase()] : []),
-                ...(c.equippedShield ? ['escudo'] : [])
-              ]);
-              const sortedEquipment = (c.equipment || [])
-                .map((item, idx) => ({ item, idx }))
-                .sort((a, b) => {
-                  const ae = equippedNames.has((a.item.name || '').trim().toLowerCase()) ? 0 : 1;
-                  const be = equippedNames.has((b.item.name || '').trim().toLowerCase()) ? 0 : 1;
-                  return ae - be;
-                });
-              return (
-                <>
-                  <div className="equipped-legend">⚔️ Equipado — los objetos en uso aparecen primero</div>
-                  <div className="inventory-table-header">
-                    <span className="col-name">Objeto</span>
-                    <span className="col-category">Categoría</span>
-                    <span className="col-qty">Cant.</span>
-                    <span className="col-notes">Descripción</span>
-                    <span className="col-actions"></span>
-                  </div>
-                  <div className="list-rows">
-                    {sortedEquipment.map(({ item, idx }) => {
-                      const isEquipped = equippedNames.has((item.name || '').trim().toLowerCase());
-                      return (
-                        <div key={idx} className={`inventory-sheet-row ${isEquipped ? 'equipped' : ''}`}>
-                          {isEquipped && <span className="equipped-badge">⚔️ equipado</span>}
-                          <input
-                            type="text"
-                            placeholder="Nombre del objeto"
-                            value={item.name}
-                            onChange={e => {
-                              const next = [...(c.equipment || [])];
-                              next[idx].name = e.target.value;
-                              update({ equipment: next });
-                            }}
-                            className="inv-name-input"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Categoría"
-                            value={item.category || ''}
-                            onChange={e => {
-                              const next = [...(c.equipment || [])];
-                              next[idx].category = e.target.value;
-                              update({ equipment: next });
-                            }}
-                            className="inv-category-input"
-                          />
-                          <input
-                            type="number"
-                            min={1}
-                            placeholder="Cant."
-                            value={item.qty}
-                            onChange={e => {
-                              const next = [...(c.equipment || [])];
-                              next[idx].qty = parseInt(e.target.value) || 1;
-                              update({ equipment: next });
-                            }}
-                            className="inv-qty-input"
-                          />
-                          <input
-                            type="text"
-                            placeholder="Descripción o notas"
-                            value={item.notes}
-                            onChange={e => {
-                              const next = [...(c.equipment || [])];
-                              next[idx].notes = e.target.value;
-                              update({ equipment: next });
-                            }}
-                            className="inv-notes-input"
-                          />
-                          <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              );
-            })()}
-            <button className="add-row-btn" onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Equipo' }] })} style={{ marginTop: '8px' }}>
-              + añadir objeto al inventario
-            </button>
-          </div>
-        )}
 
         {activeTab === 'dynamic' && (() => {
           const limits = getSpellcastingLimits(c);
@@ -739,21 +818,38 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                     ) : (
                       (() => {
                         const table = cdef.spellcasting.type === 'full' ? FULL_SLOTS[c.level] : HALF_SLOTS[c.level];
-                        return table.map((max, idx) => {
-                          if (max <= 0) return null;
-                          const lvl = idx + 1;
-                          const used = c.spellSlotsUsed[lvl] || 0;
-                          return (
-                            <div key={lvl} className="resource">
-                              <div className="rlabel">Espacios Nivel {lvl}</div>
-                              <div className="rctrl">
-                                <button onClick={() => handleSlotChange(String(lvl), 1)}>−</button>
-                                <span>{max - used}/{max}</span>
-                                <button onClick={() => handleSlotChange(String(lvl), -1)}>+</button>
-                              </div>
-                            </div>
-                          );
-                        });
+                        return (
+                          <div className="spell-slots-visual-grid">
+                            {table.map((max, idx) => {
+                              if (max <= 0) return null;
+                              const lvl = idx + 1;
+                              const used = c.spellSlotsUsed[lvl] || 0;
+                              const available = max - used;
+                              return (
+                                <div key={lvl} className="spell-slot-row">
+                                  <div className="slot-level-label">Nv {lvl}</div>
+                                  <div className="slot-pips">
+                                    {Array.from({ length: max }, (_, i) => (
+                                      <button
+                                        key={i}
+                                        className={`slot-pip ${i < available ? 'available' : 'used'}`}
+                                        title={i < available ? `Gastar espacio nivel ${lvl}` : `Recuperar espacio nivel ${lvl}`}
+                                        onClick={() => {
+                                          if (i < available) {
+                                            handleSlotChange(String(lvl), 1);
+                                          } else {
+                                            handleSlotChange(String(lvl), -1);
+                                          }
+                                        }}
+                                      />
+                                    ))}
+                                  </div>
+                                  <div className="slot-count-text">{available}/{max}</div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
                       })()
                     )}
                   </div>
@@ -888,65 +984,7 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
           );
         })()}
 
-        {activeTab === 'proficiencies' && (
-          <>
-            <div className="block-label">Salvaciones (de clase)</div>
-            <div className="save-badge">
-              {cdef.saves.map(s => `${s.toUpperCase()} ${fmtSigned(abilityMod(c.abilities[s]) + profBonus(c.level))}`).join(' · ')}
-            </div>
 
-            <div className="block-label" style={{ marginTop: '8px' }}>Armaduras</div>
-            <div className="checks-row">
-              {['Ligera', 'Media', 'Pesada', 'Escudos'].map(o => (
-                <label key={o}>
-                  <input
-                    type="checkbox"
-                    checked={c.armorProf.includes(o)}
-                    onChange={e => {
-                      const next = e.target.checked ? [...c.armorProf, o] : c.armorProf.filter(x => x !== o);
-                      update({ armorProf: next });
-                    }}
-                  />
-                  {o}
-                </label>
-              ))}
-            </div>
-
-            <div className="block-label" style={{ marginTop: '8px' }}>Armas</div>
-            <div className="checks-row">
-              {['Simples', 'Marciales'].map(o => (
-                <label key={o}>
-                  <input
-                    type="checkbox"
-                    checked={c.weaponProf.includes(o)}
-                    onChange={e => {
-                      const next = e.target.checked ? [...c.weaponProf, o] : c.weaponProf.filter(x => x !== o);
-                      update({ weaponProf: next });
-                    }}
-                  />
-                  {o}
-                </label>
-              ))}
-            </div>
-
-            <div className="field" style={{ marginTop: '8px' }}>
-              <label>Herramientas</label>
-              <input type="text" value={c.toolProf} onChange={e => update({ toolProf: e.target.value })} />
-              {c.selectedTools && c.selectedTools.length > 0 && (
-                <div className="tool-tags">
-                  {c.selectedTools.map(t => (
-                    <span key={t} className="tool-tag">{t}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className="field">
-              <label>Idiomas</label>
-              <input type="text" value={c.languages} onChange={e => update({ languages: e.target.value })} />
-            </div>
-          </>
-        )}
 
         {activeTab === 'class' && (() => {
           const baseDetail = BASE_CLASSES_CATALOG[c.className] || BASE_CLASSES_CATALOG['Guerrero'];
@@ -1358,318 +1396,425 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
           );
         })()}
 
-        {activeTab === 'gear' && (
-<div id="sheet-section-gear">
-            <div className="block-label">⚔️ Armas y ataques</div>
-            <div className="list-rows">
-              {c.weapons.map((w, i) => {
-                const mod = abilityMod(c.abilities[w.ability]) + (w.proficient ? profBonus(c.level) : 0);
-                return (
-                  <div key={i} className="weapon-sheet-card">
-                    <div className="weapon-sheet-header">
-                      <input type="text" placeholder="Arma" value={w.name} onChange={e => {
-                        const next = [...c.weapons];
-                        next[i].name = e.target.value;
-                        update({ weapons: next });
-                      }} className="weapon-name-input" />
-                      {w.magical && <span className="magical-badge">✨ Mágica</span>}
-                      <button className="rm" onClick={() => update({ weapons: c.weapons.filter((_, idx) => idx !== i) })}>✕</button>
-                    </div>
-                    <div className="weapon-sheet-stats">
-                      <button className="roll-btn" title={`Atacar con ${w.name || 'arma'}`} onClick={() => onRollWeapon(w)}>🎲</button>
-                      <select value={w.ability} onChange={e => {
-                        const next = [...c.weapons];
-                        next[i].ability = e.target.value as AbilityKey;
-                        update({ weapons: next });
-                      }}>
-                        <option value="str">FUE</option>
-                        <option value="dex">DES</option>
-                      </select>
-                      <input type="text" placeholder="Dado daño" value={w.dice} onChange={e => {
-                        const next = [...c.weapons];
-                        next[i].dice = e.target.value;
-                        update({ weapons: next });
-                      }} style={{ width: '60px' }} />
-                      <span className="weapon-sheet-attack">
-                        Ataque {fmtSigned(mod)}
-                      </span>
-                      <label className="weapon-prof-label">
-                        <input
-                          type="checkbox"
-                          checked={w.proficient}
-                          onChange={e => {
-                            const next = [...c.weapons];
-                            next[i].proficient = e.target.checked;
-                            update({ weapons: next });
-                          }}
-                          style={{ width: 'auto', verticalAlign: 'middle' }}
-                        />
-                        Comp.
-                      </label>
-                    </div>
-                    <div className="weapon-sheet-badges">
-                      {w.category && (
-                        <span className={`weapon-cat-badge ${w.category}`}>
-                          {w.category === 'simple' ? 'Simple' : 'Marcial'}
-                        </span>
-                      )}
-                      {w.range && (
-                        <span className="weapon-range-badge">{w.range}</span>
-                      )}
-                      {w.damageType && (
-                        <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--parchment-dim)' }}>
-                          {DAMAGE_TYPE_EMOJI[w.damageType] || ''} {w.damageType}
-                        </span>
-                      )}
-                      {w.properties && w.properties.map(p => (
-                        <span key={p} className="weapon-prop-badge">{p}</span>
-                      ))}
-                      {w.versatileDice && (
-                        <span className="weapon-prop-badge">versátil {w.versatileDice}</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <button className="add-row-btn" onClick={() => update({ weapons: [...c.weapons, { name: '', ability: 'str', dice: '1d6', type: 'contundente', proficient: true, notes: '' }] })}>
-              + añadir arma
-            </button>
+        {activeTab === 'gear' && (() => {
+          // Helper to classify equipment item into one of the 3 sections
+          const getItemSection = (item: { name: string; category?: string }): 'equipo' | 'accesorios' | 'inventario' => {
+            const cat = (item.category || '').toLowerCase().trim();
+            const name = (item.name || '').toLowerCase().trim();
 
-            <div className="block-label" style={{ marginTop: '16px' }}>🛡️ Equipo (por Zonas)</div>
-            <div className="list-rows" style={{ marginBottom: '16px' }}>
-              {(c.equippedGear || []).length === 0 ? (
-                <div className="flavor">No hay objetos equipados por el momento. Puedes añadir o sincronizar desde armas y armaduras.</div>
-              ) : (
-                (c.equippedGear || []).map((eg, i) => (
-                  <div key={i} className="gear-sheet-card">
-                    <div className="gear-sheet-top">
-                      <input
-                        type="text"
-                        placeholder="Nombre del equipo"
-                        value={eg.name}
-                        onChange={e => {
-                          const next = [...(c.equippedGear || [])];
+            // Explicit accessory / container check
+            if (
+              ['anillo', 'collar', 'cuello', 'pulsera', 'mochila', 'bandolera', 'morral', 'cinturón', 'amuleto', 'accesorio', 'accesorios', 'contenedor'].includes(cat) ||
+              /anillo|collar|pulsera|amuleto|cinturón|mochila|bandolera|morral|bolsa|saco de viaje/.test(name)
+            ) {
+              return 'accesorios';
+            }
+
+            // Body wearable check
+            if (
+              ['cabeza', 'cuerpo', 'torso', 'armadura', 'espalda', 'brazos', 'manos', 'muñecas', 'piernas', 'pies', 'equipo'].includes(cat) ||
+              /casco|sombrero|capucha|yelmo|diadema/.test(name) ||
+              /armadura|pechera|túnica|ropas|coraza|peto|cuero/.test(name) ||
+              /capa|manto|carcaj/.test(name) ||
+              /guantes|guanteletes|brazales/.test(name) ||
+              /botas|grebas|pantalones|calzado/.test(name)
+            ) {
+              return 'equipo';
+            }
+
+            // Otherwise: miscelánea, herramientas, kits, instrumentos -> inventario
+            return 'inventario';
+          };
+
+          const BODY_SLOT_ORDER: Record<string, number> = {
+            'cabeza': 1,
+            'cuerpo': 2,
+            'torso': 2,
+            'armadura': 2,
+            'espalda': 3,
+            'brazos': 4,
+            'manos': 4,
+            'muñecas': 4,
+            'piernas': 5,
+            'pies': 5,
+          };
+
+          const indexedEquipment = (c.equipment || []).map((item, idx) => ({ item, idx }));
+
+          // 1. Equipo (ordered top to bottom: Cabeza, Cuerpo, Espalda, Brazos, Piernas)
+          const equipoItems = indexedEquipment
+            .filter(({ item }) => getItemSection(item) === 'equipo')
+            .sort((a, b) => {
+              const catA = (a.item.category || '').toLowerCase().trim();
+              const catB = (b.item.category || '').toLowerCase().trim();
+              const orderA = BODY_SLOT_ORDER[catA] ?? 2;
+              const orderB = BODY_SLOT_ORDER[catB] ?? 2;
+              return orderA - orderB;
+            });
+
+          // 2. Accesorios
+          const accesoriosItems = indexedEquipment
+            .filter(({ item }) => getItemSection(item) === 'accesorios');
+
+          // 3. Inventario / Mochila (Herramientas, kits, instrumentos, consumibles, etc.)
+          const inventarioItems = indexedEquipment
+            .filter(({ item }) => getItemSection(item) === 'inventario');
+
+          return (
+            <div id="sheet-section-gear">
+              {/* ── MONEDAS Y RIQUEZAS ── */}
+              <div className="block-label">💰 Monedas y Riquezas</div>
+              <div className="gold-card-panel">
+                <div className="field" style={{ flex: 1, maxWidth: '220px' }}>
+                  <label>🪙 Piezas de Oro (PO)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={c.gold || 0}
+                    onChange={e => update({ gold: parseInt(e.target.value) || 0 })}
+                    style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--brass)' }}
+                  />
+                </div>
+                <div className="gold-summary-badge">
+                  Tesoro actual: <strong>{c.gold || 0} PO</strong>
+                </div>
+              </div>
+
+              {/* ── ARMAS Y ATAQUES ── */}
+              <div className="block-label" style={{ marginTop: '16px' }}>⚔️ Armas y ataques</div>
+              <div className="list-rows">
+                {c.weapons.map((w, i) => {
+                  const mod = abilityMod(c.abilities[w.ability]) + (w.proficient ? profBonus(c.level) : 0);
+                  return (
+                    <div key={i} className="weapon-sheet-card">
+                      <div className="weapon-sheet-header">
+                        <input type="text" placeholder="Arma" value={w.name} onChange={e => {
+                          const next = [...c.weapons];
                           next[i].name = e.target.value;
-                          update({ equippedGear: next });
-                        }}
-                        className="gear-name-input"
-                      />
-                      <div className="gear-slot-selector">
-                        <span className="slot-icon">📍 Zona:</span>
-                        <select
-                          value={eg.slot}
-                          onChange={e => {
-                            const next = [...(c.equippedGear || [])];
-                            next[i].slot = e.target.value;
-                            update({ equippedGear: next });
-                          }}
-                        >
-                          {EQUIPMENT_SLOTS.map(slot => (
-                            <option key={slot} value={slot}>{slot}</option>
-                          ))}
-                        </select>
+                          update({ weapons: next });
+                        }} className="weapon-name-input" />
+                        {w.magical && <span className="magical-badge">✨ Mágica</span>}
+                        <button className="rm" onClick={() => update({ weapons: c.weapons.filter((_, idx) => idx !== i) })}>✕</button>
                       </div>
-                      <label className="gear-magic-label">
-                        <input
-                          type="checkbox"
-                          checked={eg.magical || false}
-                          onChange={e => {
-                            const next = [...(c.equippedGear || [])];
-                            next[i].magical = e.target.checked;
-                            update({ equippedGear: next });
-                          }}
-                        />
-                        ✨ Mágica
-                      </label>
-                      <button className="rm" onClick={() => update({ equippedGear: (c.equippedGear || []).filter((_, idx) => idx !== i) })}>✕</button>
+                      <div className="weapon-sheet-stats">
+                        <button className="roll-btn" title={`Atacar con ${w.name || 'arma'}`} onClick={() => onRollWeapon(w)}>🎲</button>
+                        <select value={w.ability} onChange={e => {
+                          const next = [...c.weapons];
+                          next[i].ability = e.target.value as AbilityKey;
+                          update({ weapons: next });
+                        }}>
+                          <option value="str">FUE</option>
+                          <option value="dex">DES</option>
+                        </select>
+                        <input type="text" placeholder="Dado daño" value={w.dice} onChange={e => {
+                          const next = [...c.weapons];
+                          next[i].dice = e.target.value;
+                          update({ weapons: next });
+                        }} style={{ width: '60px' }} />
+                        <span className="weapon-sheet-attack">
+                          Ataque {fmtSigned(mod)}
+                        </span>
+                        <label className="weapon-prof-label">
+                          <input
+                            type="checkbox"
+                            checked={w.proficient}
+                            onChange={e => {
+                              const next = [...c.weapons];
+                              next[i].proficient = e.target.checked;
+                              update({ weapons: next });
+                            }}
+                            style={{ width: 'auto', verticalAlign: 'middle' }}
+                          />
+                          Competencia
+                        </label>
+
+                      </div>
+                      <div className="weapon-sheet-badges">
+                        {w.category && (
+                          <span className={`weapon-cat-badge ${w.category}`}>
+                            {w.category === 'simple' ? 'Simple' : 'Marcial'}
+                          </span>
+                        )}
+                        {w.range && (
+                          <span className="weapon-range-badge">{w.range}</span>
+                        )}
+                        {w.damageType && (
+                          <span className="dmg-badge-inline" style={{ borderColor: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--seam)', color: DAMAGE_TYPE_COLOR[w.damageType] || 'var(--parchment-dim)' }}>
+                            {DAMAGE_TYPE_EMOJI[w.damageType] || ''} {w.damageType}
+                          </span>
+                        )}
+                        {w.properties && w.properties.map(p => (
+                          <span key={p} className="weapon-prop-badge">{p}</span>
+                        ))}
+                        {w.versatileDice && (
+                          <span className="weapon-prop-badge">versátil {w.versatileDice}</span>
+                        )}
+                      </div>
                     </div>
-                    <div className="gear-sheet-details">
-                      <input
-                        type="text"
-                        placeholder="Descripción o efecto del equipo"
-                        value={eg.notes}
-                        onChange={e => {
-                          const next = [...(c.equippedGear || [])];
-                          next[i].notes = e.target.value;
-                          update({ equippedGear: next });
-                        }}
-                        className="gear-notes-input"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Propiedades (ej: CA 16, 1d8 cortante, Sutil)"
-                        value={eg.properties}
-                        onChange={e => {
-                          const next = [...(c.equippedGear || [])];
-                          next[i].properties = e.target.value;
-                          update({ equippedGear: next });
-                        }}
-                        className="gear-props-input"
-                      />
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
-              <button className="add-row-btn" onClick={() => update({ equippedGear: [...(c.equippedGear || []), { name: '', slot: 'Torso', notes: '', properties: '' }] })}>
-                + añadir objeto equipado
+                  );
+                })}
+              </div>
+              <button className="add-row-btn" onClick={() => update({ weapons: [...c.weapons, { name: '', ability: 'str', dice: '1d6', type: 'contundente', proficient: true, notes: '' }] })}>
+                + añadir arma
               </button>
+
+              {/* ── EQUIPO ── */}
+              <div className="block-label" style={{ marginTop: '20px' }}>🛡️ Equipo</div>
+              <div className="inventory-section-note">
+                Objetos vestibles en el cuerpo ordenados de arriba a abajo: <b>Cabeza</b>, <b>Cuerpo</b>, <b>Espalda</b>, <b>Brazos</b> y <b>Piernas</b> (incluye calzado).
+              </div>
+              <div className="inventory-table-header">
+                <span className="col-name">Objeto</span>
+                <span className="col-category">Zona / Categoría</span>
+                <span className="col-qty">Cant.</span>
+                <span className="col-notes">Descripción / Efecto</span>
+                <span className="col-actions"></span>
+              </div>
+              <div className="list-rows">
+                {equipoItems.length === 0 ? (
+                  <div className="flavor">No hay vestimentas o piezas de equipo registradas.</div>
+                ) : (
+                  equipoItems.map(({ item, idx }) => {
+                    const currentCategory = item.category === 'Pies' ? 'Piernas' : (item.category || 'Cuerpo');
+                    return (
+                      <div key={idx} className="inventory-sheet-row">
+                        <input
+                          type="text"
+                          placeholder="Ej: Casco de placas, Capa de camuflaje..."
+                          value={item.name}
+                          onChange={e => {
+                            const next = [...(c.equipment || [])];
+                            next[idx].name = e.target.value;
+                            update({ equipment: next });
+                          }}
+                          className="inv-name-input"
+                        />
+                        <select
+                          value={currentCategory}
+                          onChange={e => {
+                            const next = [...(c.equipment || [])];
+                            next[idx].category = e.target.value;
+                            update({ equipment: next });
+                          }}
+                          className="inv-category-select"
+                        >
+                          <option value="Cabeza">👑 Cabeza</option>
+                          <option value="Cuerpo">🛡️ Cuerpo</option>
+                          <option value="Espalda">🧥 Espalda</option>
+                          <option value="Brazos">🥊 Brazos</option>
+                          <option value="Piernas">🦵 Piernas (y pies)</option>
+                        </select>
+                        <input
+                          type="number"
+                          min={1}
+                          placeholder="Cant."
+                          value={item.qty}
+                          onChange={e => {
+                            const next = [...(c.equipment || [])];
+                            next[idx].qty = parseInt(e.target.value) || 1;
+                            update({ equipment: next });
+                          }}
+                          className="inv-qty-input"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Efectos, CA, propiedades..."
+                          value={item.notes}
+                          onChange={e => {
+                            const next = [...(c.equipment || [])];
+                            next[idx].notes = e.target.value;
+                            update({ equipment: next });
+                          }}
+                          className="inv-notes-input"
+                        />
+                        <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
               <button
                 className="add-row-btn"
-                style={{ borderColor: 'var(--brass-dim)', color: 'var(--brass)' }}
-                onClick={() => {
-                  const gearList: EquippedGearItem[] = [];
-                  if (c.equippedArmor) {
-                    const a = ARMOR_CATALOG.find(x => x.name === c.equippedArmor);
-                    gearList.push({
-                      name: c.equippedArmor,
-                      slot: 'Torso',
-                      notes: a ? `Armadura ${a.type}` : '',
-                      properties: a ? `CA ${a.acBase}${a.addDex ? ' + DES' : ''}` : ''
-                    });
-                  }
-                  if (c.equippedShield) {
-                    gearList.push({ name: 'Escudo', slot: 'Mano Secundaria', notes: 'Protector', properties: 'CA +2' });
-                  }
-                  c.weapons.forEach((w, idx) => {
-                    const slot = idx === 0 ? 'Mano Principal' : (w.range === 'a distancia' ? 'Espalda' : 'Mano Secundaria');
-                    gearList.push({
-                      name: w.name,
-                      slot,
-                      notes: `${w.dice} ${w.damageType || w.type}`,
-                      properties: w.notes || (w.properties ? w.properties.join(', ') : ''),
-                      magical: w.magical
-                    });
-                  });
-                  update({ equippedGear: gearList });
-                }}
+                onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Cuerpo' }] })}
+                style={{ marginTop: '8px' }}
               >
-                🔄 Sincronizar desde armas y armadura
+                + añadir equipo
               </button>
-            </div>
-          </div>
-        )}
 
-        {activeTab === 'feats' && (
-          <>
-            {(() => {
-              const maxFeats = getMaxFeatsCount(c.className, c.level, c.race);
-              const acquiredCount = c.feats.length;
-              const remaining = Math.max(0, maxFeats - acquiredCount);
-              const isSpellcaster = cdef.spellcasting !== null || (c.spellsKnown && c.spellsKnown.length > 0) || c.feats.includes('Iniciado en la Magia');
-              const isMartial = ['Bárbaro', 'Guerrero', 'Paladín', 'Explorador', 'Monje'].includes(c.className) || (c.weaponProf && c.weaponProf.includes('Marciales'));
-
-              const getNextFeatLevel = (lvl: number, cls: string): number => {
-                const levels = [4, 8, 12, 16, 19];
-                if (cls === 'Guerrero') levels.push(6, 14);
-                if (cls === 'Pícaro') levels.push(10);
-                levels.sort((a, b) => a - b);
-                return levels.find(l => l > lvl) || 20;
-              };
-
-              return (
-                <>
-                  <div className="feat-header-card">
-                    <div className="feat-counter-title">🎯 Progreso de Dotes (Nivel {c.level})</div>
-                    <div className="feat-counter-badge">
-                      Dotes adquiridas: <strong>{acquiredCount} / {maxFeats}</strong>
+              {/* ── ACCESORIOS ── */}
+              <div className="block-label" style={{ marginTop: '20px' }}>💍 Accesorios</div>
+              <div className="inventory-section-note">
+                Anillos, pulseras, collares, mochilas, bandoleras, morrales, cinturones y otros contenedores o joyas.
+              </div>
+              <div className="inventory-table-header">
+                <span className="col-name">Accesorio</span>
+                <span className="col-category">Tipo</span>
+                <span className="col-qty">Cant.</span>
+                <span className="col-notes">Descripción / Efecto</span>
+                <span className="col-actions"></span>
+              </div>
+              <div className="list-rows">
+                {accesoriosItems.length === 0 ? (
+                  <div className="flavor">No hay accesorios o contenedores registrados.</div>
+                ) : (
+                  accesoriosItems.map(({ item, idx }) => (
+                    <div key={idx} className="inventory-sheet-row">
+                      <input
+                        type="text"
+                        placeholder="Ej: Anillo de protección, Mochila de viaje..."
+                        value={item.name}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].name = e.target.value;
+                          update({ equipment: next });
+                        }}
+                        className="inv-name-input"
+                      />
+                      <select
+                        value={item.category || 'Accesorio'}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].category = e.target.value;
+                          update({ equipment: next });
+                        }}
+                        className="inv-category-select"
+                      >
+                        <option value="Anillo">💍 Anillo</option>
+                        <option value="Collar">📿 Collar / Amuleto</option>
+                        <option value="Pulsera">📿 Pulsera / Brazalete</option>
+                        <option value="Mochila">🎒 Mochila</option>
+                        <option value="Bandolera">💼 Bandolera</option>
+                        <option value="Morral">👛 Morral / Bolsa</option>
+                        <option value="Cinturón">🥋 Cinturón</option>
+                        <option value="Accesorio">✨ Accesorio General</option>
+                      </select>
+                      <input
+                        type="number"
+                        min={1}
+                        placeholder="Cant."
+                        value={item.qty}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].qty = parseInt(e.target.value) || 1;
+                          update({ equipment: next });
+                        }}
+                        className="inv-qty-input"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Capacidad, encantamiento, notas..."
+                        value={item.notes}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].notes = e.target.value;
+                          update({ equipment: next });
+                        }}
+                        className="inv-notes-input"
+                      />
+                      <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
                     </div>
-                    {remaining > 0 ? (
-                      <div className="feat-unlocked-msg">
-                        ✨ ¡Tienes <strong>{remaining}</strong> dote(s) disponible(s) para elegir! Elige una dote del catálogo para bloquearla en tu personaje.
-                      </div>
-                    ) : (
-                      <div className="feat-locked-msg">
-                        🔒 No tienes dotes disponibles en este momento. Alcanzarás tu siguiente dote al nivel <strong>{getNextFeatLevel(c.level, c.className)}</strong>.
-                      </div>
-                    )}
-                  </div>
+                  ))
+                )}
+              </div>
+              <button
+                className="add-row-btn"
+                onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Accesorio' }] })}
+                style={{ marginTop: '8px' }}
+              >
+                + añadir accesorio
+              </button>
 
-                  {/* Acquired / Locked Feats */}
-                  {c.feats.length > 0 && (
-                    <>
-                      <div className="block-label" style={{ marginTop: '12px' }}>🔒 Dotes Adquiridas (Bloqueadas)</div>
-                      <div className="acquired-feats-list">
-                        {c.feats.map(fName => {
-                          const fDef = FEAT_CATALOG.find(x => x.name === fName);
-                          return (
-                            <div key={fName} className="acquired-feat-card">
-                              <div className="acquired-feat-header">
-                                <span className="acquired-feat-title">✨ {fName}</span>
-                                <span className="acquired-feat-locked-tag">🔒 Bloqueada en personaje</span>
-                              </div>
-                              <p className="acquired-feat-desc">{fDef?.description || 'Dote adquirida.'}</p>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </>
-                  )}
+              {/* ── INVENTARIO / MOCHILA ── */}
+              <div className="block-label" style={{ marginTop: '20px' }}>🎒 Inventario / Mochila</div>
+              <div className="inventory-section-note">
+                Instrumentos musicales, kits de herramientas, pociones, raciones y objetos misceláneos. No se equipan en el cuerpo.
+              </div>
+              <div className="inventory-table-header">
+                <span className="col-name">Objeto</span>
+                <span className="col-category">Categoría</span>
+                <span className="col-qty">Cant.</span>
+                <span className="col-notes">Descripción / Notas</span>
+                <span className="col-actions"></span>
+              </div>
+              <div className="list-rows">
+                {inventarioItems.length === 0 ? (
+                  <div className="flavor">No hay objetos misceláneos o herramientas en la mochila.</div>
+                ) : (
+                  inventarioItems.map(({ item, idx }) => (
+                    <div key={idx} className="inventory-sheet-row">
+                      <input
+                        type="text"
+                        placeholder="Ej: Kit de curación, Odre de agua, Antorcha..."
+                        value={item.name}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].name = e.target.value;
+                          update({ equipment: next });
+                        }}
+                        className="inv-name-input"
+                      />
+                      <select
+                        value={item.category || 'Miscelánea'}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].category = e.target.value;
+                          update({ equipment: next });
+                        }}
+                        className="inv-category-select"
+                      >
+                        <option value="Herramientas">🛠️ Herramientas</option>
+                        <option value="Kit">🧰 Kit de Aventura</option>
+                        <option value="Instrumento">🪕 Instrumento Musical</option>
+                        <option value="Consumible">🧪 Consumible / Poción</option>
+                        <option value="Miscelánea">📦 Miscelánea / Varios</option>
+                      </select>
+                      <input
+                        type="number"
+                        min={1}
+                        placeholder="Cant."
+                        value={item.qty}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].qty = parseInt(e.target.value) || 1;
+                          update({ equipment: next });
+                        }}
+                        className="inv-qty-input"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Descripción o uso..."
+                        value={item.notes}
+                        onChange={e => {
+                          const next = [...(c.equipment || [])];
+                          next[idx].notes = e.target.value;
+                          update({ equipment: next });
+                        }}
+                        className="inv-notes-input"
+                      />
+                      <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                    </div>
+                  ))
+                )}
+              </div>
+              <button
+                className="add-row-btn"
+                onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Miscelánea' }] })}
+                style={{ marginTop: '8px' }}
+              >
+                + añadir objeto al inventario
+              </button>
 
-                  {/* Feat Selection Catalog */}
-                  <div className="block-label" style={{ marginTop: '12px' }}>📖 Catálogo de Dotes Elegibles para {c.className}</div>
-                  <div className="feat-catalog-list">
-                    {FEAT_CATALOG.map(f => {
-                      const isAcquired = c.feats.includes(f.name);
-                      if (isAcquired) return null; // already shown in acquired
+              {/* ── FORJA / CRAFTEO / MEJORAS ── */}
+              <div className="block-label" style={{ marginTop: '24px' }}>⚒️ Forja, Crafteo y Mejoras</div>
+              <EquipmentForgePanel
+                character={c}
+                onUpdateCharacter={onUpdateCharacter}
+              />
+            </div>
+          );
+        })()}
 
-                      // Class / prerequisite filtering
-                      let isEligible = true;
-                      let ineligibleReason = '';
 
-                      if (f.spellcasterOnly && !isSpellcaster) {
-                        isEligible = false;
-                        ineligibleReason = 'Requiere capacidad de lanzar conjuros (Brujo, Mago, Clérigo, Bardo, etc.)';
-                      }
-                      if (f.martialOnly && !isMartial) {
-                        isEligible = false;
-                        ineligibleReason = 'Requiere clase marcial o competencia en armas marciales';
-                      }
-
-                      return (
-                        <div key={f.name} className={`feat-catalog-card ${!isEligible ? 'ineligible' : ''} ${remaining === 0 ? 'locked-out' : ''}`}>
-                          <div className="feat-card-header">
-                            <span className="feat-card-name">{f.name}</span>
-                            <span className={`feat-cat-chip ${f.category}`}>{f.category}</span>
-                          </div>
-                          {f.prerequisite && (
-                            <div className="feat-prereq-note">Prerrequisito: {f.prerequisite}</div>
-                          )}
-                          <p className="feat-card-desc">{f.description}</p>
-
-                          <div className="feat-card-footer">
-                            {!isEligible ? (
-                              <span className="feat-reason-badge">⚠️ {ineligibleReason}</span>
-                            ) : remaining > 0 ? (
-                              <button
-                                type="button"
-                                className="choose-feat-btn"
-                                onClick={() => {
-                                  update({ feats: [...c.feats, f.name] });
-                                }}
-                              >
-                                ➕ Elegir Dote ({f.name})
-                              </button>
-                            ) : (
-                              <span className="feat-locked-badge">🔒 Bloqueado (Siguiente al nivel {getNextFeatLevel(c.level, c.className)})</span>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  <div className="field" style={{ marginTop: '14px' }}>
-                    <label>Dotes personalizadas / notas caseras</label>
-                    <textarea rows={2} value={c.featsCustom} onChange={e => update({ featsCustom: e.target.value })} placeholder="Añade rasgos o reglas caseras de tu DM..." />
-                  </div>
-                </>
-              );
-            })()}
-          </>
-        )}
 
         {activeTab === 'companions' && (
           <>

@@ -1,42 +1,84 @@
 // ─── Weapons Catalog ──────────────────────────────────────────────
+// Colección completa de armas: desde las básicas (opciones de inicio)
+// hasta armas épicas y legendarias. Cada arma es un item COMPLETO ya
+// registrado que se puede equipar directamente.
+//
+// El crafteo queda reservado exclusivamente a los pocos objetos
+// extremadamente raros/artefactos definidos en craftingRecipes.ts.
 
 import { WeaponCatalogEntry } from '../types/core';
 
 export const WEAPONS_CATALOG: WeaponCatalogEntry[] = [
-  // ── Simples cuerpo a cuerpo ──
-  { name: 'Bastón', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'contundente', properties: ['versátil'], versatileDice: '1d8' },
-  { name: 'Clava', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'contundente', properties: ['ligera'] },
-  { name: 'Daga', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'perforante', properties: ['ligera', 'sutil', 'arrojadiza'], throwRange: '6/18 m' },
-  { name: 'Gran clava', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'contundente', properties: ['a dos manos'] },
-  { name: 'Hacha de mano', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'cortante', properties: ['ligera', 'arrojadiza'], throwRange: '6/18 m' },
-  { name: 'Hoz', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'cortante', properties: ['ligera'] },
-  { name: 'Jabalina', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['arrojadiza'], throwRange: '9/36 m' },
-  { name: 'Lanza', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['arrojadiza', 'versátil'], throwRange: '6/18 m', versatileDice: '1d8' },
-  { name: 'Martillo ligero', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'contundente', properties: ['ligera', 'arrojadiza'], throwRange: '6/18 m' },
-  { name: 'Maza', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'contundente', properties: [] },
-  // ── Simples a distancia ──
-  { name: 'Arco corto', category: 'simple', range: 'a distancia', dice: '1d6', damageType: 'perforante', properties: ['munición', 'a dos manos'], ammoRange: '24/96 m' },
-  { name: 'Ballesta ligera', category: 'simple', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'carga', 'a dos manos'], ammoRange: '24/96 m' },
-  { name: 'Dardo', category: 'simple', range: 'a distancia', dice: '1d4', damageType: 'perforante', properties: ['sutil', 'arrojadiza'], throwRange: '6/18 m' },
-  { name: 'Honda', category: 'simple', range: 'a distancia', dice: '1d4', damageType: 'contundente', properties: ['munición'], ammoRange: '9/36 m' },
-  // ── Marciales cuerpo a cuerpo ──
-  { name: 'Alabarda', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d10', damageType: 'cortante', properties: ['pesada', 'alcance', 'a dos manos'] },
-  { name: 'Cimitarra', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'cortante', properties: ['ligera', 'sutil'] },
-  { name: 'Espada corta', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['ligera', 'sutil'] },
-  { name: 'Espada larga', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10' },
-  { name: 'Espada ropera', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'perforante', properties: ['sutil'] },
-  { name: 'Espadón', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'cortante', properties: ['pesada', 'a dos manos'] },
-  { name: 'Gran hacha', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d12', damageType: 'cortante', properties: ['pesada', 'a dos manos'] },
-  { name: 'Hacha de batalla', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10' },
-  { name: 'Látigo', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'cortante', properties: ['sutil', 'alcance'] },
-  { name: 'Lucero del alba', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'perforante', properties: [] },
-  { name: 'Martillo de guerra', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'contundente', properties: ['versátil'], versatileDice: '1d10' },
-  { name: 'Mazo', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'contundente', properties: ['pesada', 'a dos manos'] },
-  { name: 'Pica', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d10', damageType: 'perforante', properties: ['pesada', 'alcance', 'a dos manos'] },
-  { name: 'Tridente', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['arrojadiza', 'versátil'], throwRange: '6/18 m', versatileDice: '1d8' },
-  // ── Marciales a distancia ──
-  { name: 'Arco largo', category: 'marcial', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'pesada', 'a dos manos'], ammoRange: '45/180 m' },
-  { name: 'Ballesta de mano', category: 'marcial', range: 'a distancia', dice: '1d6', damageType: 'perforante', properties: ['munición', 'ligera', 'carga'], ammoRange: '9/36 m' },
-  { name: 'Ballesta pesada', category: 'marcial', range: 'a distancia', dice: '1d10', damageType: 'perforante', properties: ['munición', 'pesada', 'carga', 'a dos manos'], ammoRange: '30/120 m' },
-  { name: 'Red', category: 'marcial', range: 'a distancia', dice: '—', damageType: 'contundente', properties: ['especial', 'arrojadiza'], throwRange: '1.5/4.5 m' },
+  // ═══════════ SIMPLES CUERPO A CUERPO (básicas) ═══════════
+  { name: 'Bastón', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'contundente', properties: ['versátil'], versatileDice: '1d8', rarity: 'común', cost: '0 po', description: 'Un simple bastón de madera, arma fiable de viajeros y eruditos.', weightKg: 2 },
+  { name: 'Clava', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'contundente', properties: ['ligera'], rarity: 'común', cost: '0 po', description: 'Un garrote tosco y contundente.', weightKg: 1 },
+  { name: 'Daga', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'perforante', properties: ['ligera', 'sutil', 'arrojadiza'], throwRange: '6/18 m', rarity: 'común', cost: '2 po', description: 'Una hoja corta y afilada, fácil de ocultar.', weightKg: 0.5 },
+  { name: 'Gran clava', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'contundente', properties: ['a dos manos'], rarity: 'común', cost: '0 po', description: 'Una clava grande que se empuña con las dos manos.', weightKg: 5 },
+  { name: 'Hacha de mano', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'cortante', properties: ['ligera', 'arrojadiza'], throwRange: '6/18 m', rarity: 'común', cost: '5 po', description: 'Un hacha ligera que puede lanzarse.', weightKg: 1 },
+  { name: 'Hoz', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'cortante', properties: ['ligera'], rarity: 'común', cost: '1 po', description: 'Una hoz de labranza convertida en arma.', weightKg: 1 },
+  { name: 'Jabalina', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['arrojadiza'], throwRange: '9/36 m', rarity: 'común', cost: '0 po', description: 'Una lanza corta de lanzamiento.', weightKg: 1 },
+  { name: 'Lanza', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['arrojadiza', 'versátil'], throwRange: '6/18 m', versatileDice: '1d8', rarity: 'común', cost: '1 po', description: 'Una lanza clásica de caza y guerra.', weightKg: 1.5 },
+  { name: 'Martillo ligero', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'contundente', properties: ['ligera', 'arrojadiza'], throwRange: '6/18 m', rarity: 'común', cost: '2 po', description: 'Un martillo pequeño y arrojadizo.', weightKg: 1 },
+  { name: 'Maza', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'contundente', properties: [], rarity: 'común', cost: '5 po', description: 'Una maza sólida de metal.', weightKg: 2 },
+
+  // ═══════════ SIMPLES A DISTANCIA (básicas) ═══════════
+  { name: 'Arco corto', category: 'simple', range: 'a distancia', dice: '1d6', damageType: 'perforante', properties: ['munición', 'a dos manos'], ammoRange: '24/96 m', rarity: 'común', cost: '25 po', description: 'Un arco corto, versátil y fácil de usar.', weightKg: 1 },
+  { name: 'Ballesta ligera', category: 'simple', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'carga', 'a dos manos'], ammoRange: '24/96 m', rarity: 'común', cost: '25 po', description: 'Una ballesta ligera de recarga manual.', weightKg: 2.5 },
+  { name: 'Dardo', category: 'simple', range: 'a distancia', dice: '1d4', damageType: 'perforante', properties: ['sutil', 'arrojadiza'], throwRange: '6/18 m', rarity: 'común', cost: '0 po', description: 'Un dardo pequeño y preciso.', weightKg: 0.1 },
+  { name: 'Honda', category: 'simple', range: 'a distancia', dice: '1d4', damageType: 'contundente', properties: ['munición'], ammoRange: '9/36 m', rarity: 'común', cost: '0 po', description: 'Una honda para lanzar piedras.', weightKg: 0.5 },
+
+  // ═══════════ MARCIALES CUERPO A CUERPO (básicas) ═══════════
+  { name: 'Alabarda', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d10', damageType: 'cortante', properties: ['pesada', 'alcance', 'a dos manos'], rarity: 'común', cost: '20 po', description: 'Una alabarda con hoja y punta.', weightKg: 3 },
+  { name: 'Cimitarra', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'cortante', properties: ['ligera', 'sutil'], rarity: 'común', cost: '25 po', description: 'Una espada curva y elegante.', weightKg: 1.5 },
+  { name: 'Espada corta', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['ligera', 'sutil'], rarity: 'común', cost: '10 po', description: 'Una espada corta y ligera.', weightKg: 1 },
+  { name: 'Espada larga', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10', rarity: 'común', cost: '15 po', description: 'La espada larga, el caballo de batalla de los guerreros.', weightKg: 1.5 },
+  { name: 'Espada ropera', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'perforante', properties: ['sutil'], rarity: 'común', cost: '25 po', description: 'Una espada fina y precisa.', weightKg: 1 },
+  { name: 'Espadón', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'cortante', properties: ['pesada', 'a dos manos'], rarity: 'común', cost: '50 po', description: 'Un espadón enorme para golpes devastadores.', weightKg: 3 },
+  { name: 'Gran hacha', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d12', damageType: 'cortante', properties: ['pesada', 'a dos manos'], rarity: 'común', cost: '30 po', description: 'Un hacha de guerra de gran tamaño.', weightKg: 3.5 },
+  { name: 'Hacha de batalla', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10', rarity: 'común', cost: '10 po', description: 'Un hacha de batalla equilibrada.', weightKg: 2 },
+  { name: 'Látigo', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'cortante', properties: ['sutil', 'alcance'], rarity: 'común', cost: '2 po', description: 'Un látigo de alcance sorprendente.', weightKg: 1.5 },
+  { name: 'Lucero del alba', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'perforante', properties: [], rarity: 'común', cost: '15 po', description: 'Una maza con púas.', weightKg: 2 },
+  { name: 'Martillo de guerra', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'contundente', properties: ['versátil'], versatileDice: '1d10', rarity: 'común', cost: '15 po', description: 'Un martillo de guerra sólido.', weightKg: 2 },
+  { name: 'Mazo', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'contundente', properties: ['pesada', 'a dos manos'], rarity: 'común', cost: '20 po', description: 'Un mazo pesado de dos manos.', weightKg: 5 },
+  { name: 'Pica', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d10', damageType: 'perforante', properties: ['pesada', 'alcance', 'a dos manos'], rarity: 'común', cost: '5 po', description: 'Una pica larga de formación.', weightKg: 3 },
+  { name: 'Tridente', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'perforante', properties: ['arrojadiza', 'versátil'], throwRange: '6/18 m', versatileDice: '1d8', rarity: 'común', cost: '5 po', description: 'Un tridente de pesca y combate.', weightKg: 2 },
+
+  // ═══════════ MARCIALES A DISTANCIA (básicas) ═══════════
+  { name: 'Arco largo', category: 'marcial', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'pesada', 'a dos manos'], ammoRange: '45/180 m', rarity: 'común', cost: '50 po', description: 'Un arco largo y poderoso.', weightKg: 1.5 },
+  { name: 'Ballesta de mano', category: 'marcial', range: 'a distancia', dice: '1d6', damageType: 'perforante', properties: ['munición', 'ligera', 'carga'], ammoRange: '9/36 m', rarity: 'común', cost: '75 po', description: 'Una ballesta diminuta de una mano.', weightKg: 1.5 },
+  { name: 'Ballesta pesada', category: 'marcial', range: 'a distancia', dice: '1d10', damageType: 'perforante', properties: ['munición', 'pesada', 'carga', 'a dos manos'], ammoRange: '30/120 m', rarity: 'común', cost: '50 po', description: 'Una ballesta pesada y potente.', weightKg: 3 },
+  { name: 'Red', category: 'marcial', range: 'a distancia', dice: '—', damageType: 'contundente', properties: ['especial', 'arrojadiza'], throwRange: '1.5/4.5 m', rarity: 'común', cost: '1 po', description: 'Una red para atrapar enemigos.', weightKg: 1.5 },
+
+  // ═══════════ ARMAS POCO COMUNES 🟢 ═══════════
+  { name: 'Espada larga de acero fino', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8+1', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10+1', rarity: 'poco común', cost: '120 po', description: 'Una espada larga forjada con acero de alta calidad, +1 al daño.', weightKg: 1.5 },
+  { name: 'Arco de viajero élfico', category: 'marcial', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'a dos manos'], ammoRange: '45/180 m', rarity: 'poco común', cost: '150 po', magical: true, description: 'Un arco tallado en madera élfica, +1 a tiradas de ataque.', weightKg: 1.2 },
+  { name: 'Daga de plata lunática', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d4+1', damageType: 'perforante', properties: ['ligera', 'sutil', 'arrojadiza'], throwRange: '6/18 m', rarity: 'poco común', cost: '90 po', magical: true, description: 'Una daga de plata que brilla bajo la luna, +1 al daño.', weightKg: 0.5 },
+  { name: 'Hacha de cazador de bestias', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8+1', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10+1', rarity: 'poco común', cost: '130 po', description: 'Un hacha de batalla con filo reforzado contra criaturas.', weightKg: 2 },
+  { name: 'Ballesta de cazador', category: 'marcial', range: 'a distancia', dice: '1d10', damageType: 'perforante', properties: ['munición', 'carga', 'a dos manos'], ammoRange: '30/120 m', rarity: 'poco común', cost: '200 po', magical: true, description: 'Una ballesta pesada con mira de precisión, +1 a ataques.', weightKg: 3 },
+
+  // ═══════════ ARMAS RARAS 🔵 ═══════════
+  { name: 'Espada larga de fuego', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10', rarity: 'raro', cost: '800 po', magical: true, description: 'Una espada larga envuelta en llamas, añade 1d6 de daño de fuego al impacto.', weightKg: 1.5 },
+  { name: 'Espada de escarcha', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10', rarity: 'raro', cost: '800 po', magical: true, description: 'Una espada larga que exhala frío, añade 1d6 de daño de frío al impacto.', weightKg: 1.5 },
+  { name: 'Arco de luna', category: 'marcial', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'a dos manos'], ammoRange: '45/180 m', rarity: 'raro', cost: '900 po', magical: true, description: 'Un arco imbuido de luz lunar, +1 a ataques y daño.', weightKg: 1.2 },
+  { name: 'Martillo de guerra trueno', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'contundente', properties: ['versátil'], versatileDice: '1d10', rarity: 'raro', cost: '850 po', magical: true, description: 'Un martillo de guerra que retumba, añade 1d6 de daño de trueno.', weightKg: 2 },
+  { name: 'Alabarda del guardián', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d10', damageType: 'cortante', properties: ['pesada', 'alcance', 'a dos manos'], rarity: 'raro', cost: '900 po', magical: true, description: 'Una alabarda sagrada, +1 a ataques, añade 1d4 de daño radiante.', weightKg: 3 },
+  { name: 'Cimitarra del viento', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'cortante', properties: ['ligera', 'sutil'], rarity: 'raro', cost: '750 po', magical: true, description: 'Una cimitarra tan ligera que corta el aire, +1 a ataques y daño.', weightKg: 1 },
+
+  // ═══════════ ARMAS MUY RARAS 🟣 ═══════════
+  { name: 'Mandoble del Dragón', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'cortante', properties: ['pesada', 'a dos manos'], rarity: 'muy raro', cost: '5000 po', magical: true, description: 'Un espadón forjado con escamas de dragón, +2 a ataques y daño, añade 1d6 de fuego.', weightKg: 3 },
+  { name: 'Espada vampírica', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'perforante', properties: ['versátil'], versatileDice: '1d10', rarity: 'muy raro', cost: '6000 po', magical: true, description: 'Una espada que drena vida, +2 a ataques y daño, recuperas PG al golpear.', weightKg: 1.5 },
+  { name: 'Arco del cazador de sombras', category: 'marcial', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'a dos manos'], ammoRange: '45/180 m', rarity: 'muy raro', cost: '5500 po', magical: true, description: 'Un arco que se funde con la oscuridad, +2 a ataques y daño, crítico a 19-20.', weightKg: 1.2 },
+  { name: 'Hacha de guerra titánica', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d12', damageType: 'cortante', properties: ['pesada', 'a dos manos'], rarity: 'muy raro', cost: '5200 po', magical: true, description: 'Un hacha gigante imbuida de fuerza colosal, +2 a ataques y daño.', weightKg: 4 },
+  { name: 'Látigo de tormenta', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d4', damageType: 'cortante', properties: ['sutil', 'alcance'], rarity: 'muy raro', cost: '4800 po', magical: true, description: 'Un látigo que descarga relámpagos, +2 a daño, añade 1d6 de relámpago.', weightKg: 1.5 },
+
+  // ═══════════ ARMAS LEGENDARIAS 🟠 ═══════════
+  { name: 'Espada del Alba Perdido', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'cortante', properties: ['versátil'], versatileDice: '1d10', rarity: 'legendario', cost: '15000 po', magical: true, description: 'Arma legendaria +3, añade 1d6 radiante, brilla para cegar a los no-muertos.', requirements: 'Item de búsqueda (ver misiones)', weightKg: 1.5 },
+  { name: 'Lanza de Zafiro', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d10', damageType: 'perforante', properties: ['arrojadiza', 'versátil'], throwRange: '9/36 m', versatileDice: '1d12', rarity: 'legendario', cost: '14000 po', magical: true, description: 'Una lanza de cristal azul, +3 a ataques y daño, añade 1d6 de frío.', requirements: 'Item de búsqueda (ver misiones)', weightKg: 2 },
+  { name: 'Espadón del Apocalipsis', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'cortante', properties: ['pesada', 'a dos manos'], rarity: 'legendario', cost: '18000 po', magical: true, description: 'Un espadón devastador, +3 a ataques y daño, añade 1d8 de fuego.', weightKg: 3.5 },
+  { name: 'Arco de la Aurora', category: 'marcial', range: 'a distancia', dice: '1d8', damageType: 'perforante', properties: ['munición', 'a dos manos'], ammoRange: '45/180 m', rarity: 'legendario', cost: '16000 po', magical: true, description: 'Un arco de luz radiante, +3 a ataques y daño, crítico a 18-20.', weightKg: 1.2 },
+
+  // ═══════════ ARMAS ARTEFACTO 🟥 ═══════════
+  { name: 'Aguja del Destino', category: 'marcial', range: 'cuerpo a cuerpo', dice: '1d8', damageType: 'perforante', properties: ['sutil'], rarity: 'artefacto', cost: '30000 po', magical: true, description: 'Una espada ropera que percibe el futuro, +3 a ataques y daño, añade 1d6 de fuerza, fuerza re-tirada.', requirements: 'Item de búsqueda épica (ver misiones)', weightKg: 1 },
+  { name: 'Mandoble de la Creación', category: 'marcial', range: 'cuerpo a cuerpo', dice: '2d6', damageType: 'cortante', properties: ['pesada', 'a dos manos'], rarity: 'artefacto', cost: '35000 po', magical: true, description: 'Un espadón forjado con la esencia del caos, +3, añade 1d8 de fuerza, propiedades legendarias.', requirements: 'Item de búsqueda épica (ver misiones)', weightKg: 3.5 },
+  { name: 'Bastón del Archimago', category: 'simple', range: 'cuerpo a cuerpo', dice: '1d6', damageType: 'contundente', properties: ['versátil'], versatileDice: '1d8', rarity: 'artefacto', cost: '32000 po', magical: true, description: 'Un bastón que canaliza la magia de los arcanos, +3 a ataques, +1 CD de salvación de conjuros.', requirements: 'Requiere competencia en arcanos', weightKg: 2 },
 ];

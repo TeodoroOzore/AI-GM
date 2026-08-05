@@ -146,6 +146,17 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
     return getSpellcastingLimits(previewCharacter);
   }, [className, level, finalAbilities]);
 
+  // ── Competencias de habilidad otorgadas automáticamente por Trasfondo o Raza ──
+  const lockedSkills = useMemo(() => {
+    const bgSkills = BACKGROUND_EXTRAS[background]?.skills || [];
+    const racialSkills = RACES[race]?.skillProf || [];
+    return Array.from(new Set([...bgSkills, ...racialSkills, ...raceSkillChoices]));
+  }, [background, race, raceSkillChoices]);
+
+  const classChosenSkills = useMemo(() => {
+    return proficientSkills.filter(s => !lockedSkills.includes(s));
+  }, [proficientSkills, lockedSkills]);
+
   const rollAbilityScore4d6 = () => {
     const rolls = [secureRandInt(6), secureRandInt(6), secureRandInt(6), secureRandInt(6)];
     rolls.sort((a, b) => a - b);
@@ -198,9 +209,17 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
 
 
   const handleToggleSkill = (skillName: string) => {
-    setProficientSkills(prev =>
-      prev.includes(skillName) ? prev.filter(s => s !== skillName) : [...prev, skillName]
-    );
+    if (lockedSkills.includes(skillName)) return; // Bloqueada por trasfondo/raza
+    setProficientSkills(prev => {
+      if (prev.includes(skillName)) {
+        return prev.filter(s => s !== skillName);
+      }
+      const currentClassSkillsCount = prev.filter(s => !lockedSkills.includes(s)).length;
+      if (currentClassSkillsCount >= getSkillCount()) {
+        return prev; // Límite de habilidades alcanzado
+      }
+      return [...prev, skillName];
+    });
   };
 
   const handleToggleTool = (toolName: string) => {
@@ -262,10 +281,9 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
 
   const handleApplyRecommendedSkills = () => {
     if (rec) {
-      setProficientSkills(prev => {
-        const merged = new Set([...prev, ...rec.skills.slice(0, getSkillCount())]);
-        return Array.from(merged);
-      });
+      const availableRecs = rec.skills.filter(s => !lockedSkills.includes(s));
+      const toPick = availableRecs.slice(0, getSkillCount());
+      setProficientSkills(prev => Array.from(new Set([...prev.filter(s => !lockedSkills.includes(s)), ...toPick])));
     }
   };
 
@@ -409,7 +427,7 @@ c.raceChoiceA = raceChoiceA;
     c.hpMax = hpMaxFor(classDef.hitDie, level, conMod);
     c.hpCur = c.hpMax;
     c.hitDiceRemaining = level;
-    c.proficientSkills = [...proficientSkills];
+    c.proficientSkills = Array.from(new Set([...lockedSkills, ...proficientSkills]));
     c.selectedTools = normalizedSelectedTools;
     c.armorProf = profs.armor;
     c.weaponProf = profs.weapons;
@@ -460,36 +478,37 @@ c.languages = Array.from(new Set([...(profs.languages || []), ...extraLanguages]
     }
     c.spellsKnown = spells;
 
-    // 1. Build Equipment list for Inventory (Nombre, Cantidad, Descripción/Notas)
+    // 1. Build Equipment list for Inventory (Nombre, Cantidad, Descripción/Notas, Categoría)
     const equipList: EquipmentItem[] = [];
     const seenEquipment = new Set<string>();
-    const addEquipmentItem = (name: string, qty: number, notes: string) => {
+    const addEquipmentItem = (name: string, qty: number, notes: string, category?: string) => {
       const key = name.trim().toLowerCase();
       if (!key || seenEquipment.has(key)) return;
       seenEquipment.add(key);
-      equipList.push({ name, qty, notes });
+      equipList.push({ name, qty, notes, category });
     };
 
     const packDef = STARTING_PACKS.find(p => p.name === selectedPack) || STARTING_PACKS[0];
     if (packDef) {
-      packDef.items.forEach(item => addEquipmentItem(item.name, item.qty, item.notes));
+      packDef.items.forEach(item => addEquipmentItem(item.name, item.qty, item.notes, item.category));
     }
     for (const toolName of normalizedSelectedTools) {
-      addEquipmentItem(toolName, 1, 'Herramienta de competencia');
+      addEquipmentItem(toolName, 1, 'Herramienta de competencia', 'Herramientas');
     }
     if (selectedArmor) {
       const a = ARMOR_CATALOG.find(x => x.name === selectedArmor);
-      addEquipmentItem(selectedArmor, 1, a ? `Armadura ${a.type} (CA ${a.acBase})` : 'Armadura');
+      addEquipmentItem(selectedArmor, 1, a ? `Armadura ${a.type} (CA ${a.acBase})` : 'Armadura', 'Cuerpo');
     }
     if (selectedShield) {
-      addEquipmentItem('Escudo', 1, '+2 a la CA');
+      addEquipmentItem('Escudo', 1, '+2 a la CA', 'Cuerpo');
     }
     for (const wName of selectedWeapons) {
       const w = WEAPONS_CATALOG.find(x => x.name === wName);
-      addEquipmentItem(wName, 1, w ? `${w.dice} ${w.damageType}` : 'Arma');
+      addEquipmentItem(wName, 1, w ? `${w.dice} ${w.damageType}` : 'Arma', 'Arma');
     }
     c.equipment = equipList;
     c.gold = startingGold;
+
 
     // 2. Build Equipped Gear list (Nombre, Ubicación/Zona equipada, Descripción, Propiedades)
     const gearList: EquippedGearItem[] = [];
@@ -1107,9 +1126,17 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
             <div className="block-label">
               Competencias de habilidades
               <span className="skill-count-badge">
-                {proficientSkills.length} / {getSkillCount()} sugeridas
+                {classChosenSkills.length} / {getSkillCount()} elegidas
+                {lockedSkills.length > 0 && (
+                  <span className="bg-skill-badge">+ {lockedSkills.length} del trasfondo</span>
+                )}
               </span>
             </div>
+            {lockedSkills.length > 0 && (
+              <div className="bg-skills-note">
+                🔒 Las habilidades marcadas con candado provienen de tu trasfondo «{background}» y no consumen puntos de competencia.
+              </div>
+            )}
             {rec && rec.skills.length > 0 && (
               <button className="rec-apply-btn" onClick={handleApplyRecommendedSkills}>
                 ✨ Aplicar recomendadas para {className}
@@ -1120,12 +1147,16 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 const abLabel = ABILITIES.find(a => a.key === s.ab)?.label || s.ab.toUpperCase();
                 const mod = abilityMod(finalAbilities[s.ab]);
                 const isRec = rec?.skills.includes(s.name);
+                const isLocked = lockedSkills.includes(s.name);
+                const isChecked = isLocked || proficientSkills.includes(s.name);
+                const isAtLimit = !isLocked && !proficientSkills.includes(s.name) && classChosenSkills.length >= getSkillCount();
                 return (
-                  <div key={s.name} className={`skill-row-creation ${isRec ? 'recommended' : ''}`}>
-                    <label style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1 }}>
+                  <div key={s.name} className={`skill-row-creation ${isRec && !isLocked ? 'recommended' : ''} ${isLocked ? 'locked-by-bg' : ''} ${isAtLimit ? 'at-limit' : ''}`}>
+                    <label style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1, opacity: isAtLimit ? 0.45 : 1 }}>
                       <input
                         type="checkbox"
-                        checked={proficientSkills.includes(s.name)}
+                        checked={isChecked}
+                        disabled={isLocked || isAtLimit}
                         onChange={() => handleToggleSkill(s.name)}
                       />
                       <span className="skill-name-label">{s.name}</span>
@@ -1136,7 +1167,8 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                         {mod >= 0 ? `+${mod}` : mod}
                       </span>
                     </label>
-                    {isRec && <span className="rec-star" title="Recomendada para esta clase">★</span>}
+                    {isLocked && <span className="locked-bg-tag" title={`Otorgada por trasfondo: ${background}`}>🔒 {background}</span>}
+                    {isRec && !isLocked && <span className="rec-star" title="Recomendada para esta clase">★</span>}
                   </div>
                 );
               })}
