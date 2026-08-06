@@ -120,14 +120,14 @@ export function getRacialSpells(
     spells.push({
       name: 'Taumaturgia',
       level: 'racial',
-      notes: 'Truco racial. Carisma es tu habilidad para lanzarlo.',
+      notes: 'Truco racial de Tiefling. Carisma es tu aptitud mágica.',
       school: 'transmutación'
     });
     if (level >= 3) {
       spells.push({
-        name: 'Rayo de Fuego',
+        name: 'Reprensión infernal',
         level: 'racial',
-        notes: 'Una vez por descanso largo. Carisma es tu habilidad para lanzarlo.',
+        notes: 'Conjuro racial (Nivel 3). 1 vez por descanso largo. Carisma es tu aptitud mágica.',
         damageType: 'fuego',
         school: 'evocación'
       });
@@ -136,7 +136,7 @@ export function getRacialSpells(
       spells.push({
         name: 'Oscuridad',
         level: 'racial',
-        notes: 'Una vez por descanso largo. Carisma es tu habilidad para lanzarlo.',
+        notes: 'Conjuro racial (Nivel 5). 1 vez por descanso largo. Carisma es tu aptitud mágica.',
         school: 'evocación'
       });
     }
@@ -145,17 +145,16 @@ export function getRacialSpells(
   // ── Elfo Oscuro (Drow): Magia Drow ──
   if (race === 'Elfo Oscuro (Drow)') {
     spells.push({
-      name: 'Taumaturgia',
+      name: 'Luces danzantes',
       level: 'racial',
-      notes: 'Truco racial. Carisma es tu habilidad para lanzarlo.',
-      school: 'transmutación'
+      notes: 'Truco racial de Drow. Carisma es tu aptitud mágica.',
+      school: 'evocación'
     });
     if (level >= 3) {
       spells.push({
-        name: 'Rayo de Fuego',
+        name: 'Fuego feérico',
         level: 'racial',
-        notes: 'Una vez por descanso largo. Carisma es tu habilidad para lanzarlo.',
-        damageType: 'fuego',
+        notes: 'Conjuro racial (Nivel 3). 1 vez por descanso largo. Carisma es tu aptitud mágica.',
         school: 'evocación'
       });
     }
@@ -163,7 +162,7 @@ export function getRacialSpells(
       spells.push({
         name: 'Oscuridad',
         level: 'racial',
-        notes: 'Una vez por descanso largo. Carisma es tu habilidad para lanzarlo.',
+        notes: 'Conjuro racial (Nivel 5). 1 vez por descanso largo. Carisma es tu aptitud mágica.',
         school: 'evocación'
       });
     }
@@ -174,8 +173,18 @@ export function getRacialSpells(
     spells.push({
       name: raceCantrip,
       level: 'racial',
-      notes: 'Truco racial de Alto Elfo. Inteligencia es tu habilidad para lanzarlo.',
+      notes: 'Truco racial de Alto Elfo. Inteligencia es tu aptitud mágica.',
       school: 'evocación'
+    });
+  }
+
+  // ── Gnomo de los Bosques: Ilusión menor ──
+  if (race === 'Gnomo de los Bosques') {
+    spells.push({
+      name: 'Ilusión menor',
+      level: 'racial',
+      notes: 'Truco racial de Gnomo. Inteligencia es tu aptitud mágica.',
+      school: 'ilusión'
     });
   }
 

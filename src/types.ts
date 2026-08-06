@@ -7,6 +7,8 @@ export type {
   AbilityDef,
   Skill,
   RaceDef,
+  BaseRaceDef,
+  SubraceDef,
   RaceTrait,
   RaceTraitType,
   RaceAncestryChoice,
@@ -39,6 +41,8 @@ WeaponCatalogEntry,
   WeaponModification,
   ArmorModification,
   QuestItemDef,
+  JournalQuestDef,
+  DiscoveredArtifactEntry,
   CraftingProgressEntry,
   CraftingProgress,
   ToolCategory,
@@ -94,11 +98,11 @@ export type {
 
 // Data constants
 export { ABILITIES, SKILLS, POINTBUY_COST, abilityMod, fmtSigned, DAMAGE_TYPE_EMOJI, DAMAGE_TYPE_COLOR } from './data/abilities';
-export { RACES, RACE_LANGUAGES } from './data/races';
+export { RACES, BASE_RACES, RACE_LANGUAGES, resolveBaseRace, getSubraceCategoryLabel } from './data/races';
 export { CLASSES, FULL_SLOTS, HALF_SLOTS, PACT_SLOTS, profBonus, hpMaxFor, classResources } from './data/classes';
 export { CLASS_ARMOR_PROF, CLASS_WEAPON_PROF, CLASS_TOOL_PROF } from './data/classProficiencies';
 export { BACKGROUND_EXTRAS, BACKGROUND_OPTIONS } from './data/backgrounds';
-export { getCharacterProficiencies } from './data/proficiencies';
+export { getCharacterProficiencies, isWeaponProficient, isArmorProficient } from './data/proficiencies';
 export { WEAPONS_CATALOG } from './data/weapons';
 export { ARMOR_CATALOG } from './data/armor';
 export { EQUIPMENT_CATALOG } from './data/equipment';
@@ -152,4 +156,6 @@ export {
   getKnownItemNames,
   addKnownItems,
   isItemKnown,
+  computeAC,
+  buildWeaponItem,
 } from './utils/crafting';

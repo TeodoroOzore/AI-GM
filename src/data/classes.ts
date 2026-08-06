@@ -80,6 +80,11 @@ export function classResources(className: string, level: number): ClassResource[
     }
     case 'Paladín': {
       res.push({ key: 'layonhands', label: `Imposición de Manos (reserva de ${level * 5} PG)`, max: level * 5 });
+      if (level >= 3) res.push({ key: 'channel', label: 'Canalizar Divinidad (1 uso/descanso corto)', max: 1 });
+      break;
+    }
+    case 'Mago': {
+      res.push({ key: 'arcanerecovery', label: `Recuperación Arcana (1/descanso corto — recupera ${Math.ceil(level / 2)} niveles de espacios)`, max: 1 });
       break;
     }
     case 'Druida': {
@@ -87,16 +92,17 @@ export function classResources(className: string, level: number): ClassResource[
       break;
     }
     case 'Clérigo': {
-      res.push({ key: 'channel', label: 'Canalizar Divinidad (usos)', max: level >= 6 ? 2 : level >= 2 ? 1 : 0 });
+      res.push({ key: 'channel', label: 'Canalizar Divinidad (usos/descanso corto)', max: level >= 18 ? 3 : level >= 6 ? 2 : level >= 2 ? 1 : 0 });
       break;
     }
     case 'Hechicero': {
-      res.push({ key: 'sorcery', label: 'Puntos de Hechicería', max: level >= 2 ? level : 0 });
+      res.push({ key: 'sorcery', label: 'Puntos de Hechicería (descanso largo)', max: level >= 2 ? level : 0 });
       break;
     }
     case 'Bardo': {
       const die = level >= 15 ? '1d12' : level >= 10 ? '1d10' : level >= 5 ? '1d8' : '1d6';
-      res.push({ key: 'inspiration', label: `Inspiración Bárdica (dado ${die})`, max: 0, info: true });
+      const restType = level >= 5 ? 'descanso corto' : 'descanso largo';
+      res.push({ key: 'inspiration', label: `Inspiración Bárdica (dado ${die}, recupera en ${restType})`, max: 3 });
       break;
     }
   }

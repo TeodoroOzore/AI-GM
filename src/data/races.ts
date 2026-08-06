@@ -1,249 +1,522 @@
-// ─── Races & Languages ─────────────────────────────────────────────
-// Catálogo exhaustivo de razas jugables del D&D 5e (PHB) en español,
-// con bonificadores de habilidad, tamaño, velocidad, idiomas, visión
-// en la oscuridad, resistencias, competencias y rasgos raciales.
+// ─── Base Races & Subraces (D&D 5e SRD / PHB Standard) ─────────────
+// Catálogo estructurado en Raza Base y Subrazas / Variantes / Ascendencias
+// ordenadas alfabéticamente.
 
-import { RaceDef } from '../types/core';
+import { RaceDef, BaseRaceDef } from '../types/core';
 
-export const RACES: Record<string, RaceDef> = {
+export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
-  // HUMANO
+  // 1. DRACÓNIDO
   // ════════════════════════════════════════════════════════════════
-  'Humano': {
-    fixed: { str: 1, dex: 1, con: 1, int: 1, wis: 1, cha: 1 },
-    description: 'Los humanos son la raza más joven y versátil del multiverso. Su ambición, ingenio y capacidad de adaptación les han permitido prosperar en todos los rincones del mundo, alcanzando logros que otras razas más longevas apenas sueñan.',
+  'Dracónido': {
+    name: 'Dracónido',
+    description: 'Humanoides orgullosos nacidos del linaje dracónico, poseedores de un arma de aliento elemental y resistencia natural.',
     size: 'Mediano',
     speed: 9,
-    age: 'Alcanzan la adultez a los 18 años y viven menos de un siglo.',
-    alignment: 'Los humanos no tienen una tendencia innata hacia el bien o el mal. Pueden encontrarse en cualquier lugar.',
-    languages: ['Común'],
-    extraLanguages: 1,
+    age: 'Alcanzan la adultez a los 15 años y viven unos 80 años.',
+    alignment: 'Tienden a los extremos de honor noble o ferocidad implacable.',
+    languages: ['Común', 'Dracónico'],
+    fixed: { str: 2, cha: 1 },
     traits: [
-      { name: 'Versátil', description: 'Tus puntuaciones de habilidad aumentan cada una en +1. Esto ya está reflejado en tus bonificadores raciales.', type: 'feature' },
-      { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
+      { name: 'Arma de Aliento Elemental', description: 'Exhala energía elemental (2d6 a 5d6 daño según tu ascendencia).', type: 'damage' },
+      { name: 'Resistencia Dracónica', description: 'Resistencia al tipo de daño elemental de tu linaje dracónico.', type: 'defense' }
+    ],
+    subraces: [
+      {
+        name: 'Dracónido Rojo',
+        description: 'Ascendencia de dragón rojo. Resistencia al fuego y aliento de fuego en cono de 4.5m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['fuego'],
+        traits: [
+          { name: 'Aliento de Fuego', description: 'Cono de fuego de 4.5m (salvación de DES). Daño de fuego 2d6 (+1d6 a niveles 6, 11 y 16).', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Azul',
+        description: 'Ascendencia de dragón azul. Resistencia al relámpago y aliento de relámpago en línea de 9m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['relámpago'],
+        traits: [
+          { name: 'Aliento de Relámpago', description: 'Línea de relámpago de 1.5m × 9m (salvación de DES). Daño de relámpago 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Verde',
+        description: 'Ascendencia de dragón verde. Resistencia al veneno y aliento de veneno en cono de 4.5m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['veneno'],
+        traits: [
+          { name: 'Aliento de Veneno', description: 'Cono de veneno de 4.5m (salvación de CON). Daño de veneno 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Blanco',
+        description: 'Ascendencia de dragón blanco. Resistencia al frío y aliento de escarcha en cono de 4.5m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['frío'],
+        traits: [
+          { name: 'Aliento de Frío', description: 'Cono de escarcha de 4.5m (salvación de CON). Daño de frío 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Negro',
+        description: 'Ascendencia de dragón negro. Resistencia al ácido y aliento de ácido en línea de 9m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['ácido'],
+        traits: [
+          { name: 'Aliento de Ácido', description: 'Línea de ácido de 1.5m × 9m (salvación de DES). Daño de ácido 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Latón',
+        description: 'Ascendencia de dragón de latón. Resistencia al fuego y aliento de fuego en línea de 9m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['fuego'],
+        traits: [
+          { name: 'Aliento de Fuego', description: 'Línea de fuego de 1.5m × 9m (salvación de DES). Daño de fuego 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Bronce',
+        description: 'Ascendencia de dragón de bronce. Resistencia al relámpago y aliento en línea de 9m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['relámpago'],
+        traits: [
+          { name: 'Aliento de Relámpago', description: 'Línea de relámpago de 1.5m × 9m (salvación de DES). Daño 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Cobre',
+        description: 'Ascendencia de dragón de cobre. Resistencia al ácido y aliento en línea de 9m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['ácido'],
+        traits: [
+          { name: 'Aliento de Ácido', description: 'Línea de ácido de 1.5m × 9m (salvación de DES). Daño 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Oro',
+        description: 'Ascendencia de dragón de oro. Resistencia al fuego y aliento en cono de 4.5m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['fuego'],
+        traits: [
+          { name: 'Aliento de Fuego', description: 'Cono de fuego de 4.5m (salvación de DES). Daño 2d6.', type: 'damage' }
+        ]
+      },
+      {
+        name: 'Dracónido Plata',
+        description: 'Ascendencia de dragón de plata. Resistencia al frío y aliento en cono de 4.5m.',
+        fixed: { str: 2, cha: 1 },
+        resistances: ['frío'],
+        traits: [
+          { name: 'Aliento de Frío', description: 'Cono de frío de 4.5m (salvación de CON). Daño 2d6.', type: 'damage' }
+        ]
+      }
     ]
   },
 
-// ════════════════════════════════════════════════════════════════
-  // ELFO OSCURO (DROW)
   // ════════════════════════════════════════════════════════════════
-  'Elfo Oscuro (Drow)': {
-    fixed: { dex: 2, cha: 1 },
-    description: 'Los elfos oscuros, también conocidos como drows, son una subraza élfica que habita en las profundidades del Submundo. Su piel de ébano y cabello blanco plateado son el sello de una raza forjada en la oscuridad eterna. Poseen una visión superior en la oscuridad y una afinidad innata con la magia de las sombras.',
+  // 2. ELFO
+  // ════════════════════════════════════════════════════════════════
+  'Elfo': {
+    name: 'Elfo',
+    description: 'Seres longevos y elegantes, profundamente conectados con la magia y la naturaleza.',
     size: 'Mediano',
     speed: 9,
-    age: 'Aunque alcanzan la adultez física a los 100 años, se los considera adultos a los 100. Pueden vivir hasta los 750 años.',
-    alignment: 'Los drows han sido moldeados por una sociedad cruel y despiadada en el Submundo. La mayoría son neutrales malvados, aunque existen excepciones que abandonan su herencia.',
+    age: 'Alcanzan la adultez a los 100 años y pueden vivir hasta los 750 años.',
+    alignment: 'Amantes de la libertad, la belleza y la autoexpresión.',
     languages: ['Común', 'Élfico'],
-    darkvision: 36,
-    weaponProf: ['Espada larga', 'Espada corta', 'Arco corto', 'Ballesta de mano'],
-    traits: [
-      { name: 'Visión en la Oscuridad Superior', description: 'Tu visión en la oscuridad tiene un alcance de 36 metros. Puedes ver en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no puedes distinguir colores, solo tonos de gris.', type: 'senses' },
-      { name: 'Ascendencia Feérica', description: 'Tienes ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
-      { name: 'Trance', description: 'Los elfos no duermen. En su lugar meditan profundamente durante 4 horas al día (palabra común: "trance"). Mientras meditas, puedes soñar con visiones de tu pasado. Después de este descanso, obtienes los mismos beneficios que un humano después de 8 horas de sueño.', type: 'feature' },
-      { name: 'Entrenamiento Élfico', description: 'Tienes competencia con la espada larga, la espada corta, el arco corto y la ballesta de mano.', type: 'proficiency' },
-      { name: 'Magia Drow', description: 'Conoces el truco Taumaturgia. Al alcanzar el nivel 3, puedes lanzar Rayo de Fuego una vez por descanso largo. Al alcanzar el nivel 5, puedes lanzar el conjuro Oscuridad una vez por descanso largo. El Carisma es tu habilidad para lanzar estos conjuros.', type: 'spell' },
-      { name: 'Sensibilidad a la Luz Solar', description: 'Tienes desventaja en las tiradas de ataque y en las pruebas de Percepción que dependan de la vista cuando tú, tu objetivo o lo que intentes percibir está bajo la luz solar directa.', type: 'feature' }
-    ]
-  },
-
-  // ════════════════════════════════════════════════════════════════
-  // ALTO ELFO
-  // ════════════════════════════════════════════════════════════════
-  'Alto Elfo': {
-    fixed: { dex: 2, int: 1 },
-    description: 'Los altos elfos son seres longevos y elegantes, profundamente conectados con la magia del mundo y las antiguas tradiciones de sus reinos feéricos. Su aguda percepción y gracia natural los convierten en arqueros y magos incomparables.',
-    size: 'Mediano',
-    speed: 9,
-    age: 'Aunque alcanzan la adultez física a los 100 años, se los considera adultos a los 100. Pueden vivir hasta los 750 años.',
-    alignment: 'Aman la libertad, la diversidad y la expresión personal, por lo que suelen inclinarse hacia el bien y el caos.',
-    languages: ['Común', 'Élfico'],
-    extraLanguages: 1,
     darkvision: 18,
-    weaponProf: ['Espada larga', 'Espada corta', 'Arco largo', 'Arco corto'],
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a los bosques y cielos nocturnos, tienes una visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no puedes distinguir colores, solo tonos de gris.', type: 'senses' },
-      { name: 'Ascendencia Feérica', description: 'Tienes ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
-      { name: 'Trance', description: 'Los elfos no duermen. En su lugar meditan profundamente durante 4 horas al día (palabra común: "trance"). Mientras meditas, puedes soñar con visiones de tu pasado. Después de este descanso, obtienes los mismos beneficios que un humano después de 8 horas de sueño.', type: 'feature' },
-      { name: 'Entrenamiento Élfico', description: 'Tienes competencia con la espada larga, la espada corta, el arco largo y el arco corto.', type: 'proficiency' },
-      { name: 'Truco', description: 'Conoces un truco de tu elección de la lista de conjuros de mago. La Inteligencia es tu habilidad para lanzarlo.', type: 'spell' },
-      { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad hasta 18 metros.', type: 'senses' },
+      { name: 'Ascendencia Feérica', description: 'Ventaja en salvaciones contra encantamiento e inmunidad a sueño mágico.', type: 'defense' },
+      { name: 'Trance', description: 'Meditación profunda durante 4 horas al día en lugar de dormir.', type: 'feature' }
+    ],
+    subraces: [
+      {
+        name: 'Alto Elfo',
+        description: 'Dominio innato de la magia arcana y erudición de reinos antiguos.',
+        fixed: { dex: 2, int: 1 },
+        extraLanguages: 1,
+        weaponProf: ['Espada larga', 'Espada corta', 'Arco largo', 'Arco corto'],
+        traits: [
+          { name: 'Entrenamiento Élfico en Armas', description: 'Competencia con espada larga, espada corta, arco largo y arco corto.', type: 'proficiency' },
+          { name: 'Truco de Mago', description: 'Conoces un truco a elección de la lista de conjuros de Mago (Inteligencia es tu aptitud mágica).', type: 'spell' },
+          { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional.', type: 'language' }
+        ]
+      },
+      {
+        name: 'Elfo de los Bosques',
+        description: 'Sentidos aguzados y pies veloces, adaptados a la naturaleza indómita.',
+        fixed: { dex: 2, wis: 1 },
+        speed: 10.5,
+        weaponProf: ['Espada larga', 'Espada corta', 'Arco largo', 'Arco corto'],
+        traits: [
+          { name: 'Pies Veloces', description: 'Tu velocidad base de movimiento aumenta a 10.5 metros (35 pies).', type: 'movement' },
+          { name: 'Entrenamiento Élfico en Armas', description: 'Competencia con espada larga, espada corta, arco largo y arco corto.', type: 'proficiency' },
+          { name: 'Máscara de la Naturaleza', description: 'Puedes intentarte ocultar cuando solo estás ligeramente obstruido por la naturaleza.', type: 'feature' }
+        ]
+      },
+      {
+        name: 'Elfo Oscuro (Drow)',
+        description: 'Habitantes del Submundo con visión superior en sombras y magia drow.',
+        fixed: { dex: 2, cha: 1 },
+        darkvision: 36,
+        weaponProf: ['Espada ropera', 'Espada corta', 'Ballesta de mano'],
+        traits: [
+          { name: 'Visión en la Oscuridad Superior', description: 'Tu visión en la oscuridad se extiende a los 36 metros.', type: 'senses' },
+          { name: 'Magia Drow', description: 'Conoces Luces danzantes (Nivel 1), Fuego feérico (Nivel 3) y Oscuridad (Nivel 5). Carisma es tu aptitud mágica.', type: 'spell' },
+          { name: 'Entrenamiento Drow en Armas', description: 'Competencia con espada ropera, espada corta y ballesta de mano.', type: 'proficiency' },
+          { name: 'Sensibilidad a la Luz Solar', description: 'Desventaja en ataques y pruebas de vista bajo luz solar directa.', type: 'feature' }
+        ]
+      }
     ]
   },
 
   // ════════════════════════════════════════════════════════════════
-  // ENANO DE LAS COLINAS
+  // 3. ENANO
   // ════════════════════════════════════════════════════════════════
-  'Enano de las Colinas': {
-    fixed: { con: 2, wis: 1 },
-    description: 'Los enanos de las colinas son pueblos resistentes y orgullosos, forjados en las montañas y profundidades de la tierra. Su resistencia legendaria y su habilidad artesanal con la piedra y el metal son insuperables.',
+  'Enano': {
+    name: 'Enano',
+    description: 'Pueblos fuertes, tradicionales y persistentes, tallados en las piedras de las montañas.',
     size: 'Mediano',
     speed: 7.5,
-    age: 'Maduran al mismo ritmo que los humanos, pero se los considera jóvenes hasta los 50. Viven unos 350 años.',
-    alignment: 'Valoran el orden y la tradición, por lo que suelen ser legales. Son fiables y justos, aunque también orgullosos y testarudos.',
+    age: 'Viven unos 350 años.',
+    alignment: 'Valoran el orden, el honor y la tradición.',
     languages: ['Común', 'Enano'],
     darkvision: 18,
     resistances: ['veneno'],
     weaponProf: ['Hacha de batalla', 'Hacha de mano', 'Martillo de guerra', 'Martillo ligero'],
     toolChoices: { count: 1, options: ['Herramientas de herrero', 'Herramientas de cervecero', 'Herramientas de cantero'] },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a la vida bajo tierra, tienes visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. En la oscuridad total no puedes distinguir colores, solo tonos de gris.', type: 'senses' },
-      { name: 'Resistencia Enana', description: 'Tienes ventaja en las tiradas de salvación contra veneno y tienes resistencia al daño de veneno.', type: 'defense' },
-      { name: 'Entrenamiento de Combate Enano', description: 'Tienes competencia con el hacha de batalla, el hacha de mano, el martillo de guerra y el martillo ligero.', type: 'proficiency' },
-      { name: 'Competencia con Herramientas', description: 'Tienes competencia con una herramienta de artesano a tu elección (herrero, cervecero o cantero).', type: 'proficiency' },
-      { name: 'Conocimiento de la Piedra', description: 'Siempre que hagas una prueba de Inteligencia (Historia) relacionada con el origen de un trabajo de piedra, se te considera competente y sumas el doble de tu bonificador de competencia.', type: 'skill' },
-      { name: 'Robustez Enana', description: 'Tu máximo de Puntos de Golpe aumenta en 1, y aumenta en 1 cada vez que subes de nivel.', type: 'feature' }
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
+      { name: 'Resistencia Enana', description: 'Resistencia y ventaja en tiradas de salvación contra veneno.', type: 'defense' },
+      { name: 'Entrenamiento en Armas Enanas', description: 'Competencia con hachas y martillos.', type: 'proficiency' },
+      { name: 'Conocimiento de la Piedra', description: 'Doble bono de competencia en pruebas de Historia sobre trabajo de piedra.', type: 'skill' }
+    ],
+    subraces: [
+      {
+        name: 'Enano de las Colinas',
+        description: 'Intuición aguzada y resistencia corporal sobrenatural.',
+        fixed: { con: 2, wis: 1 },
+        traits: [
+          { name: 'Robustez Enana', description: 'Tu máximo de Puntos de Golpe aumenta en +1 por cada nivel.', type: 'feature' }
+        ]
+      },
+      {
+        name: 'Enano de las Montañas',
+        description: 'Corpulentos y fuertes, adiestrados en vestir armaduras de metal.',
+        fixed: { con: 2, str: 2 },
+        armorProf: ['Ligera', 'Media'],
+        traits: [
+          { name: 'Entrenamiento en Armaduras Enanas', description: 'Competencia con armadura ligera y media.', type: 'proficiency' }
+        ]
+      }
     ]
   },
 
   // ════════════════════════════════════════════════════════════════
-  // MEDIANO PIÉS LIGERO
+  // 4. GNOMO
   // ════════════════════════════════════════════════════════════════
-  'Mediano Piesligero': {
-    fixed: { dex: 2, cha: 1 },
-    description: 'Los medianos piesligeros son criaturas pequeñas y afortunadas que valoran la comodidad, la buena comida y la tranquilidad. Su naturaleza discreta y su suerte extraordinaria les permiten sortear peligros que doblegarían a otros.',
+  'Gnomo': {
+    name: 'Gnomo',
+    description: 'Inventores entusiastas y curiosos de gran intelecto y vitalidad.',
     size: 'Pequeño',
     speed: 7.5,
-    age: 'Un mediano alcanza la adultez a los 20 años y puede vivir hasta los 150 años.',
-    alignment: 'Suelen ser legales y buenos. Rara vez son malvados o caóticos, aunque los piesligeros a veces se inclinan al caos por su amor a la diversión.',
-    languages: ['Común', 'Mediano'],
-    traits: [
-      { name: 'Suerte', description: 'Cuando tiras un 1 en un d20 para una tirada de ataque, prueba de habilidad o tirada de salvación, puedes volver a tirar el dado y debes usar el nuevo resultado.', type: 'feature' },
-      { name: 'Coraje', description: 'Tienes ventaja en las tiradas de salvación contra asustado.', type: 'defense' },
-      { name: 'Agilidad Mediana', description: 'Puedes moverte a través del espacio de cualquier criatura de tamaño mayor al tuyo.', type: 'movement' },
-      { name: 'Sigiloso por Naturaleza', description: 'Puedes intentar ocultarte incluso cuando solo te obstruye una criatura que sea al menos un tamaño más grande que tú.', type: 'skill' }
-    ]
-  },
-
-  // ════════════════════════════════════════════════════════════════
-  // DRACÓNIDO
-  // ════════════════════════════════════════════════════════════════
-  'Dracónido': {
-    fixed: { str: 2, cha: 1 },
-    description: 'Los dracónidos son criaturas humanoides con aspecto de dragón, nacidas de los huevos de los dragones. Su herencia dracónica les otorga un arma de aliento devastadora y una resistencia elemental según su ancestro.',
-    size: 'Mediano',
-    speed: 9,
-    age: 'Crecen rápido: caminan horas después de nacer y alcanzan la adultez a los 15 años. Pueden vivir hasta los 80 años.',
-    alignment: 'Los dracónidos tienden a los extremos. Los buenos son justos y honorables, mientras que los malvados son crueles y despiadados.',
-    languages: ['Común', 'Dracónico'],
-    ancestryChoices: {
-      label: 'Ancestro Dracónico',
-      options: [
-        { name: 'Negro', damageType: 'ácido', breath: 'Línea de 1.5m × 9m (salvación de DES)', resistance: 'ácido' },
-        { name: 'Azul', damageType: 'relámpago', breath: 'Línea de 1.5m × 9m (salvación de DES)', resistance: 'relámpago' },
-        { name: 'Verde', damageType: 'veneno', breath: 'Cono de 4.5m (salvación de CON)', resistance: 'veneno' },
-        { name: 'Rojo', damageType: 'fuego', breath: 'Cono de 4.5m (salvación de DES)', resistance: 'fuego' },
-        { name: 'Blanco', damageType: 'frío', breath: 'Cono de 4.5m (salvación de CON)', resistance: 'frío' },
-        { name: 'Latón', damageType: 'fuego', breath: 'Línea de 1.5m × 9m (salvación de DES)', resistance: 'fuego' },
-        { name: 'Bronce', damageType: 'relámpago', breath: 'Línea de 1.5m × 9m (salvación de DES)', resistance: 'relámpago' },
-        { name: 'Cobre', damageType: 'ácido', breath: 'Línea de 1.5m × 9m (salvación de DES)', resistance: 'ácido' },
-        { name: 'Oro', damageType: 'fuego', breath: 'Cono de 4.5m (salvación de DES)', resistance: 'fuego' },
-        { name: 'Plata', damageType: 'frío', breath: 'Cono de 4.5m (salvación de CON)', resistance: 'frío' }
-      ]
-    },
-    traits: [
-      { name: 'Ancestro Dracónico', description: 'Tienes un ancestro dracónico que determina el tipo de tu arma de aliento y de tu resistencia al daño.', type: 'choice' },
-      { name: 'Arma de Aliento', description: 'Puedes usar tu acción para exhalar energía destructiva de tu ancestro. Tu arma de aliento inflige 2d6 de daño al nivel 1, y aumenta a 3d6 a nivel 6, 4d6 a nivel 11 y 5d6 a nivel 16. Después de usarla, no puedes volver a usarla hasta completar un descanso corto o largo.', type: 'damage' },
-      { name: 'Resistencia al Daño', description: 'Tienes resistencia al tipo de daño asociado a tu ancestro dracónico.', type: 'defense' }
-    ]
-  },
-
-  // ════════════════════════════════════════════════════════════════
-  // GNOMO DE LAS ROCAS
-  // ════════════════════════════════════════════════════════════════
-  'Gnomo de las Rocas': {
-    fixed: { int: 2, con: 1 },
-    description: 'Los gnomos de las rocas son inventores ingeniosos y constructores de artefactos maravillosos. Su curiosidad insaciable y su intelecto agudo los convierten en expertos artífices y estudiosos.',
-    size: 'Pequeño',
-    speed: 7.5,
-    age: 'Los gnomos maduran al mismo ritmo que los humanos, pero pueden vivir de 350 a 500 años.',
-    alignment: 'Suelen ser buenos. Los que se inclinan a la ley son ingenieros y sabios, y los caóticos son bardos y pícaros.',
+    age: 'Viven de 350 a 500 años.',
+    alignment: 'Creativos, alegres y enfocados al bien.',
     languages: ['Común', 'Gnomo'],
     darkvision: 18,
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Acostumbrado a la vida bajo tierra, tienes visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue.', type: 'senses' },
-      { name: 'Astucia Gnoma', description: 'Tienes ventaja en todas las tiradas de salvación de Inteligencia, Sabiduría y Carisma contra la magia.', type: 'defense' },
-      { name: 'Artificio', description: 'Siempre que hagas una prueba de Inteligencia (Historia) relacionada con objetos mágicos, alquímicos o tecnológicos, puedes sumar el doble de tu bonificador de competencia.', type: 'skill' },
-      { name: 'Inventor', description: 'Cuando haces una prueba de Inteligencia (Investigación) o una prueba de Destreza (Juego de Manos) para armar o desarmar un mecanismo, puedes sumar el doble de tu bonificador de competencia.', type: 'skill' }
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
+      { name: 'Astucia Gnoma', description: 'Ventaja en salvaciones de Inteligencia, Sabiduría y Carisma contra magia.', type: 'defense' }
+    ],
+    subraces: [
+      {
+        name: 'Gnomo de las Rocas',
+        description: 'Ingeniosos mecánicos y constructores de artefactos.',
+        fixed: { int: 2, con: 1 },
+        traits: [
+          { name: 'Conocimiento del Artesano', description: 'Doble competencia en Inteligencia sobre objetos mágicos o tecnológicos.', type: 'skill' },
+          { name: 'Artilugio', description: 'Construcción de pequeños mecanismos mágicos.', type: 'feature' }
+        ]
+      },
+      {
+        name: 'Gnomo de los Bosques',
+        description: 'Afinidad con la magia de ilusión y las criaturas de los bosques.',
+        fixed: { int: 2, dex: 1 },
+        traits: [
+          { name: 'Ilusión Innata', description: 'Conoces el truco Ilusión Menor (Inteligencia es tu aptitud mágica).', type: 'spell' },
+          { name: 'Hablar con Bestias Pequeñas', description: 'Comunicación sencilla con criaturas de tamaño Pequeño o menor.', type: 'feature' }
+        ]
+      }
     ]
   },
 
   // ════════════════════════════════════════════════════════════════
-  // SEMIELFO
+  // 5. HUMANO
   // ════════════════════════════════════════════════════════════════
-  'Semielfo': {
-    fixed: { cha: 2 },
-    choice: { count: 2, amount: 1 },
-    description: 'Los semielfos caminan entre dos mundos: el reino feérico de sus ancestros elfos y la bulliciosa sociedad humana. Su carisma innato y su versatilidad les permiten adaptarse a cualquier situación.',
+  'Humano': {
+    name: 'Humano',
+    description: 'La raza más adaptable, ambiciosa y versátil del mundo.',
     size: 'Mediano',
     speed: 9,
-    age: 'Los semielfos maduran al mismo ritmo que los humanos y viven unos 180 años.',
-    alignment: 'Comparten la inclinación caótica de sus parientes élficos y el espíritu libre de los humanos. Suelen ser caóticos y neutrales.',
+    age: 'Alcanzan la adultez a los 18 años y viven menos de un siglo.',
+    alignment: 'Sin tendencia innata fixed, muy variados.',
+    languages: ['Común'],
+    extraLanguages: 1,
+    traits: [],
+    subraces: [
+      {
+        name: 'Humano Estándar',
+        description: 'Aumenta todas tus puntuaciones de habilidad en +1.',
+        fixed: { str: 1, dex: 1, con: 1, int: 1, wis: 1, cha: 1 },
+        traits: [
+          { name: 'Versátil', description: '+1 a todas las puntuaciones de habilidad.', type: 'feature' }
+        ]
+      },
+      {
+        name: 'Humano Entrenado (Variante)',
+        description: 'Ganas +1 en dos atributos a tu elección y 1 habilidad adicional.',
+        choice: { count: 2, amount: 1 },
+        skillChoices: { count: 1, options: ['Atletismo', 'Acrobacias', 'Juego de Manos', 'Sigilo', 'Arcanos', 'Historia', 'Investigación', 'Naturaleza', 'Religión', 'Trato con Animales', 'Perspicacia', 'Medicina', 'Percepción', 'Supervivencia', 'Engaño', 'Intimidación', 'Interpretación', 'Persuasión'] },
+        traits: [
+          { name: 'Especialización Entrenada', description: '+1 a 2 atributos a elección y 1 habilidad extra.', type: 'feature' }
+        ]
+      }
+    ]
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // 6. MEDIANO
+  // ════════════════════════════════════════════════════════════════
+  'Mediano': {
+    name: 'Mediano',
+    description: 'Pequeños, afables y dotados de una suerte extraordinaria.',
+    size: 'Pequeño',
+    speed: 7.5,
+    age: 'Viven unos 150 años.',
+    alignment: 'Pacíficos, legales y amables.',
+    languages: ['Común', 'Mediano'],
+    traits: [
+      { name: 'Suerte', description: 'Tirar un 1 en un d20 te permite volver a tirar el dado.', type: 'feature' },
+      { name: 'Coraje', description: 'Ventaja en tiradas de salvación contra asustado.', type: 'defense' },
+      { name: 'Agilidad Mediana', description: 'Puedes moverte a través del espacio de criaturas mayores.', type: 'movement' }
+    ],
+    subraces: [
+      {
+        name: 'Mediano Piesligero',
+        description: 'Sigilosos y diestros en pasar desapercibidos.',
+        fixed: { dex: 2, cha: 1 },
+        traits: [
+          { name: 'Sigiloso por Naturaleza', description: 'Puedes ocultarte tras criaturas de mayor tamaño.', type: 'skill' }
+        ]
+      },
+      {
+        name: 'Mediano Fornido',
+        description: 'Fuertes de constitución y resistentes a toxinas.',
+        fixed: { dex: 2, con: 1 },
+        resistances: ['veneno'],
+        traits: [
+          { name: 'Resiliencia Fornida', description: 'Resistencia y ventaja contra veneno.', type: 'defense' }
+        ]
+      }
+    ]
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // 7. SEMIELFO
+  // ════════════════════════════════════════════════════════════════
+  'Semielfo': {
+    name: 'Semielfo',
+    description: 'Unen la gracia feérica élfica con el espíritu ambicioso humano.',
+    size: 'Mediano',
+    speed: 9,
+    age: 'Viven unos 180 años.',
+    alignment: 'Caóticos y de espíritu libre.',
     languages: ['Común', 'Élfico'],
     extraLanguages: 1,
     darkvision: 18,
+    fixed: { cha: 2 },
+    choice: { count: 2, amount: 1 },
     skillChoices: { count: 2, options: ['Atletismo', 'Acrobacias', 'Juego de Manos', 'Sigilo', 'Arcanos', 'Historia', 'Investigación', 'Naturaleza', 'Religión', 'Trato con Animales', 'Perspicacia', 'Medicina', 'Percepción', 'Supervivencia', 'Engaño', 'Intimidación', 'Interpretación', 'Persuasión'] },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. No puedes distinguir colores en la oscuridad, solo tonos de gris.', type: 'senses' },
-      { name: 'Ascendencia Feérica', description: 'Tienes ventaja en las tiradas de salvación contra ser encantado y la magia no puede hacerte dormir.', type: 'defense' },
-      { name: 'Versatilidad de Habilidades', description: 'Ganas competencia en dos habilidades a tu elección.', type: 'skill' },
-      { name: 'Idioma adicional', description: 'Puedes hablar, leer y escribir un idioma adicional a tu elección.', type: 'language' }
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
+      { name: 'Ascendencia Feérica', description: 'Ventaja contra encantamiento e inmunidad a sueño mágico.', type: 'defense' },
+      { name: 'Versatilidad de Habilidades', description: 'Ganas competencia en 2 habilidades a tu elección.', type: 'skill' }
+    ],
+    subraces: [
+      {
+        name: 'Semielfo Versátil',
+        description: 'Herencia combinada con gran adaptabilidad.',
+        fixed: { cha: 2 },
+        choice: { count: 2, amount: 1 }
+      }
     ]
   },
 
   // ════════════════════════════════════════════════════════════════
-  // SEMIORCO
+  // 8. SEMIORCO
   // ════════════════════════════════════════════════════════════════
   'Semiorco': {
-    fixed: { str: 2, con: 1 },
-    description: 'Los semiorcos combinan la imponente fuerza y ferocidad de sus ancestros orcos con la astucia y adaptabilidad humanas. Son guerreros temibles y supervivientes implacables.',
+    name: 'Semiorco',
+    description: 'Combinan la ferocidad imparable orca con la tenacidad humana.',
     size: 'Mediano',
     speed: 9,
-    age: 'Maduran más rápido que los humanos y alcanzan la adultez a los 14 años. Rara vez viven más de 75 años.',
-    alignment: 'Los semiorcos heredan la tendencia al caos de los orcos y no suelen ser buenos. Los que se integran en la sociedad humana suelen ser neutrales.',
+    age: 'Maduran a los 14 años y viven unos 75 años.',
+    alignment: 'Intensos e independientes.',
     languages: ['Común', 'Orco'],
     darkvision: 18,
+    fixed: { str: 2, con: 1 },
     skillProf: ['Intimidación'],
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue. No distingues colores en la oscuridad, solo tonos de gris.', type: 'senses' },
-      { name: 'Ataques Salvajes', description: 'Cuando consigues un golpe crítico con un ataque con arma cuerpo a cuerpo, puedes tirar uno de los dados de daño del arma adicionalmente y sumarlo al daño extra del crítico.', type: 'damage' },
-      { name: 'Resistencia Implacable', description: 'Cuando te reducen a 0 Puntos de Golpe pero no te matan, puedes quedarte con 1 Punto de Golpe en su lugar. No puedes volver a usar este rasgo hasta completar un descanso largo.', type: 'defense' },
-      { name: 'Amenazas Poderosas', description: 'Ganas competencia en la habilidad Intimidación.', type: 'skill' }
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
+      { name: 'Ataques Salvajes', description: '1 dado extra de daño del arma en impactos críticos cuerpo a cuerpo.', type: 'damage' },
+      { name: 'Resistencia Implacable', description: '1/día al caer a 0 PG permaneces con 1 PG.', type: 'defense' }
+    ],
+    subraces: [
+      {
+        name: 'Semiorco Indómito',
+        description: 'Fuerza física temible e instinto de combate.',
+        fixed: { str: 2, con: 1 }
+      }
     ]
   },
 
   // ════════════════════════════════════════════════════════════════
-  // TIEFLING
+  // 9. TIEFLING
   // ════════════════════════════════════════════════════════════════
   'Tiefling': {
-    fixed: { cha: 2, int: 1 },
-    description: 'Los tieflings descienden de pactos antiguos forjados con entidades infernales. Su herencia demoníaca se manifiesta en su apariencia distintiva y en su afinidad con la magia de fuego y las tinieblas.',
+    name: 'Tiefling',
+    description: 'Humanoides con herencia infernal, cuernos y afinidad con el fuego y las sombras.',
     size: 'Mediano',
     speed: 9,
-    age: 'Los tieflings maduran al mismo ritmo que los humanos y viven unos 100 años.',
-    alignment: 'Los tieflings no tienen una tendencia innata hacia el mal, aunque muchos caen en él por el rechazo que sufren. Pueden tener cualquier alineamiento.',
+    age: 'Viven unos 100 años.',
+    alignment: 'Perspicaces y de voluntad firme.',
     languages: ['Común', 'Infernal'],
     darkvision: 18,
     resistances: ['fuego'],
+    fixed: { cha: 2, int: 1 },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Gracias a tu herencia infernal, tienes visión superior en la oscuridad y en condiciones de poca luz. Puedes ver a 18 metros en luz tenue como si fuera luz brillante y en la oscuridad como si fuera luz tenue.', type: 'senses' },
-      { name: 'Resistencia Infernal', description: 'Tienes resistencia al daño de fuego.', type: 'defense' },
-      { name: 'Legado Infernal', description: 'Conoces el truco Taumaturgia. Cuando alcanzas el nivel 3, puedes lanzar el conjuro Rayo de Fuego una vez por descanso largo. Cuando alcanzas el nivel 5, puedes lanzar el conjuro Oscuridad una vez por descanso largo. El Carisma es tu habilidad para lanzar estos conjuros.', type: 'spell' }
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
+      { name: 'Resistencia Infernal', description: 'Resistencia al daño de fuego.', type: 'defense' },
+      { name: 'Legado Infernal', description: 'Taumaturgia (Nivel 1), Reprensión infernal (Nivel 3) y Oscuridad (Nivel 5).', type: 'spell' }
+    ],
+    subraces: [
+      {
+        name: 'Tiefling de Asmodeus',
+        description: 'Legado del Señor de los Nueve Infiernos.',
+        fixed: { cha: 2, int: 1 }
+      }
     ]
   }
 };
 
-// ─── Idiomas de cada raza (compatibilidad con getCharacterProficiencies) ───
+// ─── Diccionario de Razas compuestas para compatibilidad global ───
+export const RACES: Record<string, RaceDef> = {};
+
+for (const baseKey of Object.keys(BASE_RACES)) {
+  const base = BASE_RACES[baseKey];
+  for (const sub of base.subraces) {
+    const compositeKey = sub.name;
+    const composite: RaceDef = {
+      description: sub.description || base.description,
+      size: base.size,
+      speed: sub.speed || base.speed,
+      age: base.age,
+      alignment: base.alignment,
+      languages: base.languages,
+      extraLanguages: (base.extraLanguages || 0) + (sub.extraLanguages || 0),
+      darkvision: sub.darkvision || base.darkvision,
+      fixed: { ...(base.fixed || {}), ...(sub.fixed || {}) },
+      choice: sub.choice || base.choice,
+      resistances: [...(base.resistances || []), ...(sub.resistances || [])],
+      weaponProf: [...(base.weaponProf || []), ...(sub.weaponProf || [])],
+      armorProf: [...(base.armorProf || []), ...(sub.armorProf || [])],
+      toolProf: [...(base.toolProf || []), ...(sub.toolProf || [])],
+      toolChoices: sub.toolChoices || base.toolChoices,
+      skillProf: [...(base.skillProf || []), ...(sub.skillProf || [])],
+      skillChoices: sub.skillChoices || base.skillChoices,
+      traits: [...base.traits, ...(sub.traits || [])]
+    };
+    RACES[compositeKey] = composite;
+
+    if (!RACES[baseKey]) {
+      RACES[baseKey] = composite;
+    }
+  }
+}
+
+// ─── Idiomas raciales ───
 export const RACE_LANGUAGES: Record<string, string[]> = {
   'Humano':              ['Común', 'Un idioma adicional (a elección)'],
+  'Humano Estándar':     ['Común', 'Un idioma adicional (a elección)'],
+  'Humano Entrenado (Variante)': ['Común', 'Un idioma adicional (a elección)'],
+  'Elfo':                ['Común', 'Élfico'],
   'Elfo Oscuro (Drow)':  ['Común', 'Élfico'],
   'Alto Elfo':           ['Común', 'Élfico', 'Un idioma adicional (a elección)'],
+  'Elfo de los Bosques': ['Común', 'Élfico'],
+  'Enano':               ['Común', 'Enano'],
   'Enano de las Colinas':['Común', 'Enano'],
+  'Enano de las Montañas':['Común', 'Enano'],
+  'Mediano':             ['Común', 'Mediano'],
   'Mediano Piesligero':  ['Común', 'Mediano'],
+  'Mediano Fornido':     ['Común', 'Mediano'],
   'Dracónido':           ['Común', 'Dracónico'],
+  'Dracónido Rojo':      ['Común', 'Dracónico'],
+  'Dracónido Azul':      ['Común', 'Dracónico'],
+  'Dracónido Verde':     ['Común', 'Dracónico'],
+  'Dracónido Blanco':    ['Común', 'Dracónico'],
+  'Dracónido Negro':     ['Común', 'Dracónico'],
+  'Dracónido Latón':     ['Común', 'Dracónico'],
+  'Dracónido Bronce':    ['Común', 'Dracónico'],
+  'Dracónido Cobre':     ['Común', 'Dracónico'],
+  'Dracónido Oro':       ['Común', 'Dracónico'],
+  'Dracónido Plata':     ['Común', 'Dracónico'],
+  'Gnomo':               ['Común', 'Gnomo'],
   'Gnomo de las Rocas':  ['Común', 'Gnomo'],
+  'Gnomo de los Bosques':['Común', 'Gnomo'],
   'Semielfo':            ['Común', 'Élfico', 'Un idioma adicional (a elección)'],
+  'Semielfo Versátil':   ['Común', 'Élfico', 'Un idioma adicional (a elección)'],
   'Semiorco':            ['Común', 'Orco'],
+  'Semiorco Indómito':   ['Común', 'Orco'],
   'Tiefling':            ['Común', 'Infernal'],
+  'Tiefling de Asmodeus':['Común', 'Infernal'],
 };
 
+/** Devuelve el título original de la categoría según la Raza Base */
+export function getSubraceCategoryLabel(baseRace: string): string {
+  switch (baseRace) {
+    case 'Dracónido':
+      return 'Ascendencia Dracónica';
+    case 'Humano':
+      return 'Variante Humana';
+    case 'Elfo':
+      return 'Linaje Élfico';
+    case 'Enano':
+      return 'Clan Enano';
+    case 'Gnomo':
+      return 'Comunidad Gnoma';
+    case 'Mediano':
+      return 'Rama Mediana';
+    case 'Semielfo':
+      return 'Herencia Élfica';
+    case 'Semiorco':
+      return 'Linaje Orco';
+    case 'Tiefling':
+      return 'Legado Infernal';
+    default:
+      return 'Subraza / Variante';
+  }
+}
+
+/** Devuelve la Raza Base dada una subraza o nombre compuesto */
+export function resolveBaseRace(raceOrSubrace: string): string {
+  for (const [bKey, bDef] of Object.entries(BASE_RACES)) {
+    if (bKey.toLowerCase() === raceOrSubrace.toLowerCase()) return bKey;
+    if (bDef.subraces.some(s => s.name.toLowerCase() === raceOrSubrace.toLowerCase())) {
+      return bKey;
+    }
+  }
+  return 'Dracónido';
+}

@@ -76,7 +76,13 @@ export const EQUIPMENT_CATALOG: EquipmentCatalogEntry[] = [
   { name: 'Capucha del ermitaño', slot: 'Cabeza', rarity: 'común', cost: '12 po', description: 'Capucha simple que oculta el rostro en la penumbra.', effects: 'Oculta el rostro', weightKg: 0.5 },
   { name: 'Capucha de la niebla', slot: 'Cabeza', rarity: 'raro', cost: '2200 po', magical: true, description: 'Capucha que genera una niebla ligera ocultando tu identidad.', effects: 'Disfraza la identidad', weightKg: 0.5 },
 
-  // ═══════════ ESPALDA ═══════════
-  { name: 'Aljaba de morse', slot: 'Espalda', rarity: 'poco común', cost: '300 po', magical: true, description: 'Aljaba que produce flechas ilimitadas no mágicas.', effects: 'Flechas infinitas', weightKg: 1 },
+  // ═══════════ ESPALDA / MUNICIONES ═══════════
+  { name: 'Aljaba Infinita', slot: 'Espalda', rarity: 'poco común', cost: '300 po', magical: true, description: 'Aljaba que produce flechas mágicas ilimitadas.', effects: 'Flechas infinitas', weightKg: 1 },
   { name: 'Estandarte del valor', slot: 'Espalda', rarity: 'raro', cost: '2000 po', magical: true, description: 'Estandarte que otorga ventaja contra el miedo a ti y aliados adyacentes.', effects: 'Ventaja vs miedo (aliados)', weightKg: 2 },
+
+  // ═══════════ MUNICIÓN Y CONSUMIBLES DE COMBATE 🏹 ═══════════
+  { name: 'Flechas', slot: 'Mochila', rarity: 'común', cost: '1 po', description: 'Carcaj con 20 flechas estándar para arco.', effects: 'Munición de arco (20)', weightKg: 1 },
+  { name: 'Virotes de ballesta', slot: 'Mochila', rarity: 'común', cost: '1 po', description: 'Caja con 20 virotes de madera y acero para ballesta.', effects: 'Munición de ballesta (20)', weightKg: 1.5 },
+  { name: 'Balas de honda', slot: 'Mochila', rarity: 'común', cost: '4 pp', description: 'Bolsa con 20 balas de plomo para honda.', effects: 'Munición de honda (20)', weightKg: 1.5 },
+  { name: 'Dardos de cerbatana', slot: 'Mochila', rarity: 'común', cost: '1 po', description: 'Funda con 10 dardos finos para cerbatana.', effects: 'Munición de cerbatana (10)', weightKg: 0.5 },
 ];

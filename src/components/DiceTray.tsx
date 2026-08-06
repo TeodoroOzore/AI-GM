@@ -65,7 +65,7 @@ export const DiceTray: React.FC<DiceTrayProps> = ({
       crit,
       onComplete: () => {
         onAddPendingRoll({
-          text: `⏱️ Iniciativa: [${result}] ${fmtSigned(dex)}(DES) = ${total}`,
+          text: `⏱️ Iniciativa: [${result}] ${fmtSigned(dex)} (Destreza) = ${total}`,
           cls: crit
         });
       }

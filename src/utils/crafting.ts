@@ -9,6 +9,8 @@ import {
   CharacterSheet,
   CraftingRecipe,
   WeaponItem,
+  WeaponCatalogEntry,
+  AbilityKey,
   WeaponModification,
   ArmorModification,
   CraftingProgress,
@@ -18,6 +20,7 @@ import {
 import { MATERIALS_CATALOG } from '../data/materials';
 import { WEAPONS_CATALOG } from '../data/weapons';
 import { ARMOR_CATALOG } from '../data/armor';
+import { abilityMod } from '../data/abilities';
 
 // Convertir MATERIALS_CATALOG a un mapa de id->nombre
 const MATERIAL_NAME_MAP: Record<string, string> = {};
@@ -74,14 +77,29 @@ export function hasAllMaterialsForRecipe(
   return recipe.materials.every(m => (entry.gathered[m.materialId] || 0) >= m.qty);
 }
 
-// Verifica si el personaje tiene la herramienta requerida
+// Verifica si el personaje tiene la herramienta requerida (en competencias, inventario o equipo)
 export function hasRequiredTool(c: CharacterSheet, toolRequired?: string): boolean {
   if (!toolRequired) return true;
-  const toolsList = [
+  const toolReqLower = toolRequired.toLowerCase();
+
+  const allItems = [
     ...((c.selectedTools || []).map((t: string) => t.toLowerCase())),
     ...((c.toolProf || '').split(',').map((t: string) => t.trim().toLowerCase())),
+    ...((c.equipment || []).map(e => (e.name || '').toLowerCase())),
+    ...((c.equippedGear || []).map(g => (g.name || '').toLowerCase())),
   ];
-  return toolsList.some(t => t.includes(toolRequired.toLowerCase()) || toolRequired.toLowerCase().includes(t));
+
+  // Helper keyword matching
+  const keywords = ['herrero', 'joyero', 'herbolario', 'envenenador', 'alquimista', 'curtidor', 'carpintero', 'ladrón', 'falsific', 'grabado', 'sanador', 'navegante', 'pintor', 'albañil', 'tejedor', 'alfeñique'];
+  
+  for (const item of allItems) {
+    if (item.includes(toolReqLower) || toolReqLower.includes(item)) return true;
+    for (const kw of keywords) {
+      if (item.includes(kw) && toolReqLower.includes(kw)) return true;
+    }
+  }
+
+  return false;
 }
 
 // ─── Tiradas (éxito/fallo) ────────────────────────────────────────
@@ -369,3 +387,56 @@ export function addKnownItems(c: CharacterSheet, names: string[]): CharacterShee
 export function isItemKnown(c: CharacterSheet, itemName: string): boolean {
   return getKnownItemNames(c).has(itemName.trim().toLowerCase());
 }
+
+// ─── Utility Helpers para Equipar Armas y Armaduras ────────────────
+export function buildWeaponItem(entry: WeaponCatalogEntry): WeaponItem {
+  const usesDex = entry.properties.includes('sutil') || entry.range === 'a distancia';
+  return {
+    name: entry.name,
+    ability: usesDex ? 'dex' : 'str',
+    dice: entry.dice,
+    type: entry.damageType,
+    proficient: true,
+    notes: entry.properties.join(', '),
+    category: entry.category,
+    damageType: entry.damageType,
+    properties: [...entry.properties],
+    magical: entry.magical || false,
+    range: entry.range,
+    versatileDice: entry.versatileDice,
+  };
+}
+
+export function computeAC(abilities: Record<AbilityKey, number>, armorName?: string, hasShield?: boolean, className?: string): number {
+  const dexMod = abilityMod(abilities.dex);
+  let ac = 10 + dexMod; // unarmored default
+
+  if (armorName && armorName !== 'Sin armadura' && armorName !== 'Sin armadura/Túnica') {
+    const armor = ARMOR_CATALOG.find(a => a.name.toLowerCase() === armorName.toLowerCase());
+    if (armor) {
+      if (armor.addDex) {
+        const dexBonus = armor.maxDex !== undefined ? Math.min(dexMod, armor.maxDex) : dexMod;
+        ac = armor.acBase + dexBonus;
+      } else {
+        ac = armor.acBase;
+      }
+    }
+  }
+
+  if (hasShield) {
+    ac += 2;
+  }
+
+  // Bárbaro unarmored defense
+  if (className === 'Bárbaro' && (!armorName || armorName.includes('Sin armadura'))) {
+    ac = 10 + dexMod + abilityMod(abilities.con);
+    if (hasShield) ac += 2;
+  }
+  // Monje unarmored defense
+  if (className === 'Monje' && (!armorName || armorName.includes('Sin armadura')) && !hasShield) {
+    ac = 10 + dexMod + abilityMod(abilities.wis);
+  }
+
+  return ac;
+}
+

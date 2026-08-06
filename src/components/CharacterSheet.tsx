@@ -37,10 +37,35 @@ import {
 getWarlockInvocationsLimit,
   RaceDef,
   RaceTrait,
+  computeAC,
+  buildWeaponItem,
+  isWeaponProficient,
+  isArmorProficient,
 } from '../types';
 import { SUBCLASS_CATALOG } from '../data/subclasses';
 import { BASE_CLASSES_CATALOG, FIGHTING_STYLES } from '../data/baseClasses';
+import { TOOLS_CATALOG } from '../data/tools';
 import { EquipmentForgePanel } from './EquipmentForgePanel';
+import { JournalPanel } from './JournalPanel';
+
+const getItemDisplayNotes = (itemName: string, notes?: string): string => {
+  const cleanNotes = (notes || '').trim();
+  if (
+    !cleanNotes ||
+    cleanNotes === 'Herramienta de competencia' ||
+    cleanNotes === 'Competencia' ||
+    cleanNotes === 'Herramienta activa' ||
+    cleanNotes.includes('Herramienta de competencia')
+  ) {
+    const foundTool = TOOLS_CATALOG.find(
+      t => t.name.toLowerCase() === itemName.toLowerCase() || itemName.toLowerCase().includes(t.name.toLowerCase()) || t.name.toLowerCase().includes(itemName.toLowerCase())
+    );
+    if (foundTool && foundTool.description) {
+      return foundTool.description;
+    }
+  }
+  return cleanNotes;
+};
 
 type CharacterSheetProps = {
   character: CharacterType;
@@ -53,7 +78,7 @@ type CharacterSheetProps = {
   focusSection?: string;
 };
 
-type TabKey = 'stats' | 'gear' | 'class' | 'dynamic' | 'familiars' | 'companions';
+type TabKey = 'stats' | 'gear' | 'crafting' | 'journal' | 'class' | 'dynamic' | 'familiars' | 'companions';
 
 export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   character: c,
@@ -133,47 +158,84 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   };
 
   // ─── Descanso Corto ───────────────────────────────────────────────
-  // Restaura recursos de descanso corto: Furias (Bárbaro ya las tiene),
-  // Ki (Monje), Segundo Aliento / Acción Adicional (Guerrero), Espacios
-  // de Pacto (Brujo), y lanza dados de golpe para recuperar PG.
+  // Restaura recursos de descanso corto y consume 1 Dado de Golpe para curar PG.
+  // Se tranca/bloquea si los dados de golpe disponibles son 0.
   const handleShortRest = () => {
-    const hitDie = cdef.hitDie;
-    const diceToRoll = Math.max(1, Math.floor(c.hitDiceRemaining / 2) || 1);
-    const hpGained = Array.from({ length: diceToRoll }, () => Math.ceil(Math.random() * hitDie) + abilityMod(c.abilities.con)).reduce((a, b) => a + b, 0);
-    const newHp = Math.min(c.hpMax, c.hpCur + Math.max(0, hpGained));
+    if ((c.hitDiceRemaining ?? 0) <= 0) {
+      alert(`⚠️ ¡No te quedan Dados de Golpe disponibles! (${c.hitDiceRemaining || 0}/${c.level})\n\n⛔ El Descanso Corto está bloqueado. Debes realizar un Descanso Largo para recuperar Dados de Golpe.`);
+      return;
+    }
+
+    const hitDie = cdef.hitDie || 8;
+    const conMod = abilityMod(c.abilities.con);
+
+    // Consumes 1 hit die
+    const diceToRoll = 1;
+    const dieRoll = Math.ceil(Math.random() * hitDie);
+    const hpGained = Math.max(1, dieRoll + conMod);
+    const newHp = Math.min(c.hpMax, c.hpCur + hpGained);
     const newHitDice = Math.max(0, c.hitDiceRemaining - diceToRoll);
-    // Short rest resources: Warlock pact slots, some class resources
+
+    // Restore short rest class resources
     const newSlotsUsed = { ...c.spellSlotsUsed };
-    if (c.className === 'Brujo') newSlotsUsed['pact'] = 0;
+    if (c.className === 'Brujo') {
+      newSlotsUsed['pact'] = 0;
+    }
+
     const newResourceUsed = { ...c.classResourceUsed };
-    // Guerrero: Segundo Aliento, Acción Adicional
-    if (c.className === 'Guerrero') { delete newResourceUsed['secondwind']; }
+    // Guerrero: Segundo Aliento, Acción Súbita
+    if (c.className === 'Guerrero') {
+      delete newResourceUsed['secondwind'];
+      delete newResourceUsed['actionsurge'];
+    }
     // Monje: Puntos de Ki
-    if (c.className === 'Monje') { delete newResourceUsed['ki']; }
+    if (c.className === 'Monje') {
+      delete newResourceUsed['ki'];
+    }
+    // Druida: Forma Salvaje
+    if (c.className === 'Druida') {
+      delete newResourceUsed['wildshape'];
+    }
+    // Clérigo / Paladín: Canalizar Divinidad
+    if (c.className === 'Clérigo' || c.className === 'Paladín') {
+      delete newResourceUsed['channel'];
+    }
+    // Bardo (Nivel 5+): Fuente de Inspiración
+    if (c.className === 'Bardo' && c.level >= 5) {
+      delete newResourceUsed['inspiration'];
+    }
+    // Mago: Recuperación Arcana
+    if (c.className === 'Mago') {
+      delete newResourceUsed['arcanerecovery'];
+    }
+    // Hechicero (Nivel 20): Restauración Sorcière
+    if (c.className === 'Hechicero' && c.level >= 20) {
+      const sorceryUsed = newResourceUsed['sorcery'] || 0;
+      newResourceUsed['sorcery'] = Math.max(0, sorceryUsed - 4);
+    }
+
     update({
       hpCur: newHp,
       hitDiceRemaining: newHitDice,
       spellSlotsUsed: newSlotsUsed,
       classResourceUsed: newResourceUsed,
     });
-    alert(`⏰ Descanso Corto completado.\n🎲 Lanzaste ${diceToRoll}d${hitDie}: +${Math.max(0, hpGained)} PG recuperados (${c.hpCur} → ${newHp} PG).\n🎲 Dados de golpe restantes: ${newHitDice}.`);
+
+    alert(`⏰ Descanso Corto completado.\n🎲 Consumido 1 Dado de Golpe (1d${hitDie} + ${fmtSigned(conMod)}): +${hpGained} PG recuperados (${c.hpCur} → ${newHp} PG).\n🎲 Dados de Golpe restantes: ${newHitDice}/${c.level}.`);
   };
 
   // ─── Descanso Largo ───────────────────────────────────────────────
-  // Restaura PG completos, slots de conjuro, dados de golpe (mitad),
-  // todos los recursos de clase y reinicia salvaciones de muerte.
+  // Restaura PG al 100%, Dados de Golpe al 100%, todos los espacios de conjuro y recursos de clase.
   const handleLongRest = () => {
-    const maxHitDiceRestore = Math.max(1, Math.floor((cdef.hitDie === 0 ? 8 : 1) + c.level / 2));
-    const newHitDice = Math.min(c.level, c.hitDiceRemaining + maxHitDiceRestore);
     update({
       hpCur: c.hpMax,
-      hitDiceRemaining: newHitDice,
+      hitDiceRemaining: c.level,
       spellSlotsUsed: {},
       classResourceUsed: {},
       deathSaves: { success: 0, fail: 0 },
       tempHp: 0,
     });
-    alert(`🌙 Descanso Largo completado.\n❤️ PG restaurados al máximo (${c.hpMax}).\n✨ Todos los espacios de conjuro y recursos de clase restaurados.\n🎲 Dados de golpe recuperados: ${newHitDice}/${c.level}.`);
+    alert(`🌙 Descanso Largo completado.\n❤️ PG restaurados al máximo (${c.hpMax}/${c.hpMax}).\n🎲 Todos los Dados de Golpe recuperados (${c.level}/${c.level}).\n✨ Espacios de conjuro y recursos de clase restaurados al 100%.`);
   };
 
   // ─── Estadísticas de Combate derivadas ──────────────────────────
@@ -193,6 +255,8 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'stats', label: 'Estado y Stats' },
     { key: 'gear', label: 'Equipo e Inventario' },
+    { key: 'crafting', label: 'Artesanía' },
+    { key: 'journal', label: 'Diario' },
     { key: 'class', label: 'Clase' },
     { key: 'dynamic', label: cdef.tabName },
     { key: 'familiars', label: 'Familiares' },
@@ -287,34 +351,32 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
               {/* ── VITALIDAD Y ESTADO ACTUAL ── */}
               <div id="sheet-section-status">
                 <div className="block-label">Vitalidad y Estado Actual</div>
-                <div className="row">
-                  <div className="field">
-                    <label>PG actuales</label>
-                    <div className="value-pill">{c.hpCur}/{c.hpMax}</div>
+                <div className="vitals-status-grid">
+                  <div className="vitals-card">
+                    <span className="vitals-card-label">PG Actuales</span>
+                    <span className="vitals-card-value">{c.hpCur}/{c.hpMax}</span>
                   </div>
-                  <div className="field">
-                    <label>PG máximos</label>
-                    <div className="value-pill">{c.hpMax}</div>
+                  <div className="vitals-card">
+                    <span className="vitals-card-label">PG Máximos</span>
+                    <span className="vitals-card-value">{c.hpMax}</span>
                   </div>
-                  <div className="field">
-                    <label>PG temporales</label>
-                    <div className="value-pill">{c.tempHp}</div>
+                  <div className="vitals-card">
+                    <span className="vitals-card-label">PG Temporales</span>
+                    <span className="vitals-card-value">{c.tempHp}</span>
                   </div>
-                </div>
-                <div className="row">
-                  <div className="field">
-                    <label>Clase de Armadura</label>
-                    <div className="value-pill">{c.ac}</div>
+                  <div className="vitals-card">
+                    <span className="vitals-card-label">CA</span>
+                    <span className="vitals-card-value">{c.ac}</span>
                   </div>
-                  <div className="field">
-                    <label>Dados de golpe restantes</label>
-                    <div className="value-pill">{c.hitDiceRemaining}/{c.level}</div>
+                  <div className="vitals-card">
+                    <span className="vitals-card-label">Dados de Golpe</span>
+                    <span className="vitals-card-value">{c.hitDiceRemaining}/{c.level}</span>
                   </div>
                 </div>
 
                 {/* ── ESTADÍSTICAS DE COMBATE ── */}
                 <div className="combat-stats-row">
-                  <div className="combat-stat-box" title="Modificador DES + bonus de dotes (Alerta +5)">
+                  <div className="combat-stat-box" title="Modificador Destreza + bonus de dotes (Alerta +5)">
                     <div className="combat-stat-value">{fmtSigned(initiative)}</div>
                     <div className="combat-stat-label">⚡ Iniciativa</div>
                     {hasAlertFeat && <div className="combat-stat-note">+5 Alerta</div>}
@@ -322,17 +384,17 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                   <div className={`combat-stat-box ${hasExhaustion5 ? 'danger' : hasExhaustion2 ? 'warn' : ''}`} title="Velocidad de movimiento base de tu raza">
                     <div className="combat-stat-value">{hasExhaustion5 ? '0' : `${speed}m`}</div>
                     <div className="combat-stat-label">🏃 Velocidad</div>
-                    {hasExhaustion2 && !hasExhaustion5 && <div className="combat-stat-note">½ Agot.</div>}
+                    {hasExhaustion2 && !hasExhaustion5 && <div className="combat-stat-note">½ Agotamiento</div>}
                     {hasMobileFeat && !hasExhaustion5 && <div className="combat-stat-note">+3m Móvil</div>}
                   </div>
-                  <div className="combat-stat-box" title="Percepción pasiva = 10 + mod.SAB + (comp. si competente en Percepción)">
+                  <div className="combat-stat-box" title="Percepción pasiva = 10 + mod.Sabiduría + (competencia si competente en Percepción)">
                     <div className="combat-stat-value">{passivePerception}</div>
-                    <div className="combat-stat-label">👁️ Perc. Pasiva</div>
-                    {isPercepProf && <div className="combat-stat-note">con comp.</div>}
+                    <div className="combat-stat-label">👁️ Percepción Pasiva</div>
+                    {isPercepProf && <div className="combat-stat-note">con competencia</div>}
                   </div>
                   <div className="combat-stat-box" title="Bono de competencia por nivel">
                     <div className="combat-stat-value">{fmtSigned(profBonus(c.level))}</div>
-                    <div className="combat-stat-label">📜 Bono Comp.</div>
+                    <div className="combat-stat-label">📜 Bonificador Competencia</div>
                   </div>
                 </div>
 
@@ -943,7 +1005,40 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                       </div>
 
                       <div className="spell-sheet-meta">
-                        <button className="roll-btn" title={`Lanzar ${sp.name || 'conjuro'}`} onClick={() => onRollSpell(sp)}>🎲</button>
+                        <button
+                          className="roll-btn"
+                          title={`Lanzar ${sp.name || 'conjuro'}`}
+                          onClick={() => {
+                            if (!isCantrip) {
+                              if (c.className === 'Brujo') {
+                                const p = PACT_SLOTS[c.level];
+                                const used = c.spellSlotsUsed['pact'] || 0;
+                                if (p && used >= p.count) {
+                                  alert(`⚠️ ¡No te quedan Espacios de Conjuro de Pacto! (0/${p.count})\n\nRealiza un Descanso Corto o Largo para recuperarlos.`);
+                                  return;
+                                }
+                                handleSlotChange('pact', 1);
+                              } else if (cdef.spellcasting) {
+                                const lvlNum = parseInt(sp.level || '1') || 1;
+                                const table = cdef.spellcasting.type === 'full' ? FULL_SLOTS[c.level] : HALF_SLOTS[c.level];
+                                if (table) {
+                                  const maxForLvl = table[lvlNum - 1] || 0;
+                                  const usedForLvl = c.spellSlotsUsed[lvlNum] || 0;
+                                  if (maxForLvl > 0 && usedForLvl >= maxForLvl) {
+                                    alert(`⚠️ ¡No te quedan espacios de conjuro de nivel ${lvlNum}! (0/${maxForLvl})\n\nRealiza un Descanso Largo para recuperarlos.`);
+                                    return;
+                                  }
+                                  if (maxForLvl > 0) {
+                                    handleSlotChange(String(lvlNum), 1);
+                                  }
+                                }
+                              }
+                            }
+                            onRollSpell(sp);
+                          }}
+                        >
+                          🎲
+                        </button>
                         <span className={`spell-level-chip ${isCantrip ? 'cantrip' : 'spell'}`}>
                           {isCantrip ? '✨ Truco (Nvl 0)' : `🔮 Nivel ${sp.level || '1'}`}
                         </span>
@@ -1397,68 +1492,152 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
         })()}
 
         {activeTab === 'gear' && (() => {
-          // Helper to classify equipment item into one of the 3 sections
-          const getItemSection = (item: { name: string; category?: string }): 'equipo' | 'accesorios' | 'inventario' => {
+          // Helper to check if an item is a garment / armor
+          const isGarmentOrArmor = (item: { name: string; category?: string }): boolean => {
             const cat = (item.category || '').toLowerCase().trim();
             const name = (item.name || '').toLowerCase().trim();
-
-            // Explicit accessory / container check
-            if (
-              ['anillo', 'collar', 'cuello', 'pulsera', 'mochila', 'bandolera', 'morral', 'cinturón', 'amuleto', 'accesorio', 'accesorios', 'contenedor'].includes(cat) ||
-              /anillo|collar|pulsera|amuleto|cinturón|mochila|bandolera|morral|bolsa|saco de viaje/.test(name)
-            ) {
-              return 'accesorios';
+            if (['cabeza', 'cuerpo', 'torso', 'armadura', 'espalda', 'brazos', 'manos', 'muñecas', 'piernas', 'pies', 'equipo', 'ropaje', 'ropa'].includes(cat)) {
+              return true;
             }
-
-            // Body wearable check
-            if (
-              ['cabeza', 'cuerpo', 'torso', 'armadura', 'espalda', 'brazos', 'manos', 'muñecas', 'piernas', 'pies', 'equipo'].includes(cat) ||
-              /casco|sombrero|capucha|yelmo|diadema/.test(name) ||
-              /armadura|pechera|túnica|ropas|coraza|peto|cuero/.test(name) ||
-              /capa|manto|carcaj/.test(name) ||
-              /guantes|guanteletes|brazales/.test(name) ||
-              /botas|grebas|pantalones|calzado/.test(name)
-            ) {
-              return 'equipo';
-            }
-
-            // Otherwise: miscelánea, herramientas, kits, instrumentos -> inventario
-            return 'inventario';
+            return /armadura|pechera|túnica|tunica|ropa|ropas|coraza|peto|cuero|vestido|hábito|habito|atavío|atavio|gala|sayo|camisa|pantalón|pantalon|casco|sombrero|capucha|yelmo|diadema|capa|manto|carcaj|guantes|guanteletes|brazales|botas|grebas|calzado/.test(name) || ARMOR_CATALOG.some(a => a.name.toLowerCase() === name);
           };
 
-          const BODY_SLOT_ORDER: Record<string, number> = {
-            'cabeza': 1,
-            'cuerpo': 2,
-            'torso': 2,
-            'armadura': 2,
-            'espalda': 3,
-            'brazos': 4,
-            'manos': 4,
-            'muñecas': 4,
-            'piernas': 5,
-            'pies': 5,
+          // Helper to check if an item is a weapon
+          const isWeaponItem = (item: { name: string; category?: string }): boolean => {
+            const cat = (item.category || '').toLowerCase().trim();
+            const name = (item.name || '').toLowerCase().trim();
+            if (cat === 'arma') return true;
+            return /daga|espada|bastón|baston|hacha|martillo|arco|ballesta|honda|lanza|maza|jabalina|tridente|garrote|hoja|cetro|vara/.test(name) || WEAPONS_CATALOG.some(w => w.name.toLowerCase() === name);
           };
 
-          const indexedEquipment = (c.equipment || []).map((item, idx) => ({ item, idx }));
+          const isEquipableItem = (item: { name: string; category?: string }): boolean => {
+            return isGarmentOrArmor(item) || isWeaponItem(item);
+          };
 
-          // 1. Equipo (ordered top to bottom: Cabeza, Cuerpo, Espalda, Brazos, Piernas)
-          const equipoItems = indexedEquipment
-            .filter(({ item }) => getItemSection(item) === 'equipo')
-            .sort((a, b) => {
-              const catA = (a.item.category || '').toLowerCase().trim();
-              const catB = (b.item.category || '').toLowerCase().trim();
-              const orderA = BODY_SLOT_ORDER[catA] ?? 2;
-              const orderB = BODY_SLOT_ORDER[catB] ?? 2;
-              return orderA - orderB;
+          // Deduplicación estricta de la mochila: si un objeto ya está equipado (en c.weapons o como c.equippedArmor),
+          // NO debe figurar simultáneamente en c.equipment (la mochila).
+          const equippedWeaponNames = new Set((c.weapons || []).map(w => w.name.trim().toLowerCase()).filter(Boolean));
+          const equippedArmorName = (c.equippedArmor || '').trim().toLowerCase();
+
+          const indexedEquipment = (c.equipment || [])
+            .map((item, idx) => ({ item, idx }))
+            .filter(({ item }) => {
+              const nameLower = (item.name || '').trim().toLowerCase();
+              if (!nameLower) return false;
+              if (equippedWeaponNames.has(nameLower)) return false;
+              if (equippedArmorName && equippedArmorName !== 'sin armadura' && equippedArmorName !== 'sin armadura/túnica' && nameLower === equippedArmorName) return false;
+              return true;
             });
 
-          // 2. Accesorios
-          const accesoriosItems = indexedEquipment
-            .filter(({ item }) => getItemSection(item) === 'accesorios');
+          // Accesorios explícitos (anillos, collares, morrales)
+          const accesoriosItems = indexedEquipment.filter(({ item }) => {
+            const cat = (item.category || '').toLowerCase().trim();
+            const name = (item.name || '').toLowerCase().trim();
+            return ['anillo', 'collar', 'cuello', 'pulsera', 'mochila', 'bandolera', 'morral', 'cinturón', 'amuleto', 'accesorio', 'accesorios', 'contenedor'].includes(cat) ||
+              /anillo|collar|pulsera|amuleto|cinturón|mochila|bandolera|morral|bolsa|saco de viaje/.test(name);
+          });
 
-          // 3. Inventario / Mochila (Herramientas, kits, instrumentos, consumibles, etc.)
+          // Todos los demás objetos en la mochila (ordenando los equipables SIEMPRE AL PRINCIPIO)
+          const accesoriosIndices = new Set(accesoriosItems.map(acc => acc.idx));
           const inventarioItems = indexedEquipment
-            .filter(({ item }) => getItemSection(item) === 'inventario');
+            .filter(({ idx }) => !accesoriosIndices.has(idx))
+            .sort((a, b) => {
+              const equipableA = isEquipableItem(a.item);
+              const equipableB = isEquipableItem(b.item);
+              if (equipableA && !equipableB) return -1;
+              if (!equipableA && equipableB) return 1;
+              return 0;
+            });
+
+          // Acciones de equipar / desequipar armadura y ropajes
+          const handleEquipGarment = (itemIdx: number) => {
+            const item = c.equipment[itemIdx];
+            if (!item) return;
+
+            const oldArmor = c.equippedArmor;
+            // Purga todas las instancias duplicadas del objeto recién equipado de c.equipment
+            let nextEq = (c.equipment || []).filter(e => e.name.trim().toLowerCase() !== item.name.trim().toLowerCase());
+
+            if (oldArmor && oldArmor !== 'Sin armadura' && oldArmor !== 'Sin armadura/Túnica') {
+              // Purga la armadura anterior para evitar duplicados en la mochila
+              nextEq = nextEq.filter(e => e.name.trim().toLowerCase() !== oldArmor.trim().toLowerCase());
+              const oldEntry = ARMOR_CATALOG.find(a => a.name === oldArmor);
+              nextEq.push({
+                name: oldArmor,
+                qty: 1,
+                notes: oldEntry ? `Armadura ${oldEntry.type} (CA ${oldEntry.acBase})` : 'Ropaje / Armadura desequipada',
+                category: 'Cuerpo',
+              });
+            }
+
+            const newAc = computeAC(c.abilities, item.name, c.equippedShield);
+            update({
+              equippedArmor: item.name,
+              ac: newAc,
+              equipment: nextEq,
+            });
+          };
+
+          const handleUnequipGarment = () => {
+            if (!c.equippedArmor || c.equippedArmor === 'Sin armadura' || c.equippedArmor === 'Sin armadura/Túnica') return;
+            const oldArmor = c.equippedArmor;
+            // Purga duplicados previos en la mochila e inserta 1 sola copia limpia
+            const cleanEq = (c.equipment || []).filter(e => e.name.trim().toLowerCase() !== oldArmor.trim().toLowerCase());
+            const nextEq = [...cleanEq, {
+              name: oldArmor,
+              qty: 1,
+              notes: 'Ropaje / Armadura desequipada',
+              category: 'Cuerpo',
+            }];
+            const newAc = computeAC(c.abilities, 'Sin armadura', c.equippedShield);
+            update({
+              equippedArmor: 'Sin armadura/Túnica',
+              ac: newAc,
+              equipment: nextEq,
+            });
+          };
+
+          const handleEquipWeapon = (itemIdx: number) => {
+            const item = c.equipment[itemIdx];
+            if (!item) return;
+
+            const catalogEntry = WEAPONS_CATALOG.find(w => w.name.toLowerCase() === item.name.toLowerCase());
+            const newWeapon: WeaponItem = catalogEntry ? buildWeaponItem(catalogEntry) : {
+              name: item.name,
+              ability: 'str',
+              dice: '1d6',
+              type: 'contundente',
+              proficient: true,
+              notes: item.notes || '',
+            };
+
+            // Purga el arma de la mochila al equiparla
+            const nextEq = (c.equipment || []).filter(e => e.name.trim().toLowerCase() !== item.name.trim().toLowerCase());
+            update({
+              weapons: [...(c.weapons || []), newWeapon],
+              equipment: nextEq,
+            });
+          };
+
+          const handleUnequipWeapon = (wIdx: number) => {
+            const w = c.weapons[wIdx];
+            if (!w) return;
+
+            const nextWeapons = c.weapons.filter((_, idx) => idx !== wIdx);
+            // Purga cualquier duplicado previo del arma en la mochila e inserta 1 sola copia limpia
+            const cleanEq = (c.equipment || []).filter(e => e.name.trim().toLowerCase() !== w.name.trim().toLowerCase());
+            const nextEq = [...cleanEq, {
+              name: w.name,
+              qty: 1,
+              notes: w.notes || `Arma ${w.dice} (${w.damageType || ''})`,
+              category: 'Arma',
+            }];
+
+            update({
+              weapons: nextWeapons,
+              equipment: nextEq,
+            });
+          };
 
           return (
             <div id="sheet-section-gear">
@@ -1481,10 +1660,41 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
               </div>
 
               {/* ── ARMAS Y ATAQUES ── */}
-              <div className="block-label" style={{ marginTop: '16px' }}>⚔️ Armas y ataques</div>
+              <div className="block-label" style={{ marginTop: '16px' }}>⚔️ Armas y Ataques Equipados (En Manos)</div>
               <div className="list-rows">
                 {c.weapons.map((w, i) => {
                   const mod = abilityMod(c.abilities[w.ability]) + (w.proficient ? profBonus(c.level) : 0);
+                  const isRanged = (w.properties && w.properties.includes('munición')) || w.range === 'a distancia' || ['Arco', 'Ballesta', 'Honda', 'Cerbatana'].some(kw => w.name.includes(kw));
+
+                  // Find matching ammunition in character equipment
+                  let ammoItemIdx = -1;
+                  let ammoItem = null;
+                  if (isRanged) {
+                    let targetKeyword = 'flecha';
+                    if (w.name.toLowerCase().includes('ballesta')) targetKeyword = 'virote';
+                    else if (w.name.toLowerCase().includes('honda')) targetKeyword = 'bala';
+                    else if (w.name.toLowerCase().includes('cerbatana')) targetKeyword = 'dardo';
+
+                    ammoItemIdx = (c.equipment || []).findIndex(eq => eq.name.toLowerCase().includes(targetKeyword));
+                    if (ammoItemIdx !== -1) {
+                      ammoItem = c.equipment[ammoItemIdx];
+                    }
+                  }
+
+                  const handleAttackWithAmmoCheck = () => {
+                    if (isRanged && ammoItem) {
+                      if ((ammoItem.qty || 0) <= 0) {
+                        alert(`⚠️ ¡No te quedan ${ammoItem.name} para disparar con ${w.name || 'tu arma'}!`);
+                        return;
+                      }
+                      // Deduct 1 ammo
+                      const nextEq = [...(c.equipment || [])];
+                      nextEq[ammoItemIdx] = { ...ammoItem, qty: Math.max(0, (ammoItem.qty || 1) - 1) };
+                      update({ equipment: nextEq });
+                    }
+                    onRollWeapon(w);
+                  };
+
                   return (
                     <div key={i} className="weapon-sheet-card">
                       <div className="weapon-sheet-header">
@@ -1494,10 +1704,18 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                           update({ weapons: next });
                         }} className="weapon-name-input" />
                         {w.magical && <span className="magical-badge">✨ Mágica</span>}
+                        <button
+                          className="equip-btn unequip"
+                          title="Desequipar arma y guardar en la mochila"
+                          onClick={() => handleUnequipWeapon(i)}
+                          style={{ marginLeft: 'auto', marginRight: '6px' }}
+                        >
+                          🎒 Guardar en Mochila
+                        </button>
                         <button className="rm" onClick={() => update({ weapons: c.weapons.filter((_, idx) => idx !== i) })}>✕</button>
                       </div>
                       <div className="weapon-sheet-stats">
-                        <button className="roll-btn" title={`Atacar con ${w.name || 'arma'}`} onClick={() => onRollWeapon(w)}>🎲</button>
+                        <button className="roll-btn" title={`Atacar con ${w.name || 'arma'}`} onClick={handleAttackWithAmmoCheck}>🎲</button>
                         <select value={w.ability} onChange={e => {
                           const next = [...c.weapons];
                           next[i].ability = e.target.value as AbilityKey;
@@ -1527,8 +1745,38 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                           />
                           Competencia
                         </label>
-
                       </div>
+
+                      {/* Ammo tracker if ranged */}
+                      {isRanged && ammoItem && (
+                        <div className="weapon-ammo-pill">
+                          <span className="ammo-label">🏹 Munición ({ammoItem.name}):</span>
+                          <button
+                            className="ammo-qty-btn"
+                            title="Restar 1 munición"
+                            onClick={() => {
+                              const nextEq = [...(c.equipment || [])];
+                              nextEq[ammoItemIdx] = { ...ammoItem, qty: Math.max(0, (ammoItem.qty || 1) - 1) };
+                              update({ equipment: nextEq });
+                            }}
+                          >
+                            -1
+                          </button>
+                          <span className="ammo-count">{ammoItem.qty || 0} rest.</span>
+                          <button
+                            className="ammo-qty-btn"
+                            title="Sumar 1 munición"
+                            onClick={() => {
+                              const nextEq = [...(c.equipment || [])];
+                              nextEq[ammoItemIdx] = { ...ammoItem, qty: (ammoItem.qty || 0) + 1 };
+                              update({ equipment: nextEq });
+                            }}
+                          >
+                            +1
+                          </button>
+                        </div>
+                      )}
+
                       <div className="weapon-sheet-badges">
                         {w.category && (
                           <span className={`weapon-cat-badge ${w.category}`}>
@@ -1558,167 +1806,120 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
                 + añadir arma
               </button>
 
-              {/* ── EQUIPO ── */}
-              <div className="block-label" style={{ marginTop: '20px' }}>🛡️ Equipo</div>
+              {/* ── EQUIPO / VESTIMENTAS EN CUERPO ── */}
+              <div className="block-label" style={{ marginTop: '20px' }}>🛡️ Equipo (Vestimenta y Armadura en Uso)</div>
               <div className="inventory-section-note">
-                Objetos vestibles en el cuerpo ordenados de arriba a abajo: <b>Cabeza</b>, <b>Cuerpo</b>, <b>Espalda</b>, <b>Brazos</b> y <b>Piernas</b> (incluye calzado).
-              </div>
-              <div className="inventory-table-header">
-                <span className="col-name">Objeto</span>
-                <span className="col-category">Zona / Categoría</span>
-                <span className="col-qty">Cant.</span>
-                <span className="col-notes">Descripción / Efecto</span>
-                <span className="col-actions"></span>
+                Vestimenta o armadura puesta activamente en el cuerpo.
               </div>
               <div className="list-rows">
-                {equipoItems.length === 0 ? (
-                  <div className="flavor">No hay vestimentas o piezas de equipo registradas.</div>
-                ) : (
-                  equipoItems.map(({ item, idx }) => {
-                    const currentCategory = item.category === 'Pies' ? 'Piernas' : (item.category || 'Cuerpo');
-                    return (
-                      <div key={idx} className="inventory-sheet-row">
-                        <input
-                          type="text"
-                          placeholder="Ej: Casco de placas, Capa de camuflaje..."
-                          value={item.name}
-                          onChange={e => {
-                            const next = [...(c.equipment || [])];
-                            next[idx].name = e.target.value;
-                            update({ equipment: next });
-                          }}
-                          className="inv-name-input"
-                        />
-                        <select
-                          value={currentCategory}
-                          onChange={e => {
-                            const next = [...(c.equipment || [])];
-                            next[idx].category = e.target.value;
-                            update({ equipment: next });
-                          }}
-                          className="inv-category-select"
+                {/* 1. Armadura / Ropaje actualmente equipado */}
+                {c.equippedArmor && c.equippedArmor !== 'Sin armadura' && c.equippedArmor !== 'Sin armadura/Túnica' ? (() => {
+                  const entry = ARMOR_CATALOG.find(a => a.name.toLowerCase() === (c.equippedArmor || '').toLowerCase());
+                  const armorType = entry?.type || 'media';
+                  const isProfArmor = isArmorProficient(c.equippedArmor, armorType, c.className, c.race, c.background);
+
+                  return (
+                    <div className={`equipment-sheet-card equipped-active ${!isProfArmor ? 'non-prof-equipped' : ''}`} style={{ borderColor: isProfArmor ? 'var(--brass)' : '#e55353', background: 'var(--card-bg)' }}>
+                      <div className="equipment-sheet-header">
+                        <span className="equipment-title-display">🛡️ <strong>{c.equippedArmor}</strong> (Equipado en Cuerpo)</span>
+                        <button
+                          className="equip-btn unequip"
+                          title="Desequipar y guardar en la mochila"
+                          onClick={handleUnequipGarment}
+                          style={{ marginLeft: 'auto', marginRight: '6px' }}
                         >
-                          <option value="Cabeza">👑 Cabeza</option>
-                          <option value="Cuerpo">🛡️ Cuerpo</option>
-                          <option value="Espalda">🧥 Espalda</option>
-                          <option value="Brazos">🥊 Brazos</option>
-                          <option value="Piernas">🦵 Piernas (y pies)</option>
-                        </select>
-                        <input
-                          type="number"
-                          min={1}
-                          placeholder="Cant."
-                          value={item.qty}
-                          onChange={e => {
-                            const next = [...(c.equipment || [])];
-                            next[idx].qty = parseInt(e.target.value) || 1;
-                            update({ equipment: next });
-                          }}
-                          className="inv-qty-input"
-                        />
-                        <input
-                          type="text"
-                          placeholder="Efectos, CA, propiedades..."
-                          value={item.notes}
-                          onChange={e => {
-                            const next = [...(c.equipment || [])];
-                            next[idx].notes = e.target.value;
-                            update({ equipment: next });
-                          }}
-                          className="inv-notes-input"
-                        />
-                        <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                          🎒 Desequipar y Guardar en Mochila
+                        </button>
                       </div>
-                    );
-                  })
+                      <div className="equipment-sheet-sub">
+                        <span className="equipment-slot-badge">
+                          ✨ Ropaje / Armadura activa · Otorgando CA {c.ac}
+                        </span>
+                        {isProfArmor ? (
+                          <span className="prof-badge star" style={{ marginLeft: '8px' }}>⭐ Competente</span>
+                        ) : (
+                          <span className="prof-badge non-prof" style={{ marginLeft: '8px', background: 'rgba(229,83,83,0.2)', color: '#ff9b8e', border: '1px solid #e55353', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem' }}>
+                            ⚠️ Sin competencia
+                          </span>
+                        )}
+                      </div>
+                      {!isProfArmor && (
+                        <div className="non-prof-warning-banner" style={{ marginTop: '8px', padding: '8px 10px', background: 'rgba(90,24,24,0.4)', border: '1px dashed #e55353', borderRadius: '4px', fontSize: '0.72rem', color: '#ffc1c1' }}>
+                          <strong>⚠️ Penalización por falta de competencia en armadura:</strong>
+                          <div style={{ marginTop: '2px' }}>• Desventaja en tiradas de características, salvaciones y ataques basados en <strong>Fuerza</strong> o <strong>Destreza</strong>.</div>
+                          <div>• <strong>Imposibilidad de lanzar conjuros</strong> mientras viste esta armadura.</div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })() : (
+                  <div className="flavor">Sin vestimenta especial equipada (Ropajes comunes / Túnica básica). Equipa prendas o armaduras desde la mochila con el botón <b>[🛡️ Equipar en Cuerpo]</b>.</div>
                 )}
               </div>
-              <button
-                className="add-row-btn"
-                onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Cuerpo' }] })}
-                style={{ marginTop: '8px' }}
-              >
-                + añadir equipo
-              </button>
 
               {/* ── ACCESORIOS ── */}
-              <div className="block-label" style={{ marginTop: '20px' }}>💍 Accesorios</div>
+              <div className="block-label" style={{ marginTop: '20px' }}>💍 Accesorios y Joyas</div>
               <div className="inventory-section-note">
-                Anillos, pulseras, collares, mochilas, bandoleras, morrales, cinturones y otros contenedores o joyas.
-              </div>
-              <div className="inventory-table-header">
-                <span className="col-name">Accesorio</span>
-                <span className="col-category">Tipo</span>
-                <span className="col-qty">Cant.</span>
-                <span className="col-notes">Descripción / Efecto</span>
-                <span className="col-actions"></span>
+                Anillos, collares, mochilas, bandoleras, morrales, cinturones y otros contenedores o talismanes.
               </div>
               <div className="list-rows">
                 {accesoriosItems.length === 0 ? (
                   <div className="flavor">No hay accesorios o contenedores registrados.</div>
                 ) : (
                   accesoriosItems.map(({ item, idx }) => (
-                    <div key={idx} className="inventory-sheet-row">
-                      <input
-                        type="text"
-                        placeholder="Ej: Anillo de protección, Mochila de viaje..."
-                        value={item.name}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].name = e.target.value;
-                          update({ equipment: next });
-                        }}
-                        className="inv-name-input"
-                      />
-                      <select
-                        value={item.category || 'Accesorio'}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].category = e.target.value;
-                          update({ equipment: next });
-                        }}
-                        className="inv-category-select"
-                      >
-                        <option value="Anillo">💍 Anillo</option>
-                        <option value="Collar">📿 Collar / Amuleto</option>
-                        <option value="Pulsera">📿 Pulsera / Brazalete</option>
-                        <option value="Mochila">🎒 Mochila</option>
-                        <option value="Bandolera">💼 Bandolera</option>
-                        <option value="Morral">👛 Morral / Bolsa</option>
-                        <option value="Cinturón">🥋 Cinturón</option>
-                        <option value="Accesorio">✨ Accesorio General</option>
-                      </select>
-                      <input
-                        type="number"
-                        min={1}
-                        placeholder="Cant."
-                        value={item.qty}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].qty = parseInt(e.target.value) || 1;
-                          update({ equipment: next });
-                        }}
-                        className="inv-qty-input"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Capacidad, encantamiento, notas..."
-                        value={item.notes}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].notes = e.target.value;
-                          update({ equipment: next });
-                        }}
-                        className="inv-notes-input"
-                      />
-                      <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                    <div key={idx} className="equipment-sheet-card">
+                      <div className="equipment-sheet-header">
+                        <span className="equipment-title-display">{item.name || 'Accesorio'}</span>
+                        <div className="equipment-qty-pill">
+                          <button
+                            className="qty-btn"
+                            title="Restar 1"
+                            onClick={() => {
+                              const next = [...(c.equipment || [])];
+                              next[idx].qty = Math.max(0, (next[idx].qty || 1) - 1);
+                              update({ equipment: next });
+                            }}
+                          >
+                            -
+                          </button>
+                          <span className="qty-val">x{item.qty || 1}</span>
+                          <button
+                            className="qty-btn"
+                            title="Sumar 1"
+                            onClick={() => {
+                              const next = [...(c.equipment || [])];
+                              next[idx].qty = (next[idx].qty || 1) + 1;
+                              update({ equipment: next });
+                            }}
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button className="rm" title="Eliminar accesorio" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                      </div>
+                      <div className="equipment-sheet-sub">
+                        <span className="equipment-slot-badge">
+                          ✨ Tipo / Ubicación: <b>{item.category || 'Accesorio'}</b>
+                        </span>
+                      </div>
+                      {getItemDisplayNotes(item.name, item.notes) && (
+                        <div className="equipment-notes-display">
+                          {getItemDisplayNotes(item.name, item.notes)}
+                        </div>
+                      )}
                     </div>
                   ))
                 )}
               </div>
               <button
                 className="add-row-btn"
-                onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Accesorio' }] })}
+                onClick={() => {
+                  const name = prompt('Nombre del accesorio a añadir:');
+                  if (!name) return;
+                  const category = prompt('Tipo (Anillo, Collar, Pulsera, Mochila, Cinturón, Accesorio):', 'Accesorio') || 'Accesorio';
+                  const notes = prompt('Efectos mágicos o notas:') || '';
+                  update({ equipment: [...(c.equipment || []), { name, qty: 1, notes, category }] });
+                }}
                 style={{ marginTop: '8px' }}
               >
                 + añadir accesorio
@@ -1727,92 +1928,122 @@ export const CharacterSheetPanel: React.FC<CharacterSheetProps> = ({
               {/* ── INVENTARIO / MOCHILA ── */}
               <div className="block-label" style={{ marginTop: '20px' }}>🎒 Inventario / Mochila</div>
               <div className="inventory-section-note">
-                Instrumentos musicales, kits de herramientas, pociones, raciones y objetos misceláneos. No se equipan en el cuerpo.
-              </div>
-              <div className="inventory-table-header">
-                <span className="col-name">Objeto</span>
-                <span className="col-category">Categoría</span>
-                <span className="col-qty">Cant.</span>
-                <span className="col-notes">Descripción / Notas</span>
-                <span className="col-actions"></span>
+                Objetos guardados en la mochila. Los <b>objetos equipables (ropajes, armaduras, armas guardadas)</b> se muestran <b>arriba del todo</b> con botón de equipar.
               </div>
               <div className="list-rows">
                 {inventarioItems.length === 0 ? (
-                  <div className="flavor">No hay objetos misceláneos o herramientas en la mochila.</div>
+                  <div className="flavor">No hay objetos o ropajes guardados en la mochila.</div>
                 ) : (
-                  inventarioItems.map(({ item, idx }) => (
-                    <div key={idx} className="inventory-sheet-row">
-                      <input
-                        type="text"
-                        placeholder="Ej: Kit de curación, Odre de agua, Antorcha..."
-                        value={item.name}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].name = e.target.value;
-                          update({ equipment: next });
-                        }}
-                        className="inv-name-input"
-                      />
-                      <select
-                        value={item.category || 'Miscelánea'}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].category = e.target.value;
-                          update({ equipment: next });
-                        }}
-                        className="inv-category-select"
-                      >
-                        <option value="Herramientas">🛠️ Herramientas</option>
-                        <option value="Kit">🧰 Kit de Aventura</option>
-                        <option value="Instrumento">🪕 Instrumento Musical</option>
-                        <option value="Consumible">🧪 Consumible / Poción</option>
-                        <option value="Miscelánea">📦 Miscelánea / Varios</option>
-                      </select>
-                      <input
-                        type="number"
-                        min={1}
-                        placeholder="Cant."
-                        value={item.qty}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].qty = parseInt(e.target.value) || 1;
-                          update({ equipment: next });
-                        }}
-                        className="inv-qty-input"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Descripción o uso..."
-                        value={item.notes}
-                        onChange={e => {
-                          const next = [...(c.equipment || [])];
-                          next[idx].notes = e.target.value;
-                          update({ equipment: next });
-                        }}
-                        className="inv-notes-input"
-                      />
-                      <button className="rm" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
-                    </div>
-                  ))
+                  inventarioItems.map(({ item, idx }) => {
+                    const isGarment = isGarmentOrArmor(item);
+                    const isWeapon = isWeaponItem(item);
+
+                    return (
+                      <div key={idx} className={`equipment-sheet-card ${isGarment || isWeapon ? 'equipable-backpack-card' : ''}`}>
+                        <div className="equipment-sheet-header">
+                          <span className="equipment-title-display">{item.name || 'Objeto'}</span>
+
+                          {/* BOTONES DE EQUIPAR PARA OBJETOS EN MOCHILA */}
+                          {isGarment && (
+                            <button
+                              className="equip-btn equip"
+                              title="Equipar esta vestimenta / armadura en el cuerpo"
+                              onClick={() => handleEquipGarment(idx)}
+                              style={{ marginLeft: 'auto', marginRight: '8px' }}
+                            >
+                              🛡️ Equipar en Cuerpo
+                            </button>
+                          )}
+                          {isWeapon && (
+                            <button
+                              className="equip-btn equip"
+                              title="Equipar como arma activa"
+                              onClick={() => handleEquipWeapon(idx)}
+                              style={{ marginLeft: 'auto', marginRight: '8px' }}
+                            >
+                              ⚔️ Equipar como Arma
+                            </button>
+                          )}
+
+                          <div className="equipment-qty-pill" style={{ marginLeft: (isGarment || isWeapon) ? 0 : 'auto' }}>
+                            <button
+                              className="qty-btn"
+                              title="Restar 1"
+                              onClick={() => {
+                                const next = [...(c.equipment || [])];
+                                next[idx].qty = Math.max(0, (next[idx].qty || 1) - 1);
+                                update({ equipment: next });
+                              }}
+                            >
+                              -
+                            </button>
+                            <span className="qty-val">x{item.qty || 1}</span>
+                            <button
+                              className="qty-btn"
+                              title="Sumar 1"
+                              onClick={() => {
+                                const next = [...(c.equipment || [])];
+                                next[idx].qty = (next[idx].qty || 1) + 1;
+                                update({ equipment: next });
+                              }}
+                            >
+                              +
+                            </button>
+                          </div>
+                          <button className="rm" title="Eliminar objeto" onClick={() => update({ equipment: (c.equipment || []).filter((_, i2) => i2 !== idx) })}>✕</button>
+                        </div>
+                        <div className="equipment-sheet-sub">
+                          <span className="equipment-slot-badge">
+                            {isGarment ? '👕 Ropaje / Armadura (sin equipar)' : isWeapon ? '⚔️ Arma guardada en mochila' : `📦 Categoría: ${item.category || 'Miscelánea'}`}
+                          </span>
+                        </div>
+                        {getItemDisplayNotes(item.name, item.notes) && (
+                          <div className="equipment-notes-display">
+                            {getItemDisplayNotes(item.name, item.notes)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
               <button
                 className="add-row-btn"
-                onClick={() => update({ equipment: [...(c.equipment || []), { name: '', qty: 1, notes: '', category: 'Miscelánea' }] })}
+                onClick={() => {
+                  const name = prompt('Nombre del objeto o ropaje a añadir:');
+                  if (!name) return;
+                  const category = prompt('Categoría (Ropaje, Arma, Herramientas, Kit, Instrumento, Consumible, Miscelánea):', 'Miscelánea') || 'Miscelánea';
+                  const notes = prompt('Descripción o uso del objeto:') || '';
+                  update({ equipment: [...(c.equipment || []), { name, qty: 1, notes, category }] });
+                }}
                 style={{ marginTop: '8px' }}
               >
-                + añadir objeto al inventario
+                + añadir objeto a mochila
               </button>
 
-              {/* ── FORJA / CRAFTEO / MEJORAS ── */}
-              <div className="block-label" style={{ marginTop: '24px' }}>⚒️ Forja, Crafteo y Mejoras</div>
-              <EquipmentForgePanel
-                character={c}
-                onUpdateCharacter={onUpdateCharacter}
-              />
             </div>
           );
         })()}
+
+        {/* ── SOLAPA DE ARTESANÍA Y FORJA ── */}
+        {activeTab === 'crafting' && (
+          <div id="sheet-section-crafting">
+            <EquipmentForgePanel
+              character={c}
+              onUpdateCharacter={onUpdateCharacter}
+            />
+          </div>
+        )}
+
+        {/* ── SOLAPA DE DIARIO Y MISIONES ── */}
+        {activeTab === 'journal' && (
+          <div id="sheet-section-journal">
+            <JournalPanel
+              character={c}
+              onUpdateCharacter={onUpdateCharacter}
+            />
+          </div>
+        )}
 
 
 

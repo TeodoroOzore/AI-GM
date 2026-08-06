@@ -56,3 +56,75 @@ const classTools = CLASS_TOOL_PROF[className] || [];
   return { armor, weapons, tools, languages, skills };
 }
 
+/** Comprueba si el personaje es competente con un arma concreta (considerando Clase + Raza + Trasfondo) */
+export function isWeaponProficient(
+  weaponName: string,
+  category: 'simple' | 'marcial',
+  className: string,
+  raceName: string,
+  backgroundName?: string
+): boolean {
+  const classWeapons = CLASS_WEAPON_PROF[className] || [];
+  const raceDef = RACES[raceName];
+  const raceWeapons = raceDef?.weaponProf || [];
+
+  // 1. Competencia por categoría general (Simples / Marciales)
+  if (category === 'simple' && (classWeapons.includes('Simples') || raceWeapons.includes('Simples'))) {
+    return true;
+  }
+  if (category === 'marcial' && (classWeapons.includes('Marciales') || raceWeapons.includes('Marciales'))) {
+    return true;
+  }
+
+  // 2. Competencia por nombre específico de arma (ej. Elfo → Arco largo, Enano → Hacha de batalla, etc.)
+  const nameLower = weaponName.trim().toLowerCase();
+  const allSpecific = [...classWeapons, ...raceWeapons].map(w => w.trim().toLowerCase());
+
+  if (allSpecific.some(w => nameLower.includes(w) || w.includes(nameLower))) {
+    return true;
+  }
+
+  return false;
+}
+
+/** Comprueba si el personaje es competente con una armadura / escudo (considerando Clase + Raza + Trasfondo) */
+export function isArmorProficient(
+  armorName: string,
+  armorType: string,
+  className: string,
+  raceName: string,
+  backgroundName?: string
+): boolean {
+  const typeLower = armorType.trim().toLowerCase();
+  const nameLower = armorName.trim().toLowerCase();
+
+  // Ropajes, túnicas y vestimentas comunes siempre son competentes para todas las clases
+  if (typeLower === 'túnica' || typeLower === 'tunica' || typeLower === 'ropaje' || typeLower === 'cuerpo' || nameLower.includes('túnica') || nameLower.includes('ropa') || nameLower.includes('atavío')) {
+    return true;
+  }
+
+  const classArmor = CLASS_ARMOR_PROF[className] || [];
+  const raceDef = RACES[raceName];
+  const raceArmor = raceDef?.armorProf || [];
+
+  const combinedArmor = [...classArmor, ...raceArmor].map(a => a.trim().toLowerCase());
+
+  // Escudos
+  if (typeLower === 'escudo' || nameLower.includes('escudo')) {
+    return combinedArmor.includes('escudo') || combinedArmor.includes('escudos');
+  }
+
+  // Tipo de armadura ('ligera', 'media', 'pesada')
+  if (combinedArmor.includes(typeLower)) {
+    return true;
+  }
+
+  // Nombre específico
+  if (combinedArmor.some(a => nameLower.includes(a) || a.includes(nameLower))) {
+    return true;
+  }
+
+  return false;
+}
+
+

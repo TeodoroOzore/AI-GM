@@ -66,6 +66,49 @@ export type RaceDef = {
   traits: RaceTrait[];
 };
 
+export type SubraceDef = {
+  name: string;
+  description: string;
+  fixed?: Partial<Record<AbilityKey, number>>;
+  choice?: { count: number; amount: number };
+  speed?: number;
+  darkvision?: number;
+  resistances?: string[];
+  weaponProf?: string[];
+  armorProf?: string[];
+  toolProf?: string[];
+  toolChoices?: { count: number; options: string[] };
+  skillProf?: string[];
+  skillChoices?: { count: number; options: string[] };
+  extraLanguages?: number;
+  traits?: RaceTrait[];
+  ancestryChoices?: RaceAncestryChoice;
+};
+
+export type BaseRaceDef = {
+  name: string;
+  description: string;
+  size: string;
+  speed: number;
+  age: string;
+  alignment: string;
+  languages: string[];
+  extraLanguages?: number;
+  darkvision?: number;
+  fixed?: Partial<Record<AbilityKey, number>>;
+  choice?: { count: number; amount: number };
+  resistances?: string[];
+  weaponProf?: string[];
+  armorProf?: string[];
+  toolProf?: string[];
+  skillProf?: string[];
+  skillChoices?: { count: number; options: string[] };
+  toolChoices?: { count: number; options: string[] };
+  ancestryChoices?: RaceAncestryChoice;
+  traits: RaceTrait[];
+  subraces: SubraceDef[];
+};
+
 export type ClassDef = {
   hitDie: number;
   saves: AbilityKey[];
@@ -328,6 +371,7 @@ export type ToolCategory = 'artesano' | 'instrumento' | 'kit' | 'juego' | 'otro'
 export type ToolCatalogEntry = {
   name: string;
   category: ToolCategory;
+  description?: string;
 };
 
 export type SpellSchool = 'abjuración' | 'conjuración' | 'adivinación' | 'encantamiento'
@@ -560,10 +604,30 @@ concentratingOnSpell?: string;
   warlockInvocations?: string[];
   resistances?: string[];
   craftingProgress?: CraftingProgress;
+  unlockedRecipes?: string[]; // IDs de recetas avanzadas desbloqueadas por el DM/NPCs
+  journalQuests?: JournalQuestDef[]; // Misiones y búsquedas activas en el diario
+  discoveredArtifacts?: (string | DiscoveredArtifactEntry)[]; // Artefactos descubiertos con su nivel de progreso
   // Nombres de objetos que el personaje conoce/posee (se usan para filtrar
   // el catálogo en la vista del jugador). El catálogo completo es referencia
   // del DM/IA.
   knownItems?: string[];
+};
+
+export type DiscoveredArtifactEntry = {
+  artifactId: string;
+  stage: 'rumor' | 'pistas' | 'completo'; // rumor (vago) -> pistas (partes conocidas) -> completo (revelación total)
+  notes?: string; // Rumor o pista descubierta
+  knownParts?: string[]; // Lista de nombres de partes que ha encontrado
+};
+
+export type JournalQuestDef = {
+  id: string;
+  title: string;
+  description: string;
+  status: 'activa' | 'completada' | 'fallada';
+  giver?: string;
+  location?: string;
+  rewardSummary?: string;
 };
 
 export type SpellcastingLimits = {

@@ -110,7 +110,7 @@ header .actions button:hover {
 .layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 420px 1fr;
+  grid-template-columns: minmax(380px, 450px) 1fr;
   min-height: 0;
 }
 
@@ -303,29 +303,30 @@ input:focus, textarea:focus, select:focus {
 
 .ability-box {
   border: 1px solid var(--seam);
-  border-radius: 3px;
-  padding: 6px;
+  border-radius: 4px;
+  padding: 8px 6px;
   text-align: center;
   background: var(--leather-2);
 }
 
 .ability-box .name {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: var(--brass-dim);
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .ability-box .mod {
   font-family: var(--font-display);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   color: var(--parchment);
   font-weight: 700;
 }
 
 .ability-box .score {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   color: var(--parchment-dim);
 }
 
@@ -1962,6 +1963,142 @@ input:focus, textarea:focus, select:focus {
   padding: 3px 6px !important;
 }
 
+/* Equipment sheet card (Read-Only Display) */
+.equipment-sheet-card {
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.equipment-sheet-card:hover {
+  border-color: var(--brass-dim);
+}
+
+.equipment-sheet-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.equipment-title-display {
+  flex: 1;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--parchment);
+  letter-spacing: 0.3px;
+}
+
+.equipment-qty-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201, 162, 39, 0.12);
+  border: 1px solid var(--brass-dim);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.equipment-qty-pill .qty-val {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brass);
+}
+
+.equipment-qty-pill .qty-btn {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  color: var(--parchment);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.75rem;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: all 0.1s ease;
+}
+
+.equipment-qty-pill .qty-btn:hover {
+  background: var(--brass);
+  color: var(--ink);
+  border-color: var(--brass);
+}
+
+.weapon-ammo-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(230, 126, 34, 0.12);
+  border: 1px solid rgba(230, 126, 34, 0.4);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #e67e22;
+  margin-top: 4px;
+}
+
+.ammo-qty-btn {
+  background: var(--ink);
+  border: 1px solid rgba(230, 126, 34, 0.5);
+  color: #e67e22;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 1px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.ammo-qty-btn:hover {
+  background: #e67e22;
+  color: #fff;
+}
+
+.equipment-sheet-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.equipment-slot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--parchment-dim);
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.equipment-notes-display {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  color: var(--parchment-dim);
+  background: var(--leather);
+  border-left: 2px solid var(--brass-dim);
+  padding: 6px 10px;
+  border-radius: 0 3px 3px 0;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
 /* Weapon sheet card */
 .weapon-sheet-card {
   background: var(--ink);
@@ -2025,9 +2162,9 @@ input:focus, textarea:focus, select:focus {
 
 .weapon-cat-badge {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
-  padding: 1px 5px;
-  border-radius: 2px;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 3px;
   text-transform: uppercase;
 }
 
@@ -2045,21 +2182,62 @@ input:focus, textarea:focus, select:focus {
 
 .weapon-range-badge {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: var(--parchment-dim);
 }
 
 .weapon-prop-badge {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   background: var(--leather);
   border: 1px solid var(--seam);
   color: var(--parchment-dim);
-  padding: 1px 5px;
-  border-radius: 2px;
+  padding: 2px 6px;
+  border-radius: 3px;
 }
 
 /* ─── STATUS & CONDITION STYLES ──────────────────────────────── */
+.vitals-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.vitals-card {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 8px 6px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: border-color 0.15s ease;
+}
+
+.vitals-card:hover {
+  border-color: var(--brass-dim);
+}
+
+.vitals-card-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--brass-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.vitals-card-value {
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--parchment);
+}
+
 .value-pill {
   display: inline-flex;
   align-items: center;
@@ -4785,21 +4963,21 @@ input:focus, textarea:focus, select:focus {
 
 .bestiary-stat-pill .stat-label {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   color: var(--parchment-dim);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 .bestiary-block {
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .bestiary-block-label {
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   color: var(--brass-dim);
   border-bottom: 1px solid var(--seam);
   padding-bottom: 4px;
@@ -5574,9 +5752,9 @@ input:focus, textarea:focus, select:focus {
 }
 
 .rest-btn-sub {
-  font-size: 0.6rem;
+  font-size: 0.72rem;
   font-weight: normal;
-  opacity: 0.75;
+  opacity: 0.85;
   letter-spacing: 0;
 }
 
@@ -5679,3 +5857,394 @@ input:focus, textarea:focus, select:focus {
   min-width: 28px;
   text-align: left;
 }
+
+/* ═══════════ ARTESANÍA & FORJA STYLES ═══════════ */
+.owned-tools-banner {
+  background: var(--paper-dark, rgba(20, 15, 10, 0.4));
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.owned-tools-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  color: var(--parchment-bright);
+}
+
+.owned-tools-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  color: var(--brass);
+  cursor: pointer;
+}
+
+.owned-tools-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tool-owned-chip {
+  background: var(--card-bg, #2a2018);
+  border: 1px solid var(--brass-dim);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  color: var(--gold-light, #f0cf75);
+}
+
+.no-tools-warn {
+  font-size: 0.76rem;
+  color: #ff9b8e;
+  line-height: 1.3;
+}
+
+.forge-tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--seam);
+  padding-bottom: 8px;
+}
+
+.forge-tabbar button {
+  background: var(--paper-dark, rgba(0,0,0,0.3));
+  border: 1px solid var(--seam);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.forge-tabbar button:hover {
+  border-color: var(--brass);
+  color: var(--parchment-bright);
+}
+
+.forge-tabbar button.active {
+  background: var(--crimson-dark, #5a1818);
+  border-color: var(--brass);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(180, 50, 50, 0.4);
+}
+
+/* Tool Guide Grid for DM & Player */
+.tool-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.tool-guide-card {
+  background: var(--paper, #1e1814);
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.2s ease;
+}
+
+.tool-guide-card.owned {
+  border-color: var(--brass);
+  background: var(--card-bg, #241d17);
+  box-shadow: inset 0 0 10px rgba(212, 175, 55, 0.08);
+}
+
+.tool-guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+  border-bottom: 1px dashed var(--seam);
+  padding-bottom: 6px;
+}
+
+.tool-guide-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--gold-light, #f0cf75);
+}
+
+.tool-cat-badge {
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--paper-dark);
+  border: 1px solid var(--seam);
+  color: var(--parchment-dim);
+  text-transform: capitalize;
+}
+
+.tool-status-owned {
+  width: 100%;
+  font-size: 0.68rem;
+  color: #6dbf67;
+  font-weight: 600;
+}
+
+.tool-guide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.74rem;
+  line-height: 1.35;
+  color: var(--parchment);
+}
+
+.tool-guide-section strong {
+  color: var(--brass);
+}
+
+.forge-mod-card.locked {
+  opacity: 0.65;
+  border-style: dashed;
+}
+
+/* ═══════════ DIARIO Y MISIONES STYLES ═══════════ */
+.journal-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.journal-tabbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-bottom: 1px solid var(--seam);
+  padding-bottom: 8px;
+}
+
+.journal-tabbar button {
+  background: var(--paper-dark, rgba(0,0,0,0.3));
+  border: 1px solid var(--seam);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.journal-tabbar button:hover {
+  border-color: var(--brass);
+  color: var(--parchment-bright);
+}
+
+.journal-tabbar button.active {
+  background: var(--crimson-dark, #5a1818);
+  border-color: var(--brass);
+  color: #fff;
+  font-weight: 700;
+}
+
+.journal-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.journal-add-form {
+  background: var(--paper-dark, rgba(15, 12, 10, 0.5));
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.journal-add-form .form-row {
+  display: flex;
+  gap: 8px;
+}
+
+.journal-input {
+  flex: 1;
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.78rem;
+  color: var(--parchment-bright);
+}
+
+.journal-textarea {
+  width: 100%;
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: var(--parchment-bright);
+  resize: vertical;
+}
+
+.journal-quests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.journal-quest-card {
+  background: var(--paper);
+  border: 1px solid var(--seam);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.2s ease;
+}
+
+.journal-quest-card.completada {
+  border-color: #6dbf67;
+  opacity: 0.85;
+}
+
+.journal-quest-card.fallada {
+  border-color: #e55353;
+  opacity: 0.75;
+}
+
+.journal-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.journal-quest-title {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--gold-light, #f0cf75);
+}
+
+.journal-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journal-status-chip {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.journal-status-chip.activa {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+.journal-status-chip.completada {
+  background: rgba(109, 191, 103, 0.15);
+  border-color: #6dbf67;
+  color: #6dbf67;
+}
+
+.journal-status-chip.fallada {
+  background: rgba(229, 83, 83, 0.15);
+  border-color: #e55353;
+  color: #e55353;
+}
+
+.journal-quest-desc {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--parchment);
+  margin: 2px 0;
+}
+
+.journal-quest-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.72rem;
+  color: var(--parchment-dim);
+  border-top: 1px dashed var(--seam);
+  padding-top: 6px;
+}
+
+.artifact-stage-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.artifact-locked-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.73rem;
+  color: var(--parchment-dim);
+  background: var(--paper-dark, rgba(0,0,0,0.25));
+  border: 1px dashed var(--seam);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.artifact-locked-info em {
+  color: #d1a86e;
+}
+
+/* Equip / Unequip Action Buttons */
+.equip-btn {
+  background: var(--paper-dark, rgba(0, 0, 0, 0.3));
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  color: var(--parchment-bright);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.equip-btn.equip {
+  border-color: var(--brass-dim);
+  color: var(--gold-light, #f0cf75);
+}
+
+.equip-btn.equip:hover {
+  background: var(--crimson-dark, #5a1818);
+  border-color: var(--brass);
+  color: #fff;
+  box-shadow: 0 0 6px rgba(212, 175, 55, 0.4);
+}
+
+.equip-btn.unequip {
+  border-color: var(--seam);
+  color: var(--parchment-dim);
+}
+
+.equip-btn.unequip:hover {
+  border-color: #e55353;
+  color: #ff9b8e;
+  background: rgba(229, 83, 83, 0.15);
+}
+
+
+
+
