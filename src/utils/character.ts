@@ -115,12 +115,12 @@ export function getRacialSpells(
     }
   }
 
-  // ── Tiefling: Legado Infernal ──
-  if (race === 'Tiefling') {
+  // ── Infernal: Legado Infernal ──
+  if (race.includes('Infernal') || race === 'Tiefling') {
     spells.push({
       name: 'Taumaturgia',
       level: 'racial',
-      notes: 'Truco racial de Tiefling. Carisma es tu aptitud mágica.',
+      notes: 'Truco racial de Infernal. Carisma es tu aptitud mágica.',
       school: 'transmutación'
     });
     if (level >= 3) {
@@ -142,12 +142,12 @@ export function getRacialSpells(
     }
   }
 
-  // ── Elfo Oscuro (Drow): Magia Drow ──
-  if (race === 'Elfo Oscuro (Drow)') {
+  // ── Elfo Oscuro: Magia de Sombras ──
+  if (race.includes('Elfo Oscuro') || race.includes('Drow')) {
     spells.push({
       name: 'Luces danzantes',
       level: 'racial',
-      notes: 'Truco racial de Drow. Carisma es tu aptitud mágica.',
+      notes: 'Truco racial de Elfo Oscuro. Carisma es tu aptitud mágica.',
       school: 'evocación'
     });
     if (level >= 3) {

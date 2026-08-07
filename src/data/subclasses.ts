@@ -2,652 +2,662 @@ import { SubclassDetail } from '../types';
 
 export const SUBCLASS_CATALOG: Record<string, SubclassDetail> = {
   // ==========================================
-  // BÁRBARO
+  // BÁRBARO (Sendas)
   // ==========================================
-  'Camino del Berserker': {
-    name: 'Camino del Berserker',
+  'Senda del Berserker': {
+    name: 'Senda del Berserker',
     className: 'Bárbaro',
-    description: 'El Berserker canaliza una furia salvaje e incontrolable, entregándose a la violencia pura en el campo de batalla sin importar el agotamiento o las heridas.',
-    coreMechanic: 'Ataques adicionales mediante Frenesí a costa de agotamiento, e inmunidad al miedo y al encanto mientras estás en furia.',
-    keyRole: 'Daño Físico Devastador & Tanque Inmune a Control Mental',
+    description: 'Canalizas una furia incontrolable, entregándote a la violencia pura en batalla sin importar el agotamiento o las heridas.',
+    coreMechanic: 'Ataques adicionales mediante Frenesí de 5.5e e inmunidad a miedo y encanto durante tu furia.',
+    keyRole: 'Daño Físico Devastador & Tanque Implacable',
     features: [
-      { level: 3, title: 'Frenesí', description: 'Al entrar en Furia, puedes elegir hacer un Frenesí. Durante la furia, puedes hacer un ataque cuerpo a cuerpo adicional como acción bonus en cada turno. Cuando la furia termina, sufres 1 nivel de agotamiento.', type: 'feature' },
-      { level: 6, title: 'Furia Inconcebible', description: 'No puedes ser encantado ni asustado mientras estés en Furia. Si entras en furia estando encantado o asustado, el efecto se suspende durante la furia.', type: 'feature' },
-      { level: 10, title: 'Presencia Intimidadora', description: 'Usá tu acción para aterrorizar a una criatura a 9 metros. Debe superar salvación de Sabiduría (CD 8 + prof + Mod CAR) o quedar asustada hasta el final de tu siguiente turno.', type: 'feature' },
-      { level: 14, title: 'Represalia', description: 'Cuando recibes daño de una criatura adyacente, puedes usar tu reacción para hacer un ataque cuerpo a cuerpo contra ella.', type: 'feature' }
+      { level: 3, title: 'Frenesí de Batalla', description: 'Al entrar en Furia, infliges 2d6 de daño adicional con tu primer impacto cuerpo a cuerpo en cada turno.', type: 'feature' },
+      { level: 6, title: 'Furia Inconcebible', description: 'Inmunidad a ser encantado o asustado durante tu Furia.', type: 'feature' },
+      { level: 10, title: 'Presencia Intimidadora', description: 'Aterrorizas a una criatura a 9m (salvación de Sabiduría o queda asustada).', type: 'feature' },
+      { level: 14, title: 'Represalia Implacable', description: 'Cuando recibes daño de un enemigo adyacente, usas tu reacción para contraatacar.', type: 'feature' }
     ]
   },
-  'Camino del Guerrero Totémico': {
-    name: 'Camino del Guerrero Totémico',
+  'Senda del Espíritu Primigenio': {
+    name: 'Senda del Espíritu Primigenio',
     className: 'Bárbaro',
-    description: 'Aprendes a sintonizar tu alma con los espíritus de la naturaleza y las bestias, obteniendo la fuerza del Oso, la agilidad del Águila o la ferocidad del Lobo.',
-    coreMechanic: 'Resistencia casi total a todo tipo de daño (Oso) o ventajas tácticas para tus aliados en combate (Lobo/Águila).',
+    description: 'Sintonizas tu alma con los espíritus bestiales de la naturaleza, obteniendo el vigor del Oso, la agilidad del Águila o la ferocidad del Lobo.',
+    coreMechanic: 'Resistencia a múltiples tipos de daño y auras de apoyo táctico para tus aliados.',
     keyRole: 'Super-Tanque & Apoyo de Combate Táctico',
     proficienciesGranted: ['Hablar con Animales (Ritual)', 'Sentido Bestial (Ritual)'],
     features: [
-      { level: 3, title: 'Buscador de Espíritus', description: 'Ganas la capacidad de lanzar los conjuros "Hablar con Animales" y "Sentido Bestial" únicamente como rituales.', type: 'spell' },
-      { level: 3, title: 'Espíritu Totémico (Oso / Lobo / Águila)', description: 'Oso: Tienes resistencia a todo daño excepto psíquico mientras estás en Furia. Lobo: Tus aliados tienen ventaja en ataques cuerpo a cuerpo contra enemigos adyacentes a ti. Águila: Los enemigos tienen desventaja en ataques de oportunidad contra ti y puedes Esprintar como acción bonus.', type: 'feature' },
-      { level: 6, title: 'Aspecto de la Bestia', description: 'Oso: Tu capacidad de carga se duplica y tienes ventaja en pruebas de Fuerza para empujar/levantar. Lobo: Puedes rastrear a paso rápido y moverte en sigilo a paso normal. Águila: Puedes ver hasta 1 km sin problemas.', type: 'feature' },
-      { level: 10, title: 'Caminante Espiritual', description: 'Puedes lanzar el conjuro "Comunión con la Naturaleza" como ritual.', type: 'spell' },
-      { level: 14, title: 'Sintonía Totémica', description: 'Oso: Enemigos adyacentes tienen desventaja al atacar a aliados. Águila: Puedes volar temporalmente durante tu turno mientras estás en Furia. Lobo: Puedes derribar criaturas grandes o menores como acción bonus al atacar.', type: 'feature' }
+      { level: 3, title: 'Buscador de Espíritus', description: 'Lanzas Hablar con Animales y Sentido Bestial como rituales.', type: 'spell' },
+      { level: 3, title: 'Aspecto Totémico Bestial', description: 'Resistencia a todo daño excepto psíquico durante la Furia, o dar ventaja a aliados adyacentes.', type: 'feature' },
+      { level: 6, title: 'Vigor de la Naturaleza', description: 'Duplica capacidad de carga y otorga ventaja en pruebas físicas de Fuerza.', type: 'feature' },
+      { level: 10, title: 'Comunión Silvestre', description: 'Lanzas Comunión con la Naturaleza como ritual.', type: 'spell' },
+      { level: 14, title: 'Sintonía de la Manada', description: 'Derriba enemigos o vuela temporalmente durante tu turno en Furia.', type: 'feature' }
     ]
   },
-  'Camino del Corazón Salvaje': {
-    name: 'Camino del Corazón Salvaje',
+  'Senda del Dios Guerrero': {
+    name: 'Senda del Dios Guerrero',
     className: 'Bárbaro',
-    description: 'Canalizás la magia primaria y elemental del entorno salvaje. Tu furia desata auras de fuego, hielo o tormenta eléctrica a tu alrededor.',
-    coreMechanic: 'Auras elementales activas que dañan enemigos o protegen a aliados automáticamente durante tu Furia.',
-    keyRole: 'Tanque Zonal & Daño Elemental de Área',
-    auras: [
-      { levelUnlocked: 3, name: 'Aura de Tormenta (Desierto/Tundra/Mar)', range: '3 metros', description: 'Inflige daño de fuego/frío a enemigos o concede PG temporales a aliados al entrar en furia.' }
-    ],
+    description: 'Imbuido por el fervor de una deidad de la contienda, te vuelves un instrumento divino imparable que desafía a la muerte.',
+    coreMechanic: 'Daño radiante/necrótico adicional en furia y resurrección sin coste de componentes.',
+    keyRole: 'Guerrero Santo Imparable & Ejecutor Físico',
     features: [
-      { level: 3, title: 'Aura de Tormenta', description: 'Emanas un aura de 3m durante la furia. Elige entorno: Desierto (2 daño de fuego a enemigos como acción bonus), Tundra (2 PG temporales a aliados) o Mar (1d6 daño de rayo a una criatura).', type: 'aura' },
-      { level: 6, title: 'Alma Elemental', description: 'Ganas resistencia a Fuego (Desierto), Frío (Tundra) o Rayo (Mar), y puedes respirar bajo el agua o tolerar temperaturas extremas.', type: 'feature' },
-      { level: 10, title: 'Escudo de la Tormenta', description: 'Tus aliados a 3 metros dentro de tu aura ganan tu resistencia elemental.', type: 'aura' },
-      { level: 14, title: 'Ira Furiosa', description: 'Efectos adicionales en tu aura: derribar enemigos con relámpagos, congelar su movimiento o quemar a quienes te golpeen.', type: 'feature' }
+      { level: 3, title: 'Furia Celestial/Furia Divina', description: 'Tu primer ataque en Furia en cada turno inflige 1d6 + mitad de nivel de bárbaro de daño radiante o necrótico.', type: 'feature' },
+      { level: 3, title: 'Alma del Fervor', description: 'Los conjuros para resucitarte no requieren componentes materiales.', type: 'feature' },
+      { level: 6, title: 'Fanatismo Inquebrantable', description: 'Reiteras una tirada de salvación fallida una vez por Furia.', type: 'feature' },
+      { level: 14, title: 'Furia del Más Allá', description: 'Estar a 0 PG no te deja inconsciente mientras tu Furia siga activa.', type: 'feature' }
+    ]
+  },
+  'Senda de Yggdrasil': {
+    name: 'Senda de Yggdrasil',
+    className: 'Bárbaro',
+    description: 'Canalizas las raíces vivas y la fuerza del Árbol del Mundo, extendiendo ramas espectrales para proteger y controlar el terreno.',
+    coreMechanic: 'Alcance extendido con raíces mágicas, PG temporales compartidos y teletransporte a través de la madera.',
+    keyRole: 'Controlador de Terreno & Protector Cosmológico',
+    features: [
+      { level: 3, title: 'Vitalidad de Yggdrasil', description: 'Al entrar en Furia, ganas PG temporales y aumentas el alcance de tus armas cuerpo a cuerpo en 1.5m mediante raíces luminosas.', type: 'feature' },
+      { level: 6, title: 'Ramas Entrelazadas', description: 'Cuando un enemigo intenta alejarse a 9m, puedes teletransportarlo a un espacio adyacente a ti con tus raíces.', type: 'feature' },
+      { level: 10, title: 'Raíces del Cosmos', description: 'Otorgas PG temporales a aliados a 9m cuando entras en Furia.', type: 'feature' },
+      { level: 14, title: 'Viaje por el Gran Árbol', description: 'Puedes teletransportarte a ti y a tus aliados a través de los nodos de Yggdrasil en combate.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // BARDO
+  // BARDO (Escuelas)
   // ==========================================
-  'Colegio del Conocimiento': {
-    name: 'Colegio del Conocimiento',
+  'Escuela del Conocimiento': {
+    name: 'Escuela del Conocimiento',
     className: 'Bardo',
-    description: 'Eruditos y coleccionistas de secretos. Usan su ingenio mordaz para manipular el combate y aprender magia de cualquier tradición existente.',
-    coreMechanic: 'Palabras Cortantes para restar a las tiradas de enemigos y Secretos Mágicos Adicionales en niveles tempranos.',
-    keyRole: 'Saboteador, Apoyo Versátil & Lanzador de Conjuros Adaptable',
-    proficienciesGranted: ['3 Competencias en Habilidades a elección'],
+    description: 'Eruditos y coleccionistas de secretos. Usan su ingenio mordaz para manipular el combate y aprender magia de cualquier tradición.',
+    coreMechanic: 'Palabras Cortantes para restar a tiradas enemigas y Secretos Mágicos Adicionales tempranos.',
+    keyRole: 'Saboteador, Apoyo Versátil & Lanzador Adaptable',
+    proficienciesGranted: ['3 Competencias en Habilidades'],
     features: [
-      { level: 3, title: 'Competencias Adicionales', description: 'Obtienes competencia en 3 habilidades cualesquiera a tu elección.', type: 'proficiency' },
-      { level: 3, title: 'Palabras Cortantes', description: 'Usá tu reacción y 1 dado de Inspiración Bárdica para restar el resultado a una tirada de ataque, prueba de habilidad o tirada de daño de un enemigo a 18m.', type: 'feature' },
-      { level: 6, title: 'Secretos Mágicos Adicionales', description: 'Aprendes 2 conjuros cualesquiera de cualquier lista de clase (de nivel de conjuro que puedas lanzar). Se consideran conjuros de bardo.', type: 'spell' },
-      { level: 14, title: 'Habilidad Insuperable', description: 'Cuando hagas una prueba de habilidad, puedes lanzar 1 dado de Inspiración Bárdica y sumarlo al total.', type: 'feature' }
+      { level: 3, title: 'Competencias Adicionales', description: 'Ganas competencia en 3 habilidades a elección.', type: 'proficiency' },
+      { level: 3, title: 'Palabras Cortantes', description: 'Resta tu dado de Inspiración Bárdica a tiradas de ataque, habilidad o daño de enemigos a 18m.', type: 'feature' },
+      { level: 6, title: 'Secretos Mágicos Adicionales', description: 'Aprendes 2 conjuros cualesquiera de cualquier clase.', type: 'spell' },
+      { level: 14, title: 'Habilidad Insuperable', description: 'Suma tu dado de Inspiración Bárdica a tus propias pruebas de habilidad.', type: 'feature' }
     ]
   },
-  'Colegio del Valor': {
-    name: 'Colegio del Valor',
+  'Escuela del Equilibrio': {
+    name: 'Escuela del Equilibrio',
     className: 'Bardo',
-    description: 'Relatan las hazañas de grandes héroes e inspiran a sus compañeros en primera línea de batalla sosteniendo espada y escudo.',
-    coreMechanic: 'Inspiración Bárdica aplicada al daño o a la Clase de Armadura de los aliados, más competencia en armadura media y ataque extra.',
-    keyRole: 'Bardo Marcial & Tanque de Apoyo de Primera Línea',
+    description: 'Canalizan la armonía del movimiento corporal y la danza mística para esquivar ataques y guiar los pasos de sus aliados.',
+    coreMechanic: 'Danza ágil que aumenta la velocidad, otorga ataques sin armas perfeccionados y movilidad fluida.',
+    keyRole: 'Bardo Ágil & Movilidad de Grupo',
+    features: [
+      { level: 3, title: 'Danza Armónica', description: 'Al lanzar un conjuro o usar Inspiración Bárdica, puedes moverte la mitad de tu velocidad sin provocar ataques de oportunidad.', type: 'feature' },
+      { level: 3, title: 'Artes del Movimiento', description: 'Tus ataques sin armas usan Carisma o Destreza y causan daño igual a tu dado de Inspiración Bárdica.', type: 'feature' },
+      { level: 6, title: 'Paso Coordinado', description: 'Permites a un aliado mover su velocidad como reacción cuando usas tu danza.', type: 'feature' },
+      { level: 14, title: 'Evasión Perfecta del Equilibrio', description: 'Ganas Evasión para no recibir daño en salvaciones de Destreza exitosas.', type: 'feature' }
+    ]
+  },
+  'Escuela del Exceso': {
+    name: 'Escuela del Exceso',
+    className: 'Bardo',
+    description: 'Tejida con la magia cautivadora del Reino Feérico, dominas el campo de batalla con belleza deslumbrante y Manto de Inspiración.',
+    coreMechanic: 'Manto de Inspiración para otorgar PG temporales y reposicionar aliados instantáneamente.',
+    keyRole: 'Control de Masas & Movilidad de Aliados',
+    features: [
+      { level: 3, title: 'Manto de Inspiración', description: 'Gastá 1 Inspiración para dar PG temporales a aliados a 18m y permitirles mover su velocidad de inmediato.', type: 'feature' },
+      { level: 3, title: 'Presencia Cautivadora', description: 'Fascina a espectadores tras 1 minuto de actuación.', type: 'feature' },
+      { level: 6, title: 'Manto de Majestad', description: 'Lanzas el conjuro Orden como acción bonus durante 1 minuto sin gastar espacios.', type: 'spell' },
+      { level: 14, title: 'Majestad Inquebrantable', description: 'Los enemigos que intenten atacarte deben superar salvación de Carisma o perder su ataque.', type: 'feature' }
+    ]
+  },
+  'Escuela de la Determinación': {
+    name: 'Escuela de la Determinación',
+    className: 'Bardo',
+    description: 'Cantan las proezas de grandes héroes e inspiran a sus compañeros en primera línea sosteniendo armas y armadura marcial.',
+    coreMechanic: 'Inspiración aplicable a la Clase de Armadura o daño, armadura media y ataque extra.',
+    keyRole: 'Bardo Marcial de Primera Línea',
     proficienciesGranted: ['Armaduras Medias', 'Escudos', 'Armas Marciales'],
     features: [
-      { level: 3, title: 'Competencias Marciales', description: 'Ganas competencia en Armaduras Medias, Escudos y Armas Marciales.', type: 'proficiency' },
-      { level: 3, title: 'Inspiración de Combate', description: 'El aliado con tu Inspiración Bárdica puede añadir el dado a una tirada de daño o usarlo como reacción para sumar el dado a su CA contra un ataque.', type: 'feature' },
-      { level: 6, title: 'Ataque Extra', description: 'Puedes atacar dos veces en lugar de una cuando realizas la acción de Atacar en tu turno.', type: 'feature' },
-      { level: 14, title: 'Magia de Combate', description: 'Cuando usas tu acción para lanzar un conjuro de Bardo, puedes realizar un ataque con arma como acción bonus.', type: 'feature' }
-    ]
-  },
-  'Colegio de la Glamour': {
-    name: 'Colegio de la Glamour',
-    className: 'Bardo',
-    description: 'Tejida con la magia silvestre y cautivadora de las Feéricas. Dominan el campo de batalla mediante encanto irresistible y presencia regia.',
-    coreMechanic: 'Manto de Inspiración para otorgar PG temporales y reposicionar aliados sin provocar ataques de oportunidad.',
-    keyRole: 'Control de Masas & Movilidad Aliada',
-    features: [
-      { level: 3, title: 'Manto de Inspiración', description: 'Gastá 1 Inspiración Bárdica como acción bonus para otorgar PG temporales a hasta tu Mod CAR aliados a 18m. Cada aliado puede usar su reacción para moverse su velocidad sin provocar ataques de oportunidad.', type: 'feature' },
-      { level: 3, title: 'Performance Cautivadora', description: 'Tras una actuación de 1 minuto, puedes encantar a un grupo de espectadores que deben superar salvación de Sabiduría o quedar fascinados por ti.', type: 'feature' },
-      { level: 6, title: 'Manto de Majestad', description: 'Lanza el conjuro "Orden" como acción bonus durante 1 minuto sin gastar espacio de conjuro. Las criaturas encantadas fallan automáticamente su salvación.', type: 'spell' },
-      { level: 14, title: 'Majestad Inquebrantable', description: 'Adquirís una presencia regia. Las criaturas que intenten atacarte deben hacer una salvación de Carisma; si fallan, no pueden atacarte este turno.', type: 'feature' }
+      { level: 3, title: 'Competencias Marciales', description: 'Competencia en Armaduras Medias, Escudos y Armas Marciales.', type: 'proficiency' },
+      { level: 3, title: 'Inspiración de Combate', description: 'El aliado suma tu dado de Inspiración al daño o a su CA como reacción.', type: 'feature' },
+      { level: 6, title: 'Ataque Extra', description: 'Atacas dos veces al usar la acción de Atacar.', type: 'feature' },
+      { level: 14, title: 'Magia Marcial', description: 'Tras lanzar un conjuro de Bardo, haces un ataque con arma como acción bonus.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // CLÉRIGO
+  // CLÉRIGO (Doctrinas)
   // ==========================================
-  'Dominio de la Vida': {
-    name: 'Dominio de la Vida',
+  'Doctrina de la Sanación': {
+    name: 'Doctrina de la Sanación',
     className: 'Clérigo',
-    description: 'El dominio de la vida promueve la vitalidad, la curación y la preservación de las almas contra las fuerzas de la muerte y la podredumbre.',
-    coreMechanic: 'Curación potenciada de forma pasiva y Canalizar Divinidad para sanar masivamente sin gastar espacios de conjuro.',
-    keyRole: 'Curador Supremo & Soporte Defensivo',
+    description: 'Promueve la vitalidad, la curación y la preservación de las almas contra la muerte y la podredumbre.',
+    coreMechanic: 'Curación potenciada y Canalizar Divinidad para sanar masivamente.',
+    keyRole: 'Curador Supremo & Soporte Vital',
     proficienciesGranted: ['Armaduras Pesadas'],
     spells: [
       { levelUnlocked: 1, spellName: 'Bendecir', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 1, spellName: 'Curar Heridas', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Restablecimiento Menor', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Plegaria de Curación', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Farol de Esperanza', spellLevel: '3', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Revivir', spellLevel: '3', notes: 'Siempre preparado' }
+      { levelUnlocked: 1, spellName: 'Curar Heridas', spellLevel: '1', notes: 'Siempre preparado' }
     ],
     features: [
-      { level: 1, title: 'Discípulo de la Vida', description: 'Tus conjuros de curación sanan PG adicionales iguales a 2 + el nivel del conjuro lanzado.', type: 'feature' },
-      { level: 2, title: 'Canalizar Divinidad: Preservar Vida', description: 'Restaura PG a criaturas aliadas a 9m por un valor total de (5 x Nivel de Clérigo). No puede curar más allá del 50% de PG máximo de una criatura.', type: 'feature' },
-      { level: 6, title: 'Curación Bendita', description: 'Cuando lanzas un conjuro de curación sobre otra criatura, también te curás a ti mismo 2 + nivel del conjuro PG.', type: 'feature' },
-      { level: 8, title: 'Golpe Divino', description: 'Una vez por turno, puedes infligir 1d8 de daño radiante adicional al golpear con un ataque con arma.', type: 'feature' }
+      { level: 1, title: 'Discípulo de la Vida', description: 'Tus conjuros de curación sanan +2 + nivel de conjuro adicionales.', type: 'feature' },
+      { level: 2, title: 'Canalizar Divinidad: Preservar Vida', description: 'Cura PG repartidos entre aliados a 9m por un total de 5 x Nivel.', type: 'feature' },
+      { level: 6, title: 'Curación Bendita', description: 'Te curas a ti mismo al sanar a otros.', type: 'feature' },
+      { level: 8, title: 'Golpe Divino / Conjuro Potente', description: 'Suma daño radiante a tus ataques o trucos.', type: 'feature' }
     ]
   },
-  'Dominio de la Guerra': {
-    name: 'Dominio de la Guerra',
+  'Doctrina de la Punición': {
+    name: 'Doctrina de la Punición',
     className: 'Clérigo',
-    description: 'Los clérigos de la guerra veneran la valentía, el combate honorable y la fuerza en el campo de batalla como la mayor muestra de fe.',
-    coreMechanic: 'Ataques adicionales con armas como acción bonus y bonificador masivo (+10) a las tiradas de ataque propias o de aliados.',
-    keyRole: 'Clérigo Combatiente de Vanguardia',
+    description: 'Erradica las tinieblas a través de llamas sagradas, destellos protectores y fuego purificador.',
+    coreMechanic: 'Destello Protector para imponer desventaja a los enemigos y daño de Fuego/Radiante masivo en área.',
+    keyRole: 'Evocador Sagrado & Destrucción Radiante',
+    spells: [
+      { levelUnlocked: 1, spellName: 'Manos Ardientes', spellLevel: '1', notes: 'Siempre preparado' },
+      { levelUnlocked: 1, spellName: 'Fuego Feérico', spellLevel: '1', notes: 'Siempre preparado' }
+    ],
+    features: [
+      { level: 1, title: 'Truco de Luz Gratuito', description: 'Aprendes el truco Luz.', type: 'spell' },
+      { level: 1, title: 'Destello Protector', description: 'Impones desventaja al ataque de un enemigo a 9m como reacción.', type: 'feature' },
+      { level: 2, title: 'Canalizar Divinidad: Radiancia del Sol', description: 'Inflige 2d10 + Nivel daño radiante en área de 9m y disipa oscuridad.', type: 'feature' },
+      { level: 6, title: 'Destello Mejorado', description: 'Proteges aliados con tu Destello Protector.', type: 'feature' }
+    ]
+  },
+  'Doctrina del Control': {
+    name: 'Doctrina del Control',
+    className: 'Clérigo',
+    description: 'Especialistas en ilusión, engaño y manipulación del campo de batalla para desorientar a los rivales.',
+    coreMechanic: 'Duplicado ilusorio con Canalizar Divinidad e invisibilidad táctica.',
+    keyRole: 'Infiltrado Arcano & Engaño Táctico',
+    spells: [
+      { levelUnlocked: 1, spellName: 'Disfrazarse', spellLevel: '1', notes: 'Siempre preparado' },
+      { levelUnlocked: 1, spellName: 'Fuerza Ilusoria', spellLevel: '1', notes: 'Siempre preparado' }
+    ],
+    features: [
+      { level: 1, title: 'Bendición del Engañador', description: 'Otorga ventaja en pruebas de Sigilo a un aliado.', type: 'feature' },
+      { level: 2, title: 'Canalizar Divinidad: Duplicado Ilusorio', description: 'Creas un duplicado perfecto de ti mismo que puedes mover e invocar conjuros desde su posición.', type: 'feature' },
+      { level: 6, title: 'Manto de Sombras', description: 'Te vuelves invisible como acción hasta el final de tu siguiente turno.', type: 'feature' }
+    ]
+  },
+  'Doctrina de la Misión': {
+    name: 'Doctrina de la Misión',
+    className: 'Clérigo',
+    description: 'Veneran el combate honorable, la fuerza armada y la dirección de la batalla.',
+    coreMechanic: 'Ataques adicionales como acción bonus y Golpe Guiado (+10 al ataque).',
+    keyRole: 'Clérigo de Batalla de Vanguardia',
     proficienciesGranted: ['Armaduras Pesadas', 'Armas Marciales'],
     spells: [
       { levelUnlocked: 1, spellName: 'Escudo de Fe', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 1, spellName: 'Favor Divino', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Arma Mágica', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Arma Espiritual', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Manto del Cruzado', spellLevel: '3', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Guardias Espirituales', spellLevel: '3', notes: 'Siempre preparado' }
+      { levelUnlocked: 1, spellName: 'Favor Divino', spellLevel: '1', notes: 'Siempre preparado' }
     ],
     features: [
-      { level: 1, title: 'Sacerdote de la Guerra', description: 'Al realizar la acción de Atacar, puedes realizar un ataque con arma adicional como acción bonus (usos = Modificador de Sabiduría por descanso largo).', type: 'feature' },
-      { level: 2, title: 'Canalizar Divinidad: Golpe Guiado', description: 'Puedes sumar +10 a una tirada de ataque propia justo después de ver el resultado del d20.', type: 'feature' },
-      { level: 6, title: 'Canalizar Divinidad: Bendición de la Guerra', description: 'Puedes otorgar el bonificador de +10 en el ataque a una criatura aliada a 9 metros.', type: 'feature' },
-      { level: 8, title: 'Golpe Divino', description: 'Infliges 1d8 de daño físico adicional (del tipo del arma) una vez por turno al impactar.', type: 'feature' }
-    ]
-  },
-  'Dominio de la Luz': {
-    name: 'Dominio de la Luz',
-    className: 'Clérigo',
-    description: 'Promueven la verdad, la pauta solar y la erradicación de las tinieblas a través de llamas divinas y resplandor purificador.',
-    coreMechanic: 'Desventaja a los ataques enemigos con Destello Protector y daño de Fuego/Radiante masivo en área.',
-    keyRole: 'Lanzador de Evocación / Fuego Divine',
-    spells: [
-      { levelUnlocked: 1, spellName: 'Manos Ardientes', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 1, spellName: 'Fuego Feérico', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Esfera Flamígera', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Rayo abrasador', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Bola de Fuego', spellLevel: '3', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Luz del Alba', spellLevel: '3', notes: 'Siempre preparado' }
-    ],
-    features: [
-      { level: 1, title: 'Truco de Luz Gratuito', description: 'Aprendes el truco "Luz" si no lo tenías ya.', type: 'spell' },
-      { level: 1, title: 'Destello Protector', description: 'Usá tu reacción cuando seas atacado a 9m para imponer desventaja en la tirada de ataque del enemigo lanzando un destello de luz.', type: 'feature' },
-      { level: 2, title: 'Canalizar Divinidad: Radiancia del Sol', description: 'Disipa la oscuridad mágica a 9m e inflige 2d10 + nivel de Clérigo de daño radiante a todos los enemigos en el área (salvación de Constitución para la mitad).', type: 'feature' },
-      { level: 6, title: 'Destello Mejorado', description: 'Puedes usar Destello Protector para proteger a un aliado atacado a 9m de ti.', type: 'feature' },
-      { level: 8, title: 'Conjuro Potente', description: 'Sumas tu modificador de Sabiduría al daño que infliges con cualquier truco de clérigo.', type: 'feature' }
-    ]
-  },
-  'Dominio Arcano': {
-    name: 'Dominio Arcano',
-    className: 'Clérigo',
-    description: 'Clérigos dedicados a los misterios de la urdimbre mágica. Tienden puentes entre la fe divina y el estudio erudito de los magos.',
-    coreMechanic: 'Acceso a trucos y conjuros de Mago, y disipación divina de efectos mágicos al curar.',
-    keyRole: 'Soporte Anti-Mágico & Utilitario Arcano',
-    proficienciesGranted: ['Arcanos (Habilidad)'],
-    spells: [
-      { levelUnlocked: 1, spellName: 'Detectar Magia', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 1, spellName: 'Proyectil Mágico', spellLevel: '1', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Paso Brumoso', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 3, spellName: 'Llama Persistente', spellLevel: '2', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Anular Magia', spellLevel: '3', notes: 'Siempre preparado' },
-      { levelUnlocked: 5, spellName: 'Disipar Magia', spellLevel: '3', notes: 'Siempre preparado' }
-    ],
-    features: [
-      { level: 1, title: 'Iniciado Arcano', description: 'Ganas competencia en Arcanos y aprendes 2 trucos de la lista de Mago que se cuentan como trucos de clérigo.', type: 'spell' },
-      { level: 2, title: 'Canalizar Divinidad: Expulsar Extraplanarios', description: 'Funciona como expulsar muertos vivientes pero afecta a Celestiales, Elementales, Feéricos o Infernales.', type: 'feature' },
-      { level: 6, title: 'Brecha Arcana', description: 'Cuando curás a una criatura con un conjuro de nivel 1+, puedes disipar un conjuro activo sobre ella de nivel igual o menor al espacio usado.', type: 'feature' }
+      { level: 1, title: 'Sacerdote de Batalla', description: 'Ataque con arma adicional como acción bonus (usos = Mod SAB por descanso largo).', type: 'feature' },
+      { level: 2, title: 'Canalizar Divinidad: Golpe Guiado', description: 'Sumas +10 a una tirada de ataque propia.', type: 'feature' },
+      { level: 6, title: 'Bendición del Comandante', description: 'Otorgas +10 a la tirada de ataque de un aliado a 9m.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // DRUIDA
+  // DRUIDA (Armonías)
   // ==========================================
-  'Círculo de la Tierra': {
-    name: 'Círculo de la Tierra',
+  'Armonía con la Tierra': {
+    name: 'Armonía con la Tierra',
     className: 'Druida',
-    description: 'Guardianes de la antigua magia de los paisajes salvajes. Se enfocan en el lanzamiento de conjuros naturales y la comunión con el ecosistema.',
-    coreMechanic: 'Recuperación de espacios de conjuro en descansos cortos y hechizos adicionales según el bioma elegido.',
+    description: 'Guardianes de los paisajes salvajes, enfocados en la magia terrenal y recuperación arcana.',
+    coreMechanic: 'Recuperación de espacios de conjuro en descanso corto y hechizos adicionales según bioma.',
     keyRole: 'Lanzador de Conjuros de Control Terrenal',
-    spells: [
-      { levelUnlocked: 3, spellName: 'Paso sin Rastro (Bosque)', spellLevel: '2', notes: 'Conjuro de Círculo' },
-      { levelUnlocked: 3, spellName: 'Crecimiento Espinoso (Montaña)', spellLevel: '2', notes: 'Conjuro de Círculo' },
-      { levelUnlocked: 5, spellName: 'Llamar a los Rayos', spellLevel: '3', notes: 'Conjuro de Círculo' },
-      { levelUnlocked: 5, spellName: 'Muro de Viento', spellLevel: '3', notes: 'Conjuro de Círculo' }
-    ],
     features: [
-      { level: 2, title: 'Truco Adicional', description: 'Aprendes un truco de druida adicional a tu elección.', type: 'spell' },
-      { level: 2, title: 'Recuperación Natural', description: 'Durante un descanso corto, puedes recuperar espacios de conjuro gastados con un nivel combinado igual a la mitad de tu nivel de druida.', type: 'feature' },
-      { level: 3, title: 'Conjuros de Círculo', description: 'Ganas acceso a conjuros preparados adicionales según tu bioma elegido (Bosque, Montaña, Costa, Pantano, etc.).', type: 'spell' },
-      { level: 6, title: 'Zancada de Tierra', description: 'El terreno difícil no mágico no te cuesta movimiento extra y puedes pasar por vegetación espinosa sin sufrir daño.', type: 'feature' }
+      { level: 2, title: 'Recuperación Natural', description: 'Recuperas espacios de conjuro gastados durante un descanso corto.', type: 'feature' },
+      { level: 6, title: 'Paso por la Naturaleza', description: 'Moverte por terreno difícil no consumirá movimiento extra.', type: 'feature' }
     ]
   },
-  'Círculo de la Luna': {
-    name: 'Círculo de la Luna',
+  'Armonía con lo Salvaje': {
+    name: 'Armonía con lo Salvaje',
     className: 'Druida',
-    description: 'Fierosa orden de druidas que dominan la transformación en bestias feroces para luchar en la vanguardia.',
-    coreMechanic: 'Forma Salvaje Combativa como acción bonus con acceso a bestias de alto Valor de Desafío (CR) y curación con espacios de conjuro.',
-    keyRole: 'Metamorfo Combatiente & Tanque de Bestia',
+    description: 'Especialistas en la Forma Salvaje, capaces de transformarse en bestias feroces y gigantescas como acción bonus.',
+    coreMechanic: 'Forma Salvaje Combativa como acción bonus con Criaturas de mayor Valor de Desafío.',
+    keyRole: 'Tanque Bestial & Cazador de Vanguardia',
     features: [
-      { level: 2, title: 'Forma Salvaje Combativa', description: 'Puedes usar Forma Salvaje como Acción Bonus en lugar de Acción Normal.', type: 'feature' },
-      { level: 2, title: 'Formas del Círculo', description: 'Puedes transformarte en bestias más poderosas (CR 1 a nivel 2, CR 2 a nivel 6, etc.), ignorando restricciones normales de CR.', type: 'feature' },
-      { level: 2, title: 'Curación Lunar', description: 'Mientras estés en Forma Salvaje, puedes gastar 1 espacio de conjuro como acción bonus para recuperar 1d8 PG por cada nivel del espacio gastado.', type: 'feature' },
-      { level: 6, title: 'Golpes Bestiales', description: 'Tus ataques en Forma Salvaje se consideran mágicos a efectos de superar resistencias y humunidades.', type: 'feature' },
-      { level: 10, title: 'Forma Salvaje Elemental', description: 'Puedes gastar 2 usos de Forma Salvaje para transformarte en un Elemental de Aire, Tierra, Fuego o Agua.', type: 'feature' }
+      { level: 2, title: 'Forma Salvaje de Combate', description: 'Te transformas en Forma Salvaje como acción bonus.', type: 'feature' },
+      { level: 6, title: 'Golpes Salvajes', description: 'Tus ataques en Forma Salvaje se consideran mágicos.', type: 'feature' }
     ]
   },
-  'Círculo de las Estrellas': {
-    name: 'Círculo de las Estrellas',
+  'Armonía con las Corrientes': {
+    name: 'Armonía con las Corrientes',
     className: 'Druida',
-    description: 'Aprovechan el poder de los astros y las constelaciones para canalizar luz estelar, adivinación y formas astronómicas.',
-    coreMechanic: 'Forma Estelar con tres modalidades (Arquero, Cáliz, Dragón) para potenciar ataque, curación o concentración.',
-    keyRole: 'Lanzador Estelar & Versatilidad Astral',
+    description: 'Sintonizados con los océanos, ríos y tormentas acuáticas, controlando olas y nieblas heladas.',
+    coreMechanic: 'Navegación fluida, respiración acuática y ráfagas de agua de empuje.',
+    keyRole: 'Control de Masas de Agua & Daño de Frío/Rayo',
     features: [
-      { level: 2, title: 'Mapa Estelar', description: 'Puedes lanzar el conjuro "Guiado" sin gastar espacios de conjuro un número de veces igual a tu bono de competencia.', type: 'spell' },
-      { level: 2, title: 'Forma Estelar', description: 'Asumes un aspecto luminoso. Elige constelación: Arquero (disparar flecha estelar 1d8+SAB como acción bonus), Cáliz (curación extra 1d8+SAB al curar) o Dragón (mínimo 10 en d20 para mantener concentración).', type: 'feature' },
-      { level: 6, title: 'Presagio Cósmico', description: 'Tiras un d6 tras un descanso largo (Par: Weal / Impar: Woe) para sumar o restar 1d6 a tiradas de aliados o enemigos.', type: 'feature' }
+      { level: 2, title: 'Embate de las Olas', description: 'Desatas una ráfaga de agua como acción bonus que empuja a enemigos a 4.5m o los derriba.', type: 'feature' },
+      { level: 6, title: 'Forma Acuática Fluidificada', description: 'Respiración acuática permanente y velocidad de nado.', type: 'feature' }
+    ]
+  },
+  'Armonía con el Firmamento': {
+    name: 'Armonía con el Firmamento',
+    className: 'Druida',
+    description: 'Canalizan la luz de las constelaciones en Formas Estelares (Arquero, Cáliz, Dragón).',
+    coreMechanic: 'Forma Estelar para lanzar disparos radiantes, potencia de curación o concentración inquebrantable.',
+    keyRole: 'Soporte Radiante & Francotirador Mágico',
+    features: [
+      { level: 2, title: 'Forma Estelar', description: 'Adoptas la Forma Estelar (Arquero: disparo radiante bonus 1d8+Mod; Cáliz: curación extra; Dragón: mínimo 10 en concentración).', type: 'feature' },
+      { level: 6, title: 'Presagio Cósmico', description: 'Lanzas 1d6 al inicio del día para sumar o restar a tiradas de aliados/enemigos.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // EXPLORADOR
+  // GUERRERO (Estilos de Combate)
   // ==========================================
-  'Cazador': {
-    name: 'Cazador',
-    className: 'Explorador',
-    description: 'Especialista en adaptarse para abatir las amenazas más mortíferas del mundo salvaje, desde hordas de ghouls hasta gigantes de las colinas.',
-    coreMechanic: 'Tácticas de combate a elección para destrozar presas solitarias grandes o múltiples enemigos adyacentes.',
-    keyRole: 'Dañador Físico Táctico de Rango o Cuerpo a Cuerpo',
-    features: [
-      { level: 3, title: 'Táctica de Cazador', description: 'Elige 1 opción: Asesino de Gigantes (+1d8 de daño a enemigos heridos), Matagigantes (reacción para atacar a criaturas Grandes que te fallen) o Deflector de Hordas (ataque extra a una segunda criatura adyacente).', type: 'feature' },
-      { level: 7, title: 'Defensa de Cazador', description: 'Elige 1 opción: Escapar de la Horda (desventaja en ataques de oportunidad contra ti), Táctica Acero (+4 CA contra ataques subsecuentes del mismo enemigo) o Esquivar en un Santiamén.', type: 'feature' },
-      { level: 11, title: 'Multiataque', description: 'Ataque en Volea a distancia o Ataque en Torbellino cuerpo a cuerpo a todos los enemigos en un área determinada.', type: 'feature' }
-    ]
-  },
-  'Señor de las Bestias': {
-    name: 'Señor de las Bestias',
-    className: 'Explorador',
-    description: 'Crea un vínculo espiritual y físico indisoluble con una bestia salvaje que lucha en perfecta coordinación junto a él.',
-    coreMechanic: 'Compañero Bestia personalizado que actúa en combate recibiendo órdenes con tus acciones o bonus.',
-    keyRole: 'Compañero de Combate Doble & Control del Campo',
-    companion: {
-      name: 'Compañero Bestia (Tierra / Aire / Agua)',
-      type: 'Bestia Leal',
-      description: 'Lucha en tu turno. Suma tu Bonificador de Competencia a su CA, tiradas de ataque, daño y salvaciones.',
-      statsSummary: 'PG = 5 x Nivel de Explorador | CA = 13 + Prof | Daño = 1d6+2+Prof'
-    },
-    features: [
-      { level: 3, title: 'Compañero Bestia', description: 'Invocás o vinculás un espíritu bestial. En combate actúa en tu turno. Puedes ordenarle atacar usando uno de tus ataques de la acción de Atacar.', type: 'companion' },
-      { level: 7, title: 'Entrenamiento Práctico', description: 'Si la bestia no ataca, puede usar Ayudar, Destrabar o Esprintar como acción bonus en su turno.', type: 'feature' },
-      { level: 11, title: 'Furia Bestial', description: 'Tu compañero bestia puede hacer dos ataques cuando le ordenás atacar.', type: 'feature' }
-    ]
-  },
-  'Vagabundo Feérico': {
-    name: 'Vagabundo Feérico',
-    className: 'Explorador',
-    description: 'Bendecido con la magia caprichosa y deslumbrante de la Selva Feérica. Combina carisma encantador con impactos psíquicos.',
-    coreMechanic: 'Daño psíquico extra en cada impacto y bonificador de Sabiduría sumado a pruebas de Persuasión.',
-    keyRole: 'Dañador Psíquico & Cara Social del Grupo',
-    spells: [
-      { levelUnlocked: 3, spellName: 'Fuego Feérico', spellLevel: '1', notes: 'Conjuro de Vagabundo Feérico' },
-      { levelUnlocked: 5, spellName: 'Paso Brumoso', spellLevel: '2', notes: 'Conjuro de Vagabundo Feérico' }
-    ],
-    features: [
-      { level: 3, title: 'Golpes Terroríficos', description: 'Una vez por turno al golpear a una criatura con un arma, infliges 1d4 de daño psíquico extra.', type: 'feature' },
-      { level: 3, title: 'Presencia Feérica', description: 'Sumas tu modificador de Sabiduría a cualquier prueba de habilidad de Carisma que realices.', type: 'feature' },
-      { level: 7, title: 'Giro Encantador', description: 'Ganas ventaja en salvaciones contra ser Encantado o Asustado. Si tú o un aliado salvan, puedes redirigir el efecto a un enemigo.', type: 'feature' }
-    ]
-  },
-
-  // ==========================================
-  // GUERRERO
-  // ==========================================
-  'Campeón': {
-    name: 'Campeón',
+  'Estilo del Legionario': {
+    name: 'Estilo del Legionario',
     className: 'Guerrero',
-    description: 'El Campeón persigue la perfección física y el dominio atlético puro, convirtiéndose en una máquina imparable de críticos.',
-    coreMechanic: 'Rango de crítico ampliado (19-20 y 18-20) y bonificaciones pasivas de atletismo e iniciativa.',
-    keyRole: 'Dañador Físico Directo & Tanque Pasivo Robusto',
+    description: 'Especialista en la maestría física pura, perfeccionando impactos críticos e incansable atletismo.',
+    coreMechanic: 'Critico Mejorado (19-20) y Atletismo Extraordinario.',
+    keyRole: 'Daño Físico Consistente & Tanque Marcial',
     features: [
-      { level: 3, title: 'Crítico Mejorado', description: 'Tus ataques con arma consiguen un golpe crítico con una tirada de 19 o 20 en el d20.', type: 'feature' },
-      { level: 7, title: 'Atleta Notable', description: 'Sumas la mitad de tu bonificador de competencia (redondeado hacia arriba) a cualquier prueba de Fuerza, Destreza o Constitución que no la tenga ya. Además, aumenta tu distancia de salto.', type: 'feature' },
-      { level: 10, title: 'Estilo de Combate Adicional', description: 'Puedes elegir un segundo Estilo de Combate de la lista de Guerrero.', type: 'proficiency' },
-      { level: 15, title: 'Crítico Superior', description: 'Tus ataques con arma consiguen un golpe crítico con una tirada de 18, 19 o 20 en el d20.', type: 'feature' },
-      { level: 18, title: 'Superviviente', description: 'Al inicio de tu turno en combate, recuperas 5 + Modificador de CON PG si tienes menos de la mitad de tus PG máximos.', type: 'feature' }
+      { level: 3, title: 'Crítico Mejorado', description: 'Tus ataques con arma logran impacto crítico con un resultado de 19 o 20 en el d20.', type: 'feature' },
+      { level: 7, title: 'Atleta Insuperable', description: 'Sumas la mitad de tu bonificador de competencia a pruebas físicas y aumenta tu salto.', type: 'feature' },
+      { level: 10, title: 'Estilo de Combate Adicional', description: 'Obtienes un segundo Estilo de Combate.', type: 'feature' }
     ]
   },
-  'Maestro de Batalla': {
-    name: 'Maestro de Batalla',
+  'Estilo del Estratega': {
+    name: 'Estilo del Estratega',
     className: 'Guerrero',
-    description: 'Estudiosos del combate táctico y la esgrima refinada. Perciben la batalla como un tablero donde cada movimiento está calculado.',
-    coreMechanic: 'Maniobras de combate impulsadas por Dados de Superioridad (d8) que modifican ataques, mueven aliados o derriban enemigos.',
-    keyRole: 'Controlador Táctico de Combate & Comandante',
-    proficienciesGranted: ['1 Herramienta de Artesano a elección'],
-    maneuversOrAbilities: [
-      'Empuje Tactico (Derriba o empuja 4.5m)',
-      'Maniobra de Parada (Resta d8+DES al daño recibido)',
-      'Riposta (Ataque de reacción al fallarte un enemigo)',
-      'Desarme (Fuerza a soltar el arma al enemigo)',
-      'Ataque del Comandante (Un aliado ataca usando su reacción)',
-      'Finta (Ventaja en el ataque + daño extra d8)'
-    ],
+    description: 'Táctico consumado que usa Maniobras de Combate y Dados de Superioridad para dirigir la batalla.',
+    coreMechanic: 'Maniobras tácticas (Empujar, Desarmar, Finta, Comandar) impulsadas por Dados de Superioridad (d8).',
+    keyRole: 'Líder Táctico & Control de Combate Cuerpo a Cuerpo',
     features: [
-      { level: 3, title: 'Superioridad Táctica', description: 'Aprendes 3 Maniobras de combate y recibes 4 Dados de Superioridad (d8). Gastas un dado para ejecutar una maniobra. Se recuperan en descansos cortos o largos.', type: 'maneuver' },
-      { level: 3, title: 'Estudiante de la Guerra', description: 'Obtienes competencia con un tipo de herramientas de artesano a tu elección.', type: 'proficiency' },
-      { level: 7, title: 'Conoce a tu Enemigo', description: 'Si observás a una criatura durante 1 minuto fuera de combate, el DM te dirá si sus atributos (FUE, DES, CON, CA o PG) son superiores o inferiores a los tuyos.', type: 'feature' },
-      { level: 10, title: 'Superioridad Mejorada', description: 'Tus Dados de Superioridad se convierten en d10.', type: 'feature' }
+      { level: 3, title: 'Maniobras de Superioridad', description: 'Aprendes 3 Maniobras y ganas 4 Dados de Superioridad (d8) que se recuperan en descanso corto.', type: 'feature' },
+      { level: 7, title: 'Estudiar al Enemigo', description: 'Comparas tus capacidades de Fuerza/CA/Vida con las del rival tras 1 minuto.', type: 'feature' }
     ]
   },
-  'Caballero Arcano': {
-    name: 'Caballero Arcano',
+  'Estilo del Misticismo': {
+    name: 'Estilo del Misticismo',
     className: 'Guerrero',
-    description: 'Combina la destreza marcial del guerrero con el estudio erudito de la magia de Evocación y Abjuración de los magos.',
-    coreMechanic: 'Lanzamiento de conjuros basado en Inteligencia y Vínculo con Arma para invocar tus armas mágicamente a la mano.',
-    keyRole: 'Guerrero Mágico & Tanque Defensivo Arcano',
-    spells: [
-      { levelUnlocked: 3, spellName: 'Escudo', spellLevel: '1', notes: 'Conjuro de Abjuración (+5 CA)' },
-      { levelUnlocked: 3, spellName: 'Proyectil Mágico', spellLevel: '1', notes: 'Conjuro de Evocación' },
-      { levelUnlocked: 7, spellName: 'Paso Brumoso', spellLevel: '2', notes: 'Conjuro de Transmutación' }
-    ],
+    description: 'Combina el arte de la espada con la magia arcana de Evocación y Abjuración.',
+    coreMechanic: 'Lanzamiento de conjuros de Mago, Vínculo con Armas y magia de combate.',
+    keyRole: 'Tanque Mágico & Guerrero Arcano',
     features: [
-      { level: 3, title: 'Lanzamiento de Conjuros', description: 'Usas Inteligencia para lanzar conjuros de la lista de Mago (enfocado en Evocación y Abjuración). Aprendes 2 trucos y 3 conjuros de nivel 1.', type: 'spell' },
-      { level: 3, title: 'Vínculo con Arma', description: 'Realizas un ritual de 1 hora para vincularte con hasta 2 armas. No puedes ser desarmado de ellas y puedes invocarlas a tu mano como acción bonus.', type: 'feature' },
-      { level: 7, title: 'Magia de Combate', description: 'Cuando usas tu acción para lanzar un truco, puedes realizar un ataque con arma como acción bonus.', type: 'feature' },
-      { level: 10, title: 'Golpe Mágico', description: 'Cuando golpeas a una criatura con un arma, esta tiene desventaja en la siguiente salvación contra un conjuro tuyo.', type: 'feature' }
+      { level: 3, title: 'Lanzamiento de Conjuros Arcanos', description: 'Aprendes trucos y conjuros de Mago (Inteligencia es tu aptitud mágica).', type: 'spell' },
+      { level: 3, title: 'Vínculo con el Arma', description: 'Puedes convocar tu arma vinculada a tu mano como acción bonus.', type: 'feature' }
+    ]
+  },
+  'Estilo del Enfoque': {
+    name: 'Estilo del Enfoque',
+    className: 'Guerrero',
+    description: 'Desarrolla la energía psiónica de su mente para potenciar sus ataques, crear escudos telequinéticos y dar saltos imposibles.',
+    coreMechanic: 'Dados de Energía Psiónica para mitigar daño, infligir daño psíquico extra y mover objetos.',
+    keyRole: 'Tanque Psiónico & Control Telequinético',
+    features: [
+      { level: 3, title: 'Fuerza Psiónica', description: 'Ganas Dados Psiónicos (d6) para Campo Reductor, Golpe Psiónico y Movimiento Telequinético.', type: 'feature' },
+      { level: 7, title: 'Salto Telequinético', description: 'Vuelas temporalmente durante tu turno.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // HECHICERO
+  // MONJE (Filosofías)
   // ==========================================
-  'Linaje Dracónico': {
-    name: 'Linaje Dracónico',
-    className: 'Hechicero',
-    description: 'Tu magia innata proviene del torrente sanguíneo de un poderoso dragón ancestral, otorgándote escamas de dragón y afinidad elemental.',
-    coreMechanic: 'Resiliencia Dracónica pasiva (+1 PG/nivel y CA 13+DES sin armadura) y daño elemental potenciado.',
-    keyRole: 'Dañador Elemental & Lanzador Resistente',
-    features: [
-      { level: 1, title: 'Ancestro Dracónico', description: 'Elige un color de dragón (ej. Rojo/Fuego, Azul/Rayo, Blanco/Frío). Aprendes a hablar Dracónico y tienes ventaja en pruebas de interacción con dragones.', type: 'feature' },
-      { level: 1, title: 'Resiliencia Dracónica', description: 'Tu máximo de PG aumenta en 1 por cada nivel de hechicero. Además, si no llevas armadura, tu CA base es 13 + Modificador de Destreza.', type: 'feature' },
-      { level: 6, title: 'Afinidad Elemental', description: 'Al lanzar un conjuro que inflija el tipo de daño de tu ancestro dracónico, sumas tu modificador de Carisma al daño. Puedes gastar 1 Punto de Hechicería para ganar resistencia a ese elemento durante 1 hora.', type: 'feature' },
-      { level: 14, title: 'Alas Dracónicas', description: 'Brotan alas de dragón de tu espalda otorgándote una velocidad de vuelo igual a tu velocidad en tierra.', type: 'feature' }
-    ]
-  },
-  'Magia Salvaje': {
-    name: 'Magia Salvaje',
-    className: 'Hechicero',
-    description: 'Tu poder proviene de las fuerzas del caos primigenio del plano del Limbo. Tu magia es tan impredecible como devastadora.',
-    coreMechanic: 'Mareas de Caos para ganar ventaja a voluntad y la tabla de Oleada de Magia Salvaje (d100) al lanzar conjuros.',
-    keyRole: 'Lanzador Caótico de Alto Riesgo / Alta Recompensa',
-    features: [
-      { level: 1, title: 'Oleada de Magia Salvaje', description: 'Al lanzar un conjuro de nivel 1+, el DM puede hacerte tirar 1d20. Si sale 1, tiras en la tabla de Oleada de Magia Salvaje (d100) produciendo efectos aleatorios.', type: 'feature' },
-      { level: 1, title: 'Mareas de Caos', description: 'Ganas ventaja en una tirada de ataque, prueba de habilidad o salvación. Recuperas este uso tras un descanso largo o cuando el DM active una Oleada de Magia Salvaje.', type: 'feature' },
-      { level: 6, title: 'Manipular la Suerte', description: 'Gastá 2 Puntos de Hechicería como reacción para tirar 1d4 y sumarlo o restarlo a la tirada de d20 de otra criatura.', type: 'feature' }
-    ]
-  },
-  'Alma Mecánica': {
-    name: 'Alma Mecánica',
-    className: 'Hechicero',
-    description: 'Sintonizado con el plano de Modron y el orden absoluto del multiverso. Anulas el caos y restableces la precisión matemática.',
-    coreMechanic: 'Conjuros mecánicos siempre preparados y la habilidad de anular ventajas o desventajas en tiradas cercanas.',
-    keyRole: 'Manipulador del Orden & Escudo Mecánico',
-    spells: [
-      { levelUnlocked: 1, spellName: 'Alarma', spellLevel: '1', notes: 'Conjuro Mecánico' },
-      { levelUnlocked: 1, spellName: 'Armadura de Agathys', spellLevel: '1', notes: 'Conjuro Mecánico' },
-      { levelUnlocked: 3, spellName: 'Restablecimiento Menor', spellLevel: '2', notes: 'Conjuro Mecánico' }
-    ],
-    features: [
-      { level: 1, title: 'Restaurar el Orden', description: 'Como reacción cuando una criatura a 18m va a tirar con ventaja o desventaja, puedes anular esa ventaja o desventaja. Usos = Bonificador de competencia.', type: 'feature' },
-      { level: 6, title: 'Escudo de Orden', description: 'Gastá de 1 a 5 Puntos de Hechicería para crear un escudo alrededor de ti o un aliado que absorbe daño (d8s igual a los puntos gastados).', type: 'feature' }
-    ]
-  },
-
-  // ==========================================
-  // MAGO
-  // ==========================================
-  'Escuela de Evocación': {
-    name: 'Escuela de Evocación',
-    className: 'Mago',
-    description: 'Especialistas en manipular la energía elemental pura para crear explosiones de fuego, relámpagos devastadores y hielo mortal.',
-    coreMechanic: 'Esculpido de Conjuros para proteger a los aliados de tus propios conjuros de área (ej. Bola de Fuego).',
-    keyRole: 'Dañador de Área Masivo & Artillería Mágica',
-    features: [
-      { level: 2, title: 'Sabio de Evocación', description: 'El oro y tiempo requeridos para copiar un conjuro de Evocación en tu grimorio se reducen a la mitad.', type: 'feature' },
-      { level: 2, title: 'Esculpido de Conjuros', description: 'Al lanzar un conjuro de evocación de área, puedes elegir un número de criaturas (1 + nivel del conjuro) para que tengan éxito automáticamente en la salvación y no reciban daño si normalmente recibirían la mitad.', type: 'feature' },
-      { level: 6, title: 'Potentísima Cantrip', description: 'Tus trucos que requieren una tirada de salvación infligen la mitad de su daño si el objetivo supera la salvación.', type: 'feature' },
-      { level: 10, title: 'Evocación Potenciada', description: 'Sumas tu modificador de Inteligencia a una tirada de daño de cualquier conjuro de evocación de mago que lances.', type: 'feature' }
-    ]
-  },
-  'Escuela de Abjuración': {
-    name: 'Escuela de Abjuración',
-    className: 'Mago',
-    description: 'Maestros de la magia defensiva, barreras protectoras, anulación de hechizos enemigos y desvanecimiento de maldiciones.',
-    coreMechanic: 'Bastión Arcano que genera un escudo de energía que absorbe daño al lanzar conjuros defensivos.',
-    keyRole: 'Protector Defensivo & Mago Anti-Conjuros',
-    auras: [
-      { levelUnlocked: 6, name: 'Abjuración Proyectada', range: '9 metros', description: 'Interpone tu Bastión Arcano para absorber daño dirigido a un aliado.' }
-    ],
-    features: [
-      { level: 2, title: 'Sabio de Abjuración', description: 'Costo y tiempo de copiado de conjuros de Abjuración reducidos al 50%.', type: 'feature' },
-      { level: 2, title: 'Bastión Arcano', description: 'Al lanzar un conjuro de abjuración de nivel 1+, creas un escudo mágico que absorbe daño igual a (2 x Nivel de Mago + Mod INT). Se recarga al lanzar más abjuraciones.', type: 'feature' },
-      { level: 6, title: 'Abjuración Proyectada', description: 'Usá tu reacción cuando un aliado a 9m reciba daño para interponer tu Bastión Arcano y recibir el daño con tu escudo en su lugar.', type: 'aura' },
-      { level: 10, title: 'Abjurador Robusto', description: 'Sumas tu bonificador de competencia a las pruebas de habilidad para Anular Magia o Disipar Magia.', type: 'feature' }
-    ]
-  },
-  'Escuela de Nigromancia': {
-    name: 'Escuela de Nigromancia',
-    className: 'Mago',
-    description: 'Estudian las fuerzas de la vida, la muerte y la no-vida, aprendiendo a drenar la energía vital enemiga y alzar sirvientes no-muertos.',
-    coreMechanic: 'Cosecha Oscura para curarse al matar enemigos con magia y potenciar a los muertos vivientes creados.',
-    keyRole: 'Invocador de No-Muertos & Drenador Vital',
-    companion: {
-      name: 'Ejército No-Muerto (Esqueletos / Zombies)',
-      type: 'Servidores de la Muerte',
-      description: 'Sirvientes creados con Animar a los Muertos. Tienen PG extra y añaden tu bonificador de competencia a sus tiradas de daño.',
-      statsSummary: 'PG + Nivel de Mago | Daño + Prof'
-    },
-    features: [
-      { level: 2, title: 'Sabio de Nigromancia', description: 'Copiar conjuros de Nigromancia cuesta la mitad de tiempo y oro.', type: 'feature' },
-      { level: 2, title: 'Cosecha Oscura', description: 'Una vez por turno, al matar a una criatura con un conjuro de nivel 1+, recuperas PG iguales al doble del nivel del conjuro (el triple si es de Nigromancia).', type: 'feature' },
-      { level: 6, title: 'Servidores de la Muerte', description: 'Añades "Animar a los Muertos" a tu grimorio. Al lanzarlo, puedes alzar un esqueleto o zombi adicional. Sus PG máximos aumentan en tu nivel de mago y su daño suma tu bonificador de competencia.', type: 'companion' }
-    ]
-  },
-
-  // ==========================================
-  // MONJE
-  // ==========================================
-  'Camino de la Mano Abierta': {
-    name: 'Camino de la Mano Abierta',
+  'Filosofía del Dominio': {
+    name: 'Filosofía del Dominio',
     className: 'Monje',
-    description: 'Maestros absolutos del combate cuerpo a cuerpo y la manipulación de la energía Ki a través de golpes marciales precisos.',
-    coreMechanic: 'Técnica de la Mano Abierta para empujar, derribar o quitar reacciones a los enemigos mediante Ráfaga de Golpes.',
-    keyRole: 'Controlador Marcial Cerca a Cerca & Inhabilitador',
+    description: 'Maestros del combate cuerpo a cuerpo y control del Ki mediante Ráfaga de Golpes perfeccionada.',
+    coreMechanic: 'Derribar, empujar o quitar reacciones a los enemigos con Ráfaga de Golpes.',
+    keyRole: 'Control de Enemigos & Combate Sin Armas',
     features: [
-      { level: 3, title: 'Técnica de la Mano Abierta', description: 'Al impactar con un golpe de Ráfaga de Golpes, puedes imponer 1 efecto: derribar al objetivo (salvación de FUE), empujarlo 4.5m (salvación de FUE) o impedirle usar reacciones hasta el final de tu siguiente turno.', type: 'feature' },
-      { level: 6, title: 'Claridad de Cuerpo', description: 'Como acción en tu turno, puedes curarte PG iguales a (3 x tu nivel de Monje). Requiere descanso largo para reutilizar.', type: 'feature' },
-      { level: 11, title: 'Tranquilidad', description: 'Ganas el efecto del conjuro "Santuario" permanentemente tras completar un descanso largo (CD de salvación = 8 + prof + Mod SAB).', type: 'feature' },
-      { level: 17, title: 'Palma Temblorosa', description: 'Puedes imbuir vibraciones mortales con 3 Puntos de Ki. Más tarde, como acción, puedes detener las vibraciones: la criatura cae a 0 PG si falla salvación de Constitución (o recibe 10d10 de daño si la supera).', type: 'feature' }
+      { level: 3, title: 'Técnica de la Mano Abierta', description: 'Al usar Ráfaga de Golpes, puedes derribar al enemigo, empujarlo 4.5m o quitarle sus reacciones.', type: 'feature' },
+      { level: 6, title: 'Integridad Corporal', description: 'Te curas PG iguales a 3 x Nivel de Monje una vez por descanso largo.', type: 'feature' }
     ]
   },
-  'Camino de la Sombra': {
-    name: 'Camino de la Sombra',
+  'Filosofía de los Secretos': {
+    name: 'Filosofía de los Secretos',
     className: 'Monje',
-    description: 'Asesinos sigilosos y espías que canalizan la energía del Plano de las Sombras para volverse invisibles y teletransportarse.',
-    coreMechanic: 'Artes de la Sombra para lanzar conjuros de sigilo/oscuridad con Ki y teletransporte entre penumbras.',
-    keyRole: 'Infiltrador, Asesino Sigiloso & Escaramuzador',
+    description: 'Infiltrados sombríos que manipulan la oscuridad, se teletransportan de sombra en sombra y silencian a sus enemigos.',
+    coreMechanic: 'Paso Sombrío (teletransporte entre sombras) e invisibilidad.',
+    keyRole: 'Infiltrado Sigiloso & Asesino Sombrío',
     features: [
-      { level: 3, title: 'Artes de la Sombra', description: 'Gastá 2 Puntos de Ki para lanzar los conjuros: Oscuridad, Visión Oscura, Pasar sin Rastro o Silencio sin componentes materiales. Aprendes el truco Ilusión Menor.', type: 'spell' },
-      { level: 6, title: 'Paso de las Sombras', description: 'Mientras estés en penumbra u oscuridad, puedes teletransportarte hasta 18 metros a otra zona de penumbra como Acción Bonus y ganar ventaja en tu primer ataque cuerpo a cuerpo.', type: 'feature' },
-      { level: 11, title: 'Manto de Sombras', description: 'Mientras estés en penumbra u oscuridad, puedes usar tu acción para volverte invisible hasta que ataques o lances un conjuro.', type: 'feature' }
+      { level: 3, title: 'Artes de la Penumbra', description: 'Gastas Ki para lanzar Oscuridad, Visión en la Oscuridad, Silencio o Pasar sin Rastro.', type: 'spell' },
+      { level: 6, title: 'Paso Sombrío', description: 'Te teletransportas hasta 18m de una sombra a otra como acción bonus.', type: 'feature' }
     ]
   },
-  'Camino de los Cuatro Elementos': {
-    name: 'Camino de los Cuatro Elementos',
+  'Filosofía del Equilibrio': {
+    name: 'Filosofía del Equilibrio',
     className: 'Monje',
-    description: 'Sintonizan su Ki con las fuerzas elementales del fuego, la tierra, el agua y el aire para lanzar disciplinas devastadoras.',
-    coreMechanic: 'Disciplinas elementales alimentadas por Ki que replican hechizos y efectos de área elementales.',
-    keyRole: 'Monje Striker Elemental & Control Distanciado',
+    description: 'Canalizan la energía elemental pura de Fuego, Agua, Tierra y Aire en sus puños.',
+    coreMechanic: 'Ataques con alcance elemental de 6m y ráfagas de daño elemental de área.',
+    keyRole: 'Combate Elemental Zonal & Daño Variado',
     features: [
-      { level: 3, title: 'Disciplinas del Ki Elemental', description: 'Aprendes disciplinas como "Colmillo del Dragón de Fuego" (ataque a distancia con fuego) o "Empuje de las Olas" para moldear los elementos con Puntos de Ki.', type: 'feature' },
-      { level: 6, title: 'Moldear los Elementos', description: 'Acceso a nuevas disciplinas de nivel medio (ej. Puño de Aire Desafortunado o Forma del Agua).', type: 'feature' }
+      { level: 3, title: 'Sintonía Elemental', description: 'Tus ataques sin armas alcanzan 6m e infligen daño de Fuego, Frío, Ácido o Rayo.', type: 'feature' },
+      { level: 6, title: 'Embate de los Elementos', description: 'Gastas Ki para empujar o atraer a enemigos con ráfagas elementales.', type: 'feature' }
+    ]
+  },
+  'Filosofía de la Restauración': {
+    name: 'Filosofía de la Restauración',
+    className: 'Monje',
+    description: 'Manipulan la energía vital del Ki para curar heridas con el Toque de Vida o infligir sufrimiento con el Toque de Muerte.',
+    coreMechanic: 'Toque de Curación y Toque de Daño Necrótico integrados en las Artes Marciales.',
+    keyRole: 'Monje Sanador & Ejecutor Táctico',
+    features: [
+      { level: 3, title: 'Manos de Curación / Manos de Daño', description: 'Gastas Ki para curar a una criatura o infligir daño necrótico adicional en un golpe sin armas.', type: 'feature' },
+      { level: 6, title: 'Misericordia del Médico', description: 'Curar a una criatura también elimina condiciones de ceguera, sordera, parálisis o envenenamiento.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // PALADÍN
+  // PALADÍN (Órdenes)
   // ==========================================
-  'Juramento de Devoción': {
-    name: 'Juramento de Devoción',
+  'Orden del Cruzado': {
+    name: 'Orden del Cruzado',
     className: 'Paladín',
-    description: 'El paladín idealizado: virtuoso, justo y protector. Empuñan armas bendecidas para erradicar el mal y proteger a los inocentes.',
-    coreMechanic: 'Canalizar Divinidad para bendecir armas con carisma (+CAR a ataques y luz) y Aura de Devoción que impide ser Encantado.',
-    keyRole: 'Tanque Sagrado, Líder & Protector Aural',
-    auras: [
-      { levelUnlocked: 7, name: 'Aura de Devoción', range: '3 metros (6m a Nv 18)', description: 'Tú y los aliados adyacentes no pueden ser encantados mientras estés consciente.' }
-    ],
-    spells: [
-      { levelUnlocked: 3, spellName: 'Protección contra el Bien y el Mal', spellLevel: '1', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 3, spellName: 'Escudo de Fe', spellLevel: '1', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 5, spellName: 'Zona de Verdad', spellLevel: '2', notes: 'Conjuro de Juramento' }
-    ],
+    description: 'Encarna el ideal clásico de justicia, honor y protección radiante contra la maldad.',
+    coreMechanic: 'Arma Sagrada (+Mod CAR al ataque) y Aura de Devoción.',
+    keyRole: 'Líder Radiante & Tanque Protector',
     features: [
-      { level: 3, title: 'Canalizar Divinidad: Arma Sagrada', description: 'Imbues tu arma con energía positiva durante 1 minuto. Sumas tu Modificador de Carisma a las tiradas de ataque y el arma emite luz brillante a 6m.', type: 'feature' },
-      { level: 3, title: 'Canalizar Divinidad: Expulsar a los Impíos', description: 'Los abisales y muertos vivientes a 9m deben superar salvación de Sabiduría o ser expulsados durante 1 minuto.', type: 'feature' },
-      { level: 7, title: 'Aura de Devoción', description: 'Tú y los aliados dentro de 3m no pueden ser encantados mientras estés consciente.', type: 'aura' },
-      { level: 15, title: 'Pureza de Espíritu', description: 'Estás permanentemente bajo los efectos del conjuro "Protección contra el Bien y el Mal".', type: 'feature' }
+      { level: 3, title: 'Canalizar Divinidad: Arma Sagrada', description: 'Imbuyes tu arma con luz bendita sumando tu Mod CAR a las tiradas de ataque.', type: 'feature' },
+      { level: 7, title: 'Aura de Devoción', description: 'Tú y los aliados a 3m no pueden ser encantados.', type: 'aura' }
     ]
   },
-  'Juramento de Venganza': {
-    name: 'Juramento de Venganza',
+  'Orden del Grifo': {
+    name: 'Orden del Grifo',
     className: 'Paladín',
-    description: 'Un juramento despiadado enfocado en dar caza y aniquilar a los malhechores a cualquier precio sin mostrar misericordia.',
-    coreMechanic: 'Voto de Enemistad para obtener ventaja en todas las tiradas de ataque contra un objetivo prioritario durante 1 minuto.',
-    keyRole: 'Cazador de Jefes & Dañador Físico Implacable',
-    auras: [
-      { levelUnlocked: 7, name: 'Paso Implacable', range: 'Personal', description: 'Al realizar un ataque de oportunidad, puedes moverte la mitad de tu velocidad como parte de la misma reacción sin provocar O.A.' }
-    ],
-    spells: [
-      { levelUnlocked: 3, spellName: 'Marca del Cazador', spellLevel: '1', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 3, spellName: 'Persecución Feroz', spellLevel: '1', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 5, spellName: 'Paso Brumoso', spellLevel: '2', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 9, spellName: 'Acelerar (Haste)', spellLevel: '3', notes: 'Conjuro de Juramento' }
-    ],
+    description: 'Busca la gloria en el combate heroico, la velocidad impetuosa y el triunfo deslumbrante.',
+    coreMechanic: 'Zancada Gloriosa (velocidad extra) y Castigo Guiado.',
+    keyRole: 'Paladín de Carga Rápida & Daño Impactante',
     features: [
-      { level: 3, title: 'Canalizar Divinidad: Voto de Enemistad', description: 'Como Acción Bonus, jurás enemistad a un enemigo a 9m. Tienes VENTAJA en todas las tiradas de ataque contra él durante 1 minuto o hasta que caiga a 0 PG.', type: 'feature' },
-      { level: 3, title: 'Canalizar Divinidad: Abjurar Enemigo', description: 'Asustá y paralizá el movimiento de una criatura que falle salvación de Sabiduría.', type: 'feature' },
-      { level: 7, title: 'Paso Implacable', description: 'Cuando golpeas a una criatura con un ataque de oportunidad, puedes moverte hasta la mitad de tu velocidad como parte de la reacción sin provocar ataques de oportunidad.', type: 'aura' }
+      { level: 3, title: 'Zancada Gloriosa', description: 'Aumenta tu velocidad en 3m y puedes moverte como acción bonus al usar Canalizar Divinidad.', type: 'feature' },
+      { level: 7, title: 'Aura de Alacridad', description: 'Aumenta la velocidad de movimiento de todos los aliados a 3m.', type: 'aura' }
     ]
   },
-  'Juramento de los Ancestros': {
-    name: 'Juramento de los Ancestros',
+  'Orden de los Antepasados': {
+    name: 'Orden de los Antepasados',
     className: 'Paladín',
-    description: 'Defensores de la luz, la naturaleza y la belleza del mundo primigenio, conocidos como Caballeros Feéricos o Verdes.',
-    coreMechanic: 'Aura de Salvaguarda que otorga RESISTENCIA al daño de todos los conjuros a ti y a los aliados cercanos.',
-    keyRole: 'Super-Tanque Defensivo Anti-Magia',
-    auras: [
-      { levelUnlocked: 7, name: 'Aura de Salvaguarda', range: '3 metros (6m a Nv 18)', description: 'Tú y los aliados dentro del aura tenéis resistencia al daño infligido por conjuros.' }
-    ],
-    spells: [
-      { levelUnlocked: 3, spellName: 'Enredar', spellLevel: '1', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 3, spellName: 'Fuego Feérico', spellLevel: '1', notes: 'Conjuro de Juramento' },
-      { levelUnlocked: 5, spellName: 'Paso sin Rastro', spellLevel: '2', notes: 'Conjuro de Juramento' }
-    ],
+    description: 'Defensores de la luz natural, la vida silvestre y las tradiciones antiguas de la tierra.',
+    coreMechanic: 'Ira de la Naturaleza para apresar enemigos y Aura de Resistencia al daño de conjuros.',
+    keyRole: 'Tanque Anti-Magia & Protector Natural',
     features: [
-      { level: 3, title: 'Canalizar Divinidad: Ira de la Naturaleza', description: 'Invocás enredaderas mágicas para apresarle las piernas a un enemigo a 3m si falla salvación de Fuerza/Destreza.', type: 'feature' },
-      { level: 7, title: 'Aura de Salvaguarda', description: 'Tú y tus aliados a 3 metros ganáis RESISTENCIA al daño proveniente de cualquier conjuro.', type: 'aura' },
-      { level: 15, title: 'Sentinela Indomable', description: 'Cuando caes a 0 PG y no morís al instante, puedes elegir caer a 1 PG en su lugar (1 vez por descanso largo). Tampoco sufres achaques por vejez.', type: 'feature' }
+      { level: 3, title: 'Canalizar Divinidad: Ira de la Naturaleza', description: 'Enredaderas espectrales apresan a un enemigo a 3m.', type: 'feature' },
+      { level: 7, title: 'Aura de Protección Antigua', description: 'Tú y los aliados a 3m tienen resistencia al daño producido por conjuros.', type: 'aura' }
+    ]
+  },
+  'Orden del Cuervo': {
+    name: 'Orden del Cuervo',
+    className: 'Paladín',
+    description: 'Juramentados a cazar y castigar a los malvados sin piedad mediante Voto de Enemistad.',
+    coreMechanic: 'Voto de Enemistad para ventaja en tiradas de ataque contra un objetivo específico.',
+    keyRole: 'Asesino de Objetivos Individuales & Ejecutor Santo',
+    features: [
+      { level: 3, title: 'Canalizar Divinidad: Voto de Enemistad', description: 'Ganas ventaja en todas las tiradas de ataque contra un objetivo a 9m durante 1 minuto.', type: 'feature' },
+      { level: 7, title: 'Vengador Implacable', description: 'Al golpear a un enemigo con ataque de oportunidad, puedes moverte la mitad de tu velocidad.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // PÍCARO
+  // EXPLORADOR (Marcas)
   // ==========================================
-  'Ladrón': {
-    name: 'Ladrón',
-    className: 'Pícaro',
-    description: 'Especialistas en agilidad deslumbrante, infiltración de guante blanco, uso veloz de herramientas y manipulación de artefactos mágicos.',
-    coreMechanic: 'Manos Rápidas para interactuar con objetos, desarmar trampas o hurtar como Acción Bonus.',
-    keyRole: 'Escaramuzador Veloz & Utilitario de Campo',
+  'Marca del Cazador': {
+    name: 'Marca del Cazador',
+    className: 'Explorador',
+    description: 'Especialista en la cacería de presa, adaptándose para abatir gigantes, hordas o presas veloces.',
+    coreMechanic: 'Tácticas de Cazador (Asesino de Gigantes, Caza-Hordas) y defensas marciales.',
+    keyRole: 'Daño Físico Adaptable & Cazador de Monstruos',
     features: [
-      { level: 3, title: 'Manos Rápidas', description: 'Puedes usar la Acción Bonus concedida por Acción Astuta para realizar una prueba de Juego de Manos, usar tus herramientas de ladrón para desarmar una trampa o abrir una cerradura, o usar la acción de Usar un Objeto.', type: 'feature' },
-      { level: 3, title: 'Trabajo en las Alturas', description: 'Trepar ya no te cuesta movimiento extra. Además, aumentas tu distancia de salto una cantidad de metros igual a tu Modificador de Destreza.', type: 'feature' },
-      { level: 9, title: 'Sigilo Supremo', description: 'Tienes ventaja en las pruebas de Destreza (Sigilo) si te movés a no más de la mitad de tu velocidad en ese turno.', type: 'feature' },
-      { level: 13, title: 'Uso de Dispositivos Mágicos', description: 'Ignoras todos los requisitos de clase, raza y nivel para la sintonización y uso de cualquier objeto mágico.', type: 'feature' }
+      { level: 3, title: 'Presa del Cazador', description: 'Elige: Caza-Hordas (ataque extra a enemigo adyacente) o Asesino de Gigantes (1d8 extra a presas dañadas).', type: 'feature' },
+      { level: 7, title: 'Táctica Defensiva', description: 'Desventaja en ataques de oportunidad enemigos o bonus a salvaciones.', type: 'feature' }
     ]
   },
-  'Asesino': {
-    name: 'Asesino',
-    className: 'Pícaro',
-    description: 'Maestros del arte de la muerte sigilosa, el disfraz engañoso y los venenos mortales para eliminar objetivos antes de ser detectados.',
-    coreMechanic: 'Ventaja automática contra enemigos que no hayan actuado y Golpes Críticos automáticos si sorprendes al objetivo.',
-    keyRole: 'Striker Sorpresa de Un Solo Golpe Devastador',
-    proficienciesGranted: ['Kit de Disfraz', 'Kit de Venenos'],
+  'Marca del Depredador': {
+    name: 'Marca del Depredador',
+    className: 'Explorador',
+    description: 'Acechadores de las profundidades sin luz y cavernas, emboscando con velocidad aterradora.',
+    coreMechanic: 'Emboscada Temible (ataque y movimiento extra en primer turno) e invisibilidad a la visión en la oscuridad.',
+    keyRole: 'Emboscador Sigiloso de Primer Turno',
     features: [
-      { level: 3, title: 'Competencias de Asesino', description: 'Ganas competencia con el Kit de Disfraz y el Kit de Venenos.', type: 'proficiency' },
-      { level: 3, title: 'Asesinar', description: 'Tienes VENTAJA en las tiradas de ataque contra cualquier criatura que aún no haya actuado en el combate. Además, cualquier ataque que impacte a una criatura sorprendida es automáticamente un GOLPE CRÍTICO.', type: 'feature' },
-      { level: 9, title: 'Infiltración Experta', description: 'Puedes crear falsas identidades creíbles con historial, documentación y vestimenta tras dedicar 7 días de estudio y 25 po.', type: 'feature' },
-      { level: 17, title: 'Golpe Mortal', description: 'Al golpear a una criatura sorprendida, esta debe superar una salvación de Constitución (CD 8 + prof + Mod DES) o el daño del ataque se DUPLICA.', type: 'feature' }
+      { level: 3, title: 'Emboscador Temible', description: 'En el primer turno de combate ganas +3m de velocidad y un ataque extra con 1d8 daño adicional.', type: 'feature' },
+      { level: 3, title: 'Sombra de la Profundidad', description: 'Invisibilidad para criaturas que dependen de la visión en la oscuridad para verte.', type: 'feature' }
     ]
   },
-  'Embaucador Arcano': {
-    name: 'Embaucador Arcano',
-    className: 'Pícaro',
-    description: 'Pícaros que combinan el sigilo físico con la magia de Ilusión y Encantamiento para realizar hurtos imposibles y engaños deslumbrantes.',
-    coreMechanic: 'Mano de Mago Mejorada e invisible que realiza tareas picarescas a distancia como abrir cerraduras o robar de bolsillos.',
-    keyRole: 'Pícaro Infiltrador Mágico & Utilitario de Ilusión',
-    spells: [
-      { levelUnlocked: 3, spellName: 'Mano de Mago', spellLevel: 'Truco', notes: 'Mano Invisible' },
-      { levelUnlocked: 3, spellName: 'Risas Espantosas de Tasha', spellLevel: '1', notes: 'Encantamiento' },
-      { levelUnlocked: 3, spellName: 'Disfrazarse', spellLevel: '1', notes: 'Ilusión' },
-      { levelUnlocked: 7, spellName: 'Invisibilidad', spellLevel: '2', notes: 'Ilusión' }
-    ],
+  'Marca del Favor Místico': {
+    name: 'Marca del Favor Místico',
+    className: 'Explorador',
+    description: 'Bendecidos por el glamour del Reino Feérico, combinando ataques carismáticos y engaño mágico.',
+    coreMechanic: 'Daño psíquico de Favor Feérico y bonificador de Carisma en pruebas sociales.',
+    keyRole: 'Explorador Carismático & Control Mágico',
     features: [
-      { level: 3, title: 'Lanzamiento de Conjuros', description: 'Lanzas conjuros de la lista de Mago (enfocado en Ilusión y Encantamiento) usando Inteligencia.', type: 'spell' },
-      { level: 3, title: 'Mano de Mago Mejorada', description: 'Tu truco Mano de Mago es invisible. Puedes usarla como Acción Bonus para hurtar objetos de recipientes, poner objetos en bolsillos de otros o abrir cerraduras/desactivar trampas a distancia.', type: 'feature' },
-      { level: 9, title: 'Emboscada Mágica', description: 'Si estás oculto de una criatura cuando le lanzas un conjuro, esa criatura tiene desventaja en las salvaciones contra el conjuro ese turno.', type: 'feature' }
+      { level: 3, title: 'Presencia Feérica', description: 'Suma tu Modificador de Sabiduría a pruebas de Carisma e inflige 1d4 daño psíquico extra.', type: 'feature' },
+      { level: 7, title: 'Torcedura Mente Feérica', description: 'Ventaja en salvaciones contra ser encantado o asustado.', type: 'feature' }
+    ]
+  },
+  'Marca de la Manada': {
+    name: 'Marca de la Manada',
+    className: 'Explorador',
+    description: 'Forma un vínculo inquebrantable con un compañero bestial que lucha codo a codo en el campo de batalla.',
+    coreMechanic: 'Compañero Bestial convocado con estadísticas escaladas por nivel.',
+    keyRole: 'Compañero de Combate & Control Doble',
+    companion: { name: 'Compañero Bestial', type: 'Tierra/Aire/Agua', description: 'Tu compañero ataca y obedece tus órdenes verbales en combate.', statsSummary: 'Escala con tu nivel y bonificador de competencia.' },
+    features: [
+      { level: 3, title: 'Compañero de la Manada', description: 'Convocas un espíritu bestial de la tierra, aire o mar como compañero leal.', type: 'companion' },
+      { level: 7, title: 'Entrenamiento Marcial Bestial', description: 'Los ataques de tu compañero se consideran mágicos.', type: 'feature' }
     ]
   },
 
   // ==========================================
-  // BRUJO
+  // PÍCARO (Hermandades)
   // ==========================================
-  'Patrón Arquihada': {
-    name: 'Patrón Arquihada',
-    className: 'Brujo',
-    description: 'Tu pacto está firmado con un señor o señora de las cortes feéricas, otorgándote magia de ilusiones, encantamiento y escapismo elegante.',
-    coreMechanic: 'Presencia Feérica para encantar/asustar en área y teletransporte invisible de reacción al recibir daño.',
-    keyRole: 'Encantador Feérico & Escaramuzador Involuntario',
-    spells: [
-      { levelUnlocked: 1, spellName: 'Fuego Feérico', spellLevel: '1', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 1, spellName: 'Sueño', spellLevel: '1', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 3, spellName: 'Paso Brumoso', spellLevel: '2', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 3, spellName: 'Calmar Emociones', spellLevel: '2', notes: 'Conjuro de Patrón' }
-    ],
+  'Hermandad de los Ladrones': {
+    name: 'Hermandad de los Ladrones',
+    className: 'Pícaro',
+    description: 'Especialistas en agilidad deslumbrante, uso rápido de objetos en combate y escalada felina.',
+    coreMechanic: 'Manos Rápidas para usar objetos o herramientas como acción bonus y Trabajo del Segundo Piso.',
+    keyRole: 'Utilidad Rápida & Infiltrado Urbano',
     features: [
-      { level: 1, title: 'Presencia Feérica', description: 'Como acción, puedes hacer que todas las criaturas en un cubo de 3m se sometan a una salvación de Carisma o queden Asustadas o Encantadas por ti hasta tu siguiente turno (1 vez por descanso).', type: 'feature' },
-      { level: 6, title: 'Escape Feérico', description: 'Como reacción al sufrir daño, te volvés invisible y te teletransportás hasta 18 metros a un espacio no ocupado que veas.', type: 'feature' },
-      { level: 10, title: 'Mente Beguiling', description: 'Eres inmune a ser Encantado. Cuando otra criatura intente encantarte, puedes usar tu reacción para redirigir el encanto a ella.', type: 'feature' }
+      { level: 3, title: 'Manos Rápidas', description: 'Puedes usar Juego de Manos, desactivar trampas o usar objetos como acción bonus.', type: 'feature' },
+      { level: 3, title: 'Trabajo del Segundo Piso', description: 'Escalas a tu velocidad normal sin penalización.', type: 'feature' }
     ]
   },
-  'Patrón Fiendish': {
-    name: 'Patrón Fiendish',
-    className: 'Brujo',
-    description: 'Has forjado una alianza diabólica o demoníaca con un Señor del Infierno o del Abismo. Tu magia arde con fuego destructivo.',
-    coreMechanic: 'Bendición del Oscuro que concede Puntos de Golpe temporales al aniquilar enemigos.',
-    keyRole: 'Brujo de Fuego Destructivo & Tanque Temporal',
-    spells: [
-      { levelUnlocked: 1, spellName: 'Manos Ardientes', spellLevel: '1', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 1, spellName: 'Rayo de Hechizo', spellLevel: '1', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 3, spellName: 'Esfera Flamígera', spellLevel: '2', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 5, spellName: 'Bola de Fuego', spellLevel: '3', notes: 'Conjuro de Patrón' }
-    ],
+  'Hermandad de los Silenciadores': {
+    name: 'Hermandad de los Silenciadores',
+    className: 'Pícaro',
+    description: 'Maestros del golpe letal desapercibido, ejecutando ataques mortales antes de que la víctima reaccione.',
+    coreMechanic: 'Asesinato (ventaja contra quienes no han actuado y crítico automático en sorpresa).',
+    keyRole: 'Eliminador de Objetivos de Un Solo Golpe',
     features: [
-      { level: 1, title: 'Bendición del Oscuro', description: 'Cuando reducís a una criatura hostil a 0 PG, ganas PG temporales iguales a tu Modificador de Carisma + tu nivel de Brujo.', type: 'feature' },
-      { level: 6, title: 'Propia Suerte Oscura', description: 'Puedes sumar 1d10 a una prueba de habilidad o salvación que realices (1 vez por descanso corto o largo).', type: 'feature' },
-      { level: 10, title: 'Resiliencia Infernal', description: 'Tras un descanso, elige un tipo de daño: ganas resistencia a ese daño (salvo armas mágicas o de plata).', type: 'feature' }
+      { level: 3, title: 'Asesinato', description: 'Tienes ventaja en ataques contra criaturas que no han actuado en el combate. Impactos a criaturas sorprendidas son críticos automáticos.', type: 'feature' },
+      { level: 9, title: 'Infiltración Perfecta', description: 'Creas identidades falsas impecables.', type: 'feature' }
     ]
   },
-  'Patrón Great Old One': {
-    name: 'Patrón Great Old One',
-    className: 'Brujo',
-    description: 'Tu patrono es una entidad incomprensible de los vacíos entre las estrellas, como Cthulhu o Hadar. Canalizás magia psíquica y locura.',
-    coreMechanic: 'Mente Despierta para comunicación telepática instantánea con cualquier criatura y escudos de interferencia mental.',
-    keyRole: 'Controlador Psíquico & Telepata Dimensional',
-    spells: [
-      { levelUnlocked: 1, spellName: 'Disonancia Susurrante', spellLevel: '1', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 1, spellName: 'Risas Espantosas de Tasha', spellLevel: '1', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 3, spellName: 'Detectar Pensamientos', spellLevel: '2', notes: 'Conjuro de Patrón' },
-      { levelUnlocked: 3, spellName: 'Sugestión', spellLevel: '2', notes: 'Conjuro de Patrón' }
-    ],
+  'Hermandad de los Susurradores': {
+    name: 'Hermandad de los Susurradores',
+    className: 'Pícaro',
+    description: 'Combina el sigilo furtivo con trucos y conjuros de Ilusión y Encantamiento de Mago.',
+    coreMechanic: 'Lanzamiento de conjuros de Mago e Invisibilidad/Ilusiones furtivas.',
+    keyRole: 'Infiltrado Arcano & Engañador Mágico',
     features: [
-      { level: 1, title: 'Mente Despierta', description: 'Puedes comunicarte telepáticamente con cualquier criatura que veas a 9m de ti, independientemente de si comparten idioma.', type: 'feature' },
-      { level: 6, title: 'Escudo Psíquico', description: 'Cuando una criatura te haga una tirada de ataque, puedes usar tu reacción para imponerle desventaja. Si falla, tu siguiente ataque contra ella tiene ventaja.', type: 'feature' },
-      { level: 10, title: 'Escudo Mental', description: 'Tus pensamientos no pueden ser leídos por magia salvo que lo permitas. Además, tienes resistencia al daño Psíquico.', type: 'feature' }
+      { level: 3, title: 'Conjuros de Susurros', description: 'Aprendes trucos y conjuros de Mago (Inteligencia es tu aptitud mágica).', type: 'spell' },
+      { level: 3, title: 'Versatilidad de Manos Arcanas', description: 'Controlas la Mano Mágica de forma invisible para abrir cerraduras o robar.', type: 'feature' }
+    ]
+  },
+  'Hermandad de los Segadores': {
+    name: 'Hermandad de los Segadores',
+    className: 'Pícaro',
+    description: 'Manifiesta hojas de energía psiónica pura con sus mentes para atacar en silencio y comunicarse telepáticamente.',
+    coreMechanic: 'Cuchillas Psiónicas de daño psíquico y comunicación mental con el equipo.',
+    keyRole: 'Asesino Psiónico Silencioso',
+    features: [
+      { level: 3, title: 'Cuchillas Psiónicas', description: 'Manifiestas dagas de energía psiónica (1d6 daño psíquico + Furtivo) que desaparecen sin dejar rastro.', type: 'feature' },
+      { level: 3, title: 'Red Telepática', description: 'Estableces comunicación mental con tus aliados.', type: 'feature' }
+    ]
+  },
+
+  // ==========================================
+  // HECHICERO (Herencias)
+  // ==========================================
+  'Herencia Primordial': {
+    name: 'Herencia Primordial',
+    className: 'Hechicero',
+    description: 'Tu magia proviene de la sangre ancestral de dragones legendarios, otorgándote escamas de dragón y afinidad elemental.',
+    coreMechanic: 'Resiliencia Dracónica (+1 PG por nivel, CA 13 pasiva) y daño elemental potenciado.',
+    keyRole: 'Lanzador Elemental Resistente & Destrucción',
+    features: [
+      { level: 3, title: 'Resiliencia Dracónica', description: 'Tu CA sin armadura es 13 + Mod DES y ganas +1 PG máximo por nivel.', type: 'feature' },
+      { level: 6, title: 'Afinidad Elemental', description: 'Sumas tu Mod CAR al daño del elemento de tu linaje.', type: 'feature' }
+    ]
+  },
+  'Herencia Divina': {
+    name: 'Herencia Divina',
+    className: 'Hechicero',
+    description: 'Sintonizado con el orden perfecto del cosmos o la gracia divina, previniendo el caos en el campo de batalla.',
+    coreMechanic: 'Restaurar Orden (neutralizar ventaja/desventaja) y Escudo de Engranajes temporales.',
+    keyRole: 'Lanzador Defensivo & Neutralizador de Azar',
+    features: [
+      { level: 3, title: 'Restaurar el Orden', description: 'Como reacción, cancelas una ventaja o desventaja a 18m (usos = Mod CAR).', type: 'feature' },
+      { level: 6, title: 'Protección Cósmica', description: 'Creas un escudo de fuerza temporal que absorbe daño recibido.', type: 'feature' }
+    ]
+  },
+  'Herencia Corrupta': {
+    name: 'Herencia Corrupta',
+    className: 'Hechicero',
+    description: 'Tocado por la influencia aberrante del Vacío Exterior, otorgándote telepatía y conjuros psiónicos invisibles.',
+    coreMechanic: 'Telepatía mental, conjuros psiónicos sin componentes somáticos/verbales y metamagia psiónica.',
+    keyRole: 'Control Mental & Hechicero Psiónico',
+    features: [
+      { level: 3, title: 'Habla Telepática', description: 'Te comunicas mentalmente con cualquier criatura a 9m.', type: 'feature' },
+      { level: 6, title: 'Hechicería Psiónica', description: 'Lanzas conjuros psiónicos usando Puntos de Hechicería sin componentes verbales o somáticos.', type: 'feature' }
+    ]
+  },
+  'Herencia Caótica': {
+    name: 'Herencia Caótica',
+    className: 'Hechicero',
+    description: 'Canalizas la magia pura e impredecible del Caos Primigenio, provocando mareas de azar extraordinario.',
+    coreMechanic: 'Mareas de Azar para obtener ventaja a voluntad y Oleadas de Magia Salvaje aleatorias.',
+    keyRole: 'Lanzador Impredecible & Caos Táctico',
+    features: [
+      { level: 3, title: 'Mareas de Azar', description: 'Ganas ventaja en una tirada de ataque, prueba o salvación (se recupera tras una Oleada).', type: 'feature' },
+      { level: 3, title: 'Oleada de Magia Salvaje', description: 'Al lanzar un conjuro de nivel 1+, el caos puede desatar efectos mágicos aleatorios.', type: 'feature' }
+    ]
+  },
+
+  // ==========================================
+  // BRUJO (Contratos) — REWORK 5.5E
+  // ==========================================
+  'Contrato con el Abismo': {
+    name: 'Contrato con el Abismo',
+    className: 'Brujo',
+    description: 'Forjas tu pacto con señores demoníacos o diabólicos de los planos inferiores, obteniendo fuego abisal y resiliencia.',
+    coreMechanic: 'Bendición del Oscuro (PG temporales al abatir enemigos) y Suerte del Abismo.',
+    keyRole: 'Brujo Destructivo de Fuego & Auto-Sustento',
+    features: [
+      { level: 3, title: 'Bendición del Oscuro', description: 'Al reducir un enemigo a 0 PG, ganas PG temporales iguales a tu Mod CAR + Nivel de Brujo.', type: 'feature' },
+      { level: 6, title: 'Suerte del Abismo', description: 'Añades 1d10 a una prueba de habilidad o salvación una vez por descanso corto.', type: 'feature' }
+    ]
+  },
+  'Contrato con las Hadas': {
+    name: 'Contrato con las Hadas',
+    className: 'Brujo',
+    description: 'Pacto suscrito con señores del Reino Feérico, otorgando ilusión encantadora y teletransporte de niebla.',
+    coreMechanic: 'Paso Feérico mejorado con efectos de encantamiento o invisibilidad al teletransportarse.',
+    keyRole: 'Movilidad Escurridiza & Control Feérico',
+    features: [
+      { level: 3, title: 'Pasos del Reino Feérico', description: 'Te teletransportas 9m como acción bonus (usos = Mod CAR).', type: 'feature' },
+      { level: 6, title: 'Escape de la Niebla', description: 'Al recibir daño, te vuelves invisible y te teletransportas 18m como reacción.', type: 'feature' }
+    ]
+  },
+  'Pacto con los Cielos': {
+    name: 'Pacto con los Cielos',
+    className: 'Brujo',
+    description: 'Pacto establecido con entes celestiales y solares, infundido con luz radiante y milagros de sanación.',
+    coreMechanic: 'Luz Sanadora (reserva de d6s para curar como acción bonus) y resistencia radiante.',
+    keyRole: 'Brujo Sanador & Soporte Radiante',
+    features: [
+      { level: 3, title: 'Luz Sanadora', description: 'Reserva de dados (d6s = 1 + Nivel) para curar a aliados a 18m como acción bonus.', type: 'feature' },
+      { level: 6, title: 'Resplandor Celestial', description: 'Resistencia al daño radiante y sumas Mod CAR a conjuros de fuego o radiante.', type: 'feature' }
+    ]
+  },
+  'Pacto con los Horrores': {
+    name: 'Pacto con los Horrores',
+    className: 'Brujo',
+    description: 'Vínculo misterioso con entidades alienígenas del Vacío Astral, otorgando mente despierta y escudos psíquicos.',
+    coreMechanic: 'Mente Despierta (telepatía) y Escudo Telepático de reflexión de daño psíquico.',
+    keyRole: 'Control Psiónico & Saboteador Mental',
+    features: [
+      { level: 3, title: 'Mente Despierta', description: 'Comunicación telepática a 9m con cualquier criatura sin importar el idioma.', type: 'feature' },
+      { level: 6, title: 'Escudo Telepático', description: 'Resistencia al daño psíquico y reflejas el daño psíquico recibido a tu atacante.', type: 'feature' }
+    ]
+  },
+
+  // ==========================================
+  // MAGO (Estudios)
+  // ==========================================
+  'Estudios en Destrucción': {
+    name: 'Estudios en Destrucción',
+    className: 'Mago',
+    description: 'Especialistas en canalizar energía elemental pura en ráfagas destructivas (fuego, hielo, rayo).',
+    coreMechanic: 'Esculpir Conjuros para proteger aliados de tus áreas de efecto de evocar.',
+    keyRole: 'Lanzador de Daño Masivo en Área',
+    features: [
+      { level: 2, title: 'Esculpir Conjuros', description: 'Los aliados seleccionados superan automáticamente las salvaciones de tus conjuros de evocación y no reciben daño.', type: 'feature' },
+      { level: 6, title: 'Truco Potente', description: 'Tus trucos dañinos infringen la mitad de daño aunque el enemigo supere la salvación.', type: 'feature' }
+    ]
+  },
+  'Estudios en Protección': {
+    name: 'Estudios en Protección',
+    className: 'Mago',
+    description: 'Eruditos de la magia defensiva, creando escudos de fuerza arcana para protegerse a sí mismos y al grupo.',
+    coreMechanic: 'Baluarte Arcano que absorbe daño recibido y se recarga al lanzar magia de protección.',
+    keyRole: 'Mago Defensivo & Escudo de Fuerza',
+    features: [
+      { level: 2, title: 'Baluarte Arcano', description: 'Creas un escudo mágico con (2 x Nivel + Mod INT) PG que absorbe el daño recibido antes que tus PG.', type: 'feature' },
+      { level: 6, title: 'Baluarte Compartido', description: 'Proyectas tu Baluarte Arcano para absorber daño dirigido a un aliado a 9m.', type: 'feature' }
+    ]
+  },
+  'Estudios en Profecías': {
+    name: 'Estudios en Profecías',
+    className: 'Mago',
+    description: 'Adivinos que vislumbran los hilos del tiempo y el destino, alterando tiradas clave antes de que sucedan.',
+    coreMechanic: 'Dados de Augurio (2d20 lanzados al inicio del día para sustituir cualquier d20).',
+    keyRole: 'Manipulador del Destino & Adivino Táctico',
+    features: [
+      { level: 2, title: 'Augurio del Destino', description: 'Lanzas 2d20 tras un descanso largo. Puedes reemplazar cualquier tirada de ataque, prueba o salvación por uno de estos dados.', type: 'feature' },
+      { level: 6, title: 'Adivinación Experta', description: 'Recuperas espacios de conjuro de nivel inferior al lanzar conjuros de adivinación.', type: 'spell' }
+    ]
+  },
+  'Estudios en la Realidad': {
+    name: 'Estudios en la Realidad',
+    className: 'Mago',
+    description: 'Ilusionistas maestros capaces de tejer espejismos tan convincentes que distorsionan la propia realidad física.',
+    coreMechanic: 'Ilusiones perfeccionadas como acción bonus y duplicados ilusorios de defensa.',
+    keyRole: 'Maestro de Espejismos & Engaño Absoluto',
+    features: [
+      { level: 2, title: 'Ilusión Rápida', description: 'Lanzas la ilusión menor como acción bonus.', type: 'feature' },
+      { level: 6, title: 'Misterio Ilusorio', description: 'Creas un duplicado ilusorio como reacción cuando eres atacado, haciendo que el ataque falle automáticamente.', type: 'feature' }
     ]
   }
 };
+
+// ─── Alias para compatibilidad con datos guardados / nombres previos ───
+SUBCLASS_CATALOG['Camino del Berserker'] = SUBCLASS_CATALOG['Senda del Berserker'];
+SUBCLASS_CATALOG['Camino del Guerrero Totémico'] = SUBCLASS_CATALOG['Senda del Espíritu Primigenio'];
+SUBCLASS_CATALOG['Camino del Corazón Salvaje'] = SUBCLASS_CATALOG['Senda del Espíritu Primigenio'];
+SUBCLASS_CATALOG['Colegio del Conocimiento'] = SUBCLASS_CATALOG['Escuela del Conocimiento'];
+SUBCLASS_CATALOG['Colegio del Valor'] = SUBCLASS_CATALOG['Escuela de la Determinación'];
+SUBCLASS_CATALOG['Colegio de la Glamour'] = SUBCLASS_CATALOG['Escuela del Exceso'];
+SUBCLASS_CATALOG['Dominio de la Vida'] = SUBCLASS_CATALOG['Doctrina de la Sanación'];
+SUBCLASS_CATALOG['Dominio de la Guerra'] = SUBCLASS_CATALOG['Doctrina de la Misión'];
+SUBCLASS_CATALOG['Dominio de la Luz'] = SUBCLASS_CATALOG['Doctrina de la Punición'];
+SUBCLASS_CATALOG['Círculo de la Tierra'] = SUBCLASS_CATALOG['Armonía con la Tierra'];
+SUBCLASS_CATALOG['Círculo de la Luna'] = SUBCLASS_CATALOG['Armonía con lo Salvaje'];
+SUBCLASS_CATALOG['Círculo de las Estrellas'] = SUBCLASS_CATALOG['Armonía con el Firmamento'];
+SUBCLASS_CATALOG['Campeón'] = SUBCLASS_CATALOG['Estilo del Legionario'];
+SUBCLASS_CATALOG['Maestro de Batalla'] = SUBCLASS_CATALOG['Estilo del Estratega'];
+SUBCLASS_CATALOG['Caballero Arcano'] = SUBCLASS_CATALOG['Estilo del Misticismo'];
+SUBCLASS_CATALOG['Camino de la Mano Abierta'] = SUBCLASS_CATALOG['Filosofía del Dominio'];
+SUBCLASS_CATALOG['Camino de la Sombra'] = SUBCLASS_CATALOG['Filosofía de los Secretos'];
+SUBCLASS_CATALOG['Camino de los Cuatro Elementos'] = SUBCLASS_CATALOG['Filosofía del Equilibrio'];
+SUBCLASS_CATALOG['Juramento de Devoción'] = SUBCLASS_CATALOG['Orden del Cruzado'];
+SUBCLASS_CATALOG['Juramento de Venganza'] = SUBCLASS_CATALOG['Orden del Cuervo'];
+SUBCLASS_CATALOG['Juramento de los Ancestros'] = SUBCLASS_CATALOG['Orden de los Antepasados'];
+SUBCLASS_CATALOG['Cazador'] = SUBCLASS_CATALOG['Marca del Cazador'];
+SUBCLASS_CATALOG['Señor de las Bestias'] = SUBCLASS_CATALOG['Marca de la Manada'];
+SUBCLASS_CATALOG['Vagabundo Feérico'] = SUBCLASS_CATALOG['Marca del Favor Místico'];
+SUBCLASS_CATALOG['Ladrón'] = SUBCLASS_CATALOG['Hermandad de los Ladrones'];
+SUBCLASS_CATALOG['Asesino'] = SUBCLASS_CATALOG['Hermandad de los Silenciadores'];
+SUBCLASS_CATALOG['Embaucador Arcano'] = SUBCLASS_CATALOG['Hermandad de los Susurradores'];
+SUBCLASS_CATALOG['Linaje Dracónico'] = SUBCLASS_CATALOG['Herencia Primordial'];
+SUBCLASS_CATALOG['Magia Salvaje'] = SUBCLASS_CATALOG['Herencia Caótica'];
+SUBCLASS_CATALOG['Alma Mecánica'] = SUBCLASS_CATALOG['Herencia Divina'];
+SUBCLASS_CATALOG['Patrón Arquihada'] = SUBCLASS_CATALOG['Contrato con las Hadas'];
+SUBCLASS_CATALOG['Patrón Fiendish'] = SUBCLASS_CATALOG['Contrato con el Abismo'];
+SUBCLASS_CATALOG['Patrón Great Old One'] = SUBCLASS_CATALOG['Pacto con los Horrores'];
+SUBCLASS_CATALOG['Escuela de Evocación'] = SUBCLASS_CATALOG['Estudios en Destrucción'];
+SUBCLASS_CATALOG['Escuela de Abjuración'] = SUBCLASS_CATALOG['Estudios en Protección'];
+SUBCLASS_CATALOG['Escuela de Nigromancia'] = SUBCLASS_CATALOG['Estudios en la Realidad'];

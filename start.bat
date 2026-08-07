@@ -1,4 +1,5 @@
 @echo off
+set "PATH=%LocalAppData%\Programs\nodejs;%PATH%"
 echo ========================================
 echo   AI GM - D&D 5e Solo Adventure Tool
 echo ========================================

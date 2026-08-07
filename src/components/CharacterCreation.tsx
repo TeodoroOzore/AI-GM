@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { getSpellcastingLimits } from '../utils/spellcasting';
+import { ActiveRollAnimation } from './DiceAnimationOverlay';
 import {
   ABILITIES,
   SKILLS,
@@ -54,12 +55,13 @@ const WIZARD_CANTRIPS = CANTRIPS_CATALOG.filter(c => c.classes.includes('Mago'))
 
 type CharacterCreationProps = {
   onCreateCharacter: (character: CharacterSheet, introMessage: string, worldMemory: string) => void;
+  onTriggerAnimation?: (anim: ActiveRollAnimation) => void;
 };
 
 type CreationMethod = 'standard' | 'pointbuy' | 'rolled' | 'manual';
 type CreationStep = 'identity' | 'abilities' | 'skills' | 'equipment' | 'review';
 
-export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCharacter }) => {
+export const CharacterCreation: React.FC<CharacterCreationProps> = ({ onCreateCharacter, onTriggerAnimation }) => {
   const [name, setName] = useState('Kaelen Vent');
   const [gender, setGender] = useState('Masculino');
   const [level, setLevel] = useState(1);
@@ -163,17 +165,47 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
     return proficientSkills.filter(s => !lockedSkills.includes(s));
   }, [proficientSkills, lockedSkills]);
 
-  const rollAbilityScore4d6 = () => {
-    const rolls = [secureRandInt(6), secureRandInt(6), secureRandInt(6), secureRandInt(6)];
-    rolls.sort((a, b) => a - b);
-    rolls.shift();
-    return rolls.reduce((a, b) => a + b, 0);
+  const rollAbilityScore4d6WithDetails = () => {
+    const rawRolls = [secureRandInt(6), secureRandInt(6), secureRandInt(6), secureRandInt(6)];
+    const sorted = [...rawRolls].sort((a, b) => a - b);
+    const dropped = sorted[0];
+    const kept = sorted.slice(1);
+    const sum = kept.reduce((a, b) => a + b, 0);
+    return {
+      rawRolls,
+      dropped,
+      kept,
+      sum
+    };
   };
 
   const handleRollPool = () => {
-    const newPool = ABILITIES.map(() => rollAbilityScore4d6());
-    setRolledPool(newPool);
-    setAssignments({ str: null, dex: null, con: null, int: null, wis: null, cha: null });
+    const results = ABILITIES.map(() => rollAbilityScore4d6WithDetails());
+    const newPool = results.map(r => r.sum);
+
+    const applyNewPool = () => {
+      setRolledPool(newPool);
+      setAssignments({ str: null, dex: null, con: null, int: null, wis: null, cha: null });
+    };
+
+    if (onTriggerAnimation) {
+      const details = results.map((r, i) =>
+        `Tirada ${i + 1}: 4d6 [${r.rawRolls.join(', ')}] ➔ ${r.sum} (descartando ${r.dropped})`
+      );
+      const topScore = Math.max(...newPool);
+      onTriggerAnimation({
+        dieType: 'd6',
+        label: 'Generando Atributos (4d6 × 6)',
+        rolls: newPool,
+        finalResult: topScore,
+        rollDetails: details,
+        onComplete: () => {
+          applyNewPool();
+        }
+      });
+    } else {
+      applyNewPool();
+    }
   };
 
   // ── Fix: Track available values with multiplicity ──
@@ -859,28 +891,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                     </div>
                   )}
 
-                  {/* Elecciones de idiomas raciales */}
-                  {totalExtraLanguages > 0 && (
-                    <div className="race-choice-row" style={{ marginTop: '10px' }}>
-                      <label>🗣️ Idiomas adicionales a elección ({extraLanguages.length}/{totalExtraLanguages})</label>
-                      <div className="race-skill-choices">
-                        {LANGUAGE_OPTIONS.filter(l => l !== 'Común' && !(rdef.languages || []).includes(l)).map(l => {
-                          const isDisabled = !extraLanguages.includes(l) && extraLanguages.length >= totalExtraLanguages;
-                          return (
-                            <label key={l} className={`tool-chip ${extraLanguages.includes(l) ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}>
-                              <input
-                                type="checkbox"
-                                checked={extraLanguages.includes(l)}
-                                disabled={isDisabled}
-                                onChange={() => toggleExtraLanguage(l)}
-                              />
-                              <span>{l}</span>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
+
 
                   {/* Habilidades raciales adicionales */}
                   {(rdef.skillChoices && rdef.skillChoices.options && rdef.skillChoices.options.length > 0) && (
@@ -1149,10 +1160,10 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
         </div>
       )}
 
-      {/* ══════ STEP 3: SKILLS + TOOLS + SPELLS ══════ */}
+      {/* ══════ STEP 3: SKILLS + LANGUAGES + TOOLS + SPELLS ══════ */}
       {currentStep === 'skills' && (
         <div className="creation-section">
-          <h3>Competencias, herramientas y magia</h3>
+          <h3>Competencias, idiomas, herramientas y magia</h3>
 
           {/* Skill selection with stat labels */}
           <div className="subsection">
@@ -1206,6 +1217,54 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 );
               })}
             </div>
+          </div>
+
+          {/* Elección de Idiomas */}
+          <div className="subsection">
+            <div className="block-label">
+              🗣️ Elección de Idiomas
+              {totalExtraLanguages > 0 && (
+                <span className="skill-count-badge">
+                  {extraLanguages.length} / {totalExtraLanguages} elegidos
+                </span>
+              )}
+            </div>
+
+            <div className="bg-skills-note" style={{ marginBottom: '10px' }}>
+              🗣️ <strong>Idiomas por defecto ({race}):</strong> {(RACES[race]?.languages || ['Común']).join(', ')}
+              {bgDef?.languages && bgDef.languages.length > 0 && (
+                <span> | <strong>Del trasfondo ({background}):</strong> {bgDef.languages.join(', ')}</span>
+              )}
+            </div>
+
+            {totalExtraLanguages > 0 ? (
+              <div>
+                <div className="small-note" style={{ marginBottom: '8px' }}>
+                  Selecciona {totalExtraLanguages} {totalExtraLanguages === 1 ? 'idioma adicional' : 'idiomas adicionales'} según tu raza y trasfondo:
+                </div>
+                <div className="race-skill-choices" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {LANGUAGE_OPTIONS.filter(l => l !== 'Común' && !(RACES[race]?.languages || []).includes(l)).map(l => {
+                    const isSelected = extraLanguages.includes(l);
+                    const isDisabled = !isSelected && extraLanguages.length >= totalExtraLanguages;
+                    return (
+                      <label key={l} className={`tool-chip ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          disabled={isDisabled}
+                          onChange={() => toggleExtraLanguage(l)}
+                        />
+                        <span>{l}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="flavor" style={{ fontSize: '0.8rem', color: 'var(--parchment-dim)' }}>
+                Tu raza y trasfondo ya determinan tus idiomas conocidos. No se requieren elecciones adicionales.
+              </div>
+            )}
           </div>
 
 {/* Tools selection */}

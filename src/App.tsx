@@ -37,21 +37,30 @@ export function App() {
   const [sheetFocusSection, setSheetFocusSection] = useState<string>('');
   const [bestiaryOpen, setBestiaryOpen] = useState<boolean>(false);
 
-  // Load state from localStorage on mount
+  // Load state from localStorage on mount safely
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const stored: CampaignState = JSON.parse(raw);
-        if (stored && stored.started) {
-          setCharacter(stored.character);
-          setLog(stored.log || []);
+        if (stored && stored.started && stored.character) {
+          const mergedCharacter: CharacterType = {
+            ...blankCharacter(),
+            ...stored.character,
+            abilities: {
+              ...blankCharacter().abilities,
+              ...(stored.character.abilities || {})
+            }
+          };
+          setCharacter(mergedCharacter);
+          setLog(Array.isArray(stored.log) ? stored.log : []);
           setWorldMemory(stored.worldMemory || '');
           setStarted(true);
         }
       }
     } catch (e) {
-      console.error('Error cargando el estado:', e);
+      console.error('Error cargando el estado guardado, reiniciando:', e);
+      localStorage.removeItem(STORAGE_KEY);
     }
   }, []);
 
@@ -229,7 +238,7 @@ export function App() {
 
 const handleRollSpell = (spell: SpellItem) => {
     const spellcasting = CLASSES[character.className]?.spellcasting;
-    // Racial spells (Dracónido breath → CON; Tiefling/Drow → CHA; Alto Elfo → INT)
+    // Racial spells (Dragonar breath → CON; Infernal/Elfo Oscuro → CHA; Alto Elfo → INT)
     let spellAbility: AbilityKey;
     if (spell.level === 'racial') {
       if (spell.name === 'Arma de Aliento') spellAbility = 'con';
@@ -367,7 +376,10 @@ const handleRollSpell = (spell: SpellItem) => {
       <DiceAnimationOverlay animationData={activeAnimation} />
 
       {!started ? (
-        <CharacterCreation onCreateCharacter={handleCreateCharacter} />
+        <CharacterCreation
+          onCreateCharacter={handleCreateCharacter}
+          onTriggerAnimation={handleTriggerAnimation}
+        />
       ) : (
         <div className="layout">
           <CharacterSheetPanel

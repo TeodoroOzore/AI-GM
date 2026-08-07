@@ -3,18 +3,18 @@
 import { ClassDef, ClassResource, AbilityKey } from '../types/core';
 
 export const CLASSES: Record<string, ClassDef> = {
-  'Bárbaro': { hitDie: 12, saves: ['str', 'con'], spellcasting: null, tabName: 'Furia e Instinto', unlockLevel: 3, subclasses: ['Camino del Berserker', 'Camino del Guerrero Totémico', 'Camino del Corazón Salvaje'] },
-  'Bardo': { hitDie: 8, saves: ['dex', 'cha'], spellcasting: { type: 'full', ability: 'cha' }, tabName: 'Repertorio', unlockLevel: 3, subclasses: ['Colegio del Conocimiento', 'Colegio del Valor', 'Colegio de la Glamour'] },
-  'Clérigo': { hitDie: 8, saves: ['wis', 'cha'], spellcasting: { type: 'full', ability: 'wis' }, tabName: 'Dones Divinos', unlockLevel: 1, subclasses: ['Dominio de la Vida', 'Dominio de la Guerra', 'Dominio de la Luz', 'Dominio Arcano'] },
-  'Druida': { hitDie: 8, saves: ['int', 'wis'], spellcasting: { type: 'full', ability: 'wis' }, tabName: 'Cantos de la Naturaleza', unlockLevel: 2, subclasses: ['Círculo de la Tierra', 'Círculo de la Luna', 'Círculo de las Estrellas'] },
-  'Explorador': { hitDie: 10, saves: ['str', 'dex'], spellcasting: { type: 'half', ability: 'wis' }, tabName: 'Senda Salvaje', unlockLevel: 3, subclasses: ['Cazador', 'Señor de las Bestias', 'Vagabundo Feérico'] },
-  'Guerrero': { hitDie: 10, saves: ['str', 'con'], spellcasting: null, tabName: 'Técnicas de Combate', unlockLevel: 3, subclasses: ['Campeón', 'Maestro de Batalla', 'Caballero Arcano'] },
-  'Hechicero': { hitDie: 6, saves: ['con', 'cha'], spellcasting: { type: 'full', ability: 'cha' }, tabName: 'Linaje Arcano', unlockLevel: 1, subclasses: ['Linaje Dracónico', 'Magia Salvaje', 'Alma Mecánica'] },
-  'Mago': { hitDie: 6, saves: ['int', 'wis'], spellcasting: { type: 'full', ability: 'int' }, tabName: 'Grimorio', unlockLevel: 2, subclasses: ['Escuela de Evocación', 'Escuela de Abjuración', 'Escuela de Nigromancia'] },
-  'Monje': { hitDie: 8, saves: ['str', 'dex'], spellcasting: null, tabName: 'Disciplinas de Ki', unlockLevel: 3, subclasses: ['Camino de la Mano Abierta', 'Camino de la Sombra', 'Camino de los Cuatro Elementos'] },
-  'Paladín': { hitDie: 10, saves: ['wis', 'cha'], spellcasting: { type: 'half', ability: 'cha' }, tabName: 'Juramento Sagrado', unlockLevel: 3, subclasses: ['Juramento de Devoción', 'Juramento de Venganza', 'Juramento de los Ancestros'] },
-  'Pícaro': { hitDie: 8, saves: ['dex', 'int'], spellcasting: null, tabName: 'Trucos del Oficio', unlockLevel: 3, subclasses: ['Ladrón', 'Asesino', 'Embaucador Arcano'] },
-  'Brujo': { hitDie: 8, saves: ['wis', 'cha'], spellcasting: { type: 'pact', ability: 'cha' }, tabName: 'Pacto de Sangre', unlockLevel: 1, subclasses: ['Patrón Arquihada', 'Patrón Fiendish', 'Patrón Great Old One'] }
+  'Bárbaro': { hitDie: 12, saves: ['str', 'con'], spellcasting: null, tabName: 'Furia e Instinto', unlockLevel: 3, subclasses: ['Senda del Berserker', 'Senda del Espíritu Primigenio', 'Senda del Dios Guerrero', 'Senda de Yggdrasil'] },
+  'Bardo': { hitDie: 8, saves: ['dex', 'cha'], spellcasting: { type: 'full', ability: 'cha' }, tabName: 'Repertorio', unlockLevel: 3, subclasses: ['Escuela del Conocimiento', 'Escuela del Equilibrio', 'Escuela del Exceso', 'Escuela de la Determinación'] },
+  'Clérigo': { hitDie: 8, saves: ['wis', 'cha'], spellcasting: { type: 'full', ability: 'wis' }, tabName: 'Dones Divinos', unlockLevel: 3, subclasses: ['Doctrina de la Sanación', 'Doctrina de la Punición', 'Doctrina del Control', 'Doctrina de la Misión'] },
+  'Druida': { hitDie: 8, saves: ['int', 'wis'], spellcasting: { type: 'full', ability: 'wis' }, tabName: 'Cantos de la Naturaleza', unlockLevel: 3, subclasses: ['Armonía con la Tierra', 'Armonía con lo Salvaje', 'Armonía con las Corrientes', 'Armonía con el Firmamento'] },
+  'Explorador': { hitDie: 10, saves: ['str', 'dex'], spellcasting: { type: 'half', ability: 'wis' }, tabName: 'Senda Salvaje', unlockLevel: 3, subclasses: ['Marca del Cazador', 'Marca del Depredador', 'Marca del Favor Místico', 'Marca de la Manada'] },
+  'Guerrero': { hitDie: 10, saves: ['str', 'con'], spellcasting: null, tabName: 'Técnicas de Combate', unlockLevel: 3, subclasses: ['Estilo del Legionario', 'Estilo del Estratega', 'Estilo del Misticismo', 'Estilo del Enfoque'] },
+  'Hechicero': { hitDie: 6, saves: ['con', 'cha'], spellcasting: { type: 'full', ability: 'cha' }, tabName: 'Linaje Arcano', unlockLevel: 3, subclasses: ['Herencia Primordial', 'Herencia Divina', 'Herencia Corrupta', 'Herencia Caótica'] },
+  'Mago': { hitDie: 6, saves: ['int', 'wis'], spellcasting: { type: 'full', ability: 'int' }, tabName: 'Grimorio', unlockLevel: 3, subclasses: ['Estudios en Destrucción', 'Estudios en Protección', 'Estudios en Profecías', 'Estudios en la Realidad'] },
+  'Monje': { hitDie: 8, saves: ['str', 'dex'], spellcasting: null, tabName: 'Disciplinas de Ki', unlockLevel: 3, subclasses: ['Filosofía del Dominio', 'Filosofía de los Secretos', 'Filosofía del Equilibrio', 'Filosofía de la Restauración'] },
+  'Paladín': { hitDie: 10, saves: ['wis', 'cha'], spellcasting: { type: 'half', ability: 'cha' }, tabName: 'Juramento Sagrado', unlockLevel: 3, subclasses: ['Orden del Cruzado', 'Orden del Grifo', 'Orden de los Antepasados', 'Orden del Cuervo'] },
+  'Pícaro': { hitDie: 8, saves: ['dex', 'int'], spellcasting: null, tabName: 'Trucos del Oficio', unlockLevel: 3, subclasses: ['Hermandad de los Ladrones', 'Hermandad de los Silenciadores', 'Hermandad de los Susurradores', 'Hermandad de los Segadores'] },
+  'Brujo': { hitDie: 8, saves: ['wis', 'cha'], spellcasting: { type: 'pact', ability: 'cha' }, tabName: 'Pacto de Sangre', unlockLevel: 3, subclasses: ['Contrato con el Abismo', 'Contrato con las Hadas', 'Pacto con los Cielos', 'Pacto con los Horrores'] }
 };
 
 export const FULL_SLOTS: Record<number, number[]> = {

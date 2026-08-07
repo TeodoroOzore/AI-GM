@@ -12,6 +12,7 @@ export type ActiveRollAnimation = {
   mod?: number;
   total?: number;
   crit?: 'crit' | 'fail' | '';
+  rollDetails?: string[];
   onComplete: () => void;
 };
 
@@ -34,6 +35,21 @@ export const DiceAnimationOverlay: React.FC<Props> = ({ animationData }) => {
   const [isImpact, setIsImpact] = useState<boolean>(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Keyboard shortcut listener to advance when settled
+  useEffect(() => {
+    if (!animationData || isRolling) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+        e.preventDefault();
+        animationData.onComplete();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [animationData, isRolling]);
 
   // Initialize Three.js 3D WebGL scene
   useEffect(() => {
@@ -232,12 +248,7 @@ export const DiceAnimationOverlay: React.FC<Props> = ({ animationData }) => {
         };
       });
       setParticles(newParticles);
-
-      const endTimer = setTimeout(() => {
-        animationData.onComplete();
-      }, 1400);
-
-      return () => clearTimeout(endTimer);
+      // Removed auto-close timer so user can review results at their pace
     }, 1100);
 
     return () => {
@@ -257,6 +268,7 @@ export const DiceAnimationOverlay: React.FC<Props> = ({ animationData }) => {
         className={`dice-modal ${isRolling ? 'rolling' : 'settled'} ${isImpact ? 'impact-shake' : ''} ${
           isCrit ? 'crit-glow' : ''
         } ${isFail ? 'fail-glow' : ''}`}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="dice-modal-header">{animationData.label}</div>
 
@@ -319,9 +331,16 @@ export const DiceAnimationOverlay: React.FC<Props> = ({ animationData }) => {
         {/* Result Summary */}
         {!isRolling && (
           <div className="dice-modal-result">
-            {animationData.rolls.length > 1 && (
+            {animationData.rollDetails && animationData.rollDetails.length > 0 ? (
+              <div className="dice-details-list">
+                {animationData.rollDetails.map((detail, idx) => (
+                  <div key={idx} className="dice-detail-item">{detail}</div>
+                ))}
+              </div>
+            ) : animationData.rolls.length > 1 ? (
               <div className="dice-rolls-list">Tiradas: [{animationData.rolls.join(', ')}]</div>
-            )}
+            ) : null}
+
             {animationData.total !== undefined && animationData.total !== animationData.finalResult ? (
               <div className="dice-total-box">
                 Resultado final: <strong>{animationData.total}</strong>
@@ -331,13 +350,30 @@ export const DiceAnimationOverlay: React.FC<Props> = ({ animationData }) => {
                 Dado: <strong>{animationData.finalResult}</strong>
               </div>
             )}
+
             {isCrit && <div className="crit-badge">✨ ¡20 NATURAL! ✨</div>}
             {isFail && <div className="fail-badge">💀 ¡1 NATURAL! 💀</div>}
-            <div className="click-hint">Toca cualquier parte para continuar</div>
+
+            <button
+              type="button"
+              className="dice-next-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                animationData.onComplete();
+              }}
+            >
+              <span>Siguiente</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <div className="click-hint">Toca cualquier parte o presiona Enter/Espacio para continuar</div>
           </div>
         )}
       </div>
     </div>
   );
 };
+
 

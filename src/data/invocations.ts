@@ -1,11 +1,29 @@
-// ─── Warlock Invocations Catalog ──────────────────────────────────
+// ─── Warlock Invocations Catalog (D&D 5.5e Rework) ───────────────────
 
 import { WarlockInvocation } from '../types/core';
 
 export const WARLOCK_INVOCATIONS_CATALOG: WarlockInvocation[] = [
+  // ── Pact Boons as Level 1 Invocations (5.5e Rework) ──
+  {
+    name: 'Invocación: Hoja del Pacto',
+    description: 'Pacto de la Hoja (5.5e): Conjuras un arma espectral o vinculas un arma mágica. Usas Carisma para sus tiradas de ataque y daño, y sus impactos se consideran mágicos.',
+    prerequisite: 'Nivel 1 (Brujo)',
+  },
+  {
+    name: 'Invocación: Tomo del Pacto',
+    description: 'Pacto del Tomo (5.5e): Obtienes un Grimorio del Pacto con 3 trucos adicionales de cualquier lista de clase y 2 conjuros de ritual de Nivel 1.',
+    prerequisite: 'Nivel 1 (Brujo)',
+  },
+  {
+    name: 'Invocación: Cadena del Pacto',
+    description: 'Pacto de la Cadena (5.5e): Aprendes el conjuro Buscar Familiar de forma innata. Tu familiar puede tomar formas avanzadas (Imp, Quasit, Pseudodragón, Esprite) y atacar usando una de tus acciones.',
+    prerequisite: 'Nivel 1 (Brujo)',
+  },
+
+  // ── Invocaciones Sobrenaturales Generales ──
   {
     name: 'Descarga Agónica',
-    description: 'Cuando usas Descarga Sobrenatural, puedes empujar al objetivo hasta 3 metros si falla su salvación de Constitución.',
+    description: 'Cuando lanzas Descarga Sobrenatural, sumas tu modificador de Carisma al daño de cada impacto.',
   },
   {
     name: 'Visión del Diablo',
@@ -13,43 +31,34 @@ export const WARLOCK_INVOCATIONS_CATALOG: WarlockInvocation[] = [
   },
   {
     name: 'Armadura de Sombras',
-    description: 'Puedes lanzar Escudo de Fe sobre ti mismo en cualquier momento, sin gastar espacios de conjuro. Requiere concentración.',
+    description: 'Puedes lanzar Armadura de Mago sobre ti mismo a voluntad, sin gastar espacios de conjuro ni componentes materiales.',
   },
   {
     name: 'Libro de los Secretos Antiguos',
-    description: 'Puedes anotar rituales en tu Libro de Sombras y lanzarlos sin gastar espacios de conjuro.',
-    prerequisite: 'Pacto del Tomo (Nivel 3)',
-  },
-  {
-    name: 'Amo de las Cadenas',
-    description: 'Puedes lanzar Buscar Familiar sin gastar espacios. Tu familiar puede atacar si usas tu Acción en tu turno.',
-    prerequisite: 'Pacto de la Cadena (Nivel 3)',
+    description: 'Puedes anotar cualquier conjuro etiquetado como Ritual en tu Tomo del Pacto y lanzarlo como ritual.',
+    prerequisite: 'Invocación: Tomo del Pacto',
   },
   {
     name: 'Hoja Sedienta',
-    description: 'Tu arma del Pacto de la Hoja gana un bonificador de +1 a las tiradas de ataque y de daño.',
-    prerequisite: 'Pacto de la Hoja (Nivel 5)',
+    description: 'Puedes atacar dos veces en lugar de una cuando realizas la acción de Atacar con tu arma del Pacto de la Hoja.',
+    prerequisite: 'Invocación: Hoja del Pacto (Nivel 5)',
   },
   {
     name: 'Salto Ascendente',
-    description: 'Puedes lanzar Salto sobre ti mismo a voluntad, sin gastar espacios de conjuro.',
+    description: 'Puedes lanzar el conjuro Salto sobre ti mismo a voluntad, sin gastar espacios de conjuro.',
   },
   {
     name: 'Esculpido de Carne',
-    description: 'Aprendes los trucos Ilusión Menor y Prestidigitación. No cuentan para tus trucos de Brujo.',
+    description: 'Puedes lanzar Alterar el Propio Cuerpo a voluntad, sin gastar espacios de conjuro.',
+    prerequisite: 'Nivel 9',
   },
   {
     name: 'Mirada del Cazador de Sombras',
-    description: 'Puedes lanzar Comprensión Idiomas a voluntad, sin gastar espacios de conjuro.',
-  },
-  {
-    name: 'Maldición Inficiada',
-    description: 'Cuando matas a una criatura maldecida con tu Maldición del Brujo, puedes mover la maldición a otra criatura como acción bonus.',
+    description: 'Puedes lanzar Comprensión de Idiomas a voluntad, sin gastar espacios de conjuro.',
   },
   {
     name: 'Tirón Repulsivo',
-    description: 'Cuando usas Descarga Sobrenatural y el objetivo falla, lo empujás hasta 3 metros en lugar de hacia ti.',
-    prerequisite: 'Nivel 5',
+    description: 'Cuando usas Descarga Sobrenatural e impactas a una criatura, puedes empujarla hasta 3 metros en línea recta.',
   },
   {
     name: 'Susurros de la Tumba',
@@ -58,19 +67,24 @@ export const WARLOCK_INVOCATIONS_CATALOG: WarlockInvocation[] = [
   },
   {
     name: 'Ojos del Amo de Runas',
-    description: 'Puedes lanzar Detectar Pensamientos a voluntad, sin gastar espacios de conjuro.',
-    prerequisite: 'Nivel 7',
+    description: 'Puedes leer cualquier escritura y código, sin importar el idioma.',
   },
+  {
+    name: 'Vigor Vital del Abismo',
+    description: 'Puedes lanzar Falsa Vida sobre ti mismo a voluntad como conjuro de 1.er nivel.',
+  }
 ];
 
-/** Devuelve cuántas invocaciones puede tener activas el Brujo según su nivel (D&D 5e PHB). */
+/** Devuelve cuántas invocaciones puede tener activas el Brujo según su nivel en D&D 5.5e. */
 export function getWarlockInvocationsLimit(level: number): number {
-  if (level >= 18) return 8;
-  if (level >= 15) return 7;
-  if (level >= 12) return 6;
-  if (level >= 9)  return 5;
-  if (level >= 7)  return 4;
-  if (level >= 5)  return 3;
+  if (level >= 18) return 9;
+  if (level >= 15) return 8;
+  if (level >= 12) return 7;
+  if (level >= 9)  return 6;
+  if (level >= 7)  return 5;
+  if (level >= 5)  return 4;
+  if (level >= 3)  return 3;
   if (level >= 2)  return 2;
+  if (level >= 1)  return 1;
   return 0;
 }

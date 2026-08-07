@@ -1315,8 +1315,61 @@ input:focus, textarea:focus, select:focus {
   color: var(--parchment-dim);
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  margin-top: 10px;
+  margin-top: 6px;
   opacity: 0.75;
+}
+
+.dice-next-btn {
+  margin-top: 12px;
+  padding: 10px 28px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 1.5px;
+  color: #fef08a;
+  background: linear-gradient(135deg, rgba(201, 162, 39, 0.35) 0%, rgba(120, 80, 20, 0.55) 100%);
+  border: 1.5px solid var(--brass);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), 0 0 14px rgba(201, 162, 39, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 5;
+}
+
+.dice-next-btn:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.55) 0%, rgba(180, 110, 20, 0.8) 100%);
+  border-color: #fef08a;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7), 0 0 22px rgba(245, 158, 11, 0.55);
+  transform: translateY(-2px) scale(1.03);
+  color: #ffffff;
+}
+
+.dice-next-btn:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+.dice-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 140px;
+  overflow-y: auto;
+  width: 100%;
+  padding: 6px 12px;
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 6px;
+  border: 1px solid var(--seam);
+  margin-bottom: 4px;
+}
+
+.dice-detail-item {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--parchment);
+  text-align: center;
 }
 
 /* ─── CHARACTER CREATION WIZARD & RECOMMENDATIONS ─── */

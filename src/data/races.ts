@@ -6,10 +6,10 @@ import { RaceDef, BaseRaceDef } from '../types/core';
 
 export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
-  // 1. DRACÓNIDO
+  // 1. DRAGONAR
   // ════════════════════════════════════════════════════════════════
-  'Dracónido': {
-    name: 'Dracónido',
+  'Dragonar': {
+    name: 'Dragonar',
     description: 'Humanoides orgullosos nacidos del linaje dracónico, poseedores de un arma de aliento elemental y resistencia natural.',
     size: 'Mediano',
     speed: 9,
@@ -23,7 +23,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     ],
     subraces: [
       {
-        name: 'Dracónido Rojo',
+        name: 'Dragonar Rojo',
         description: 'Ascendencia de dragón rojo. Resistencia al fuego y aliento de fuego en cono de 4.5m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['fuego'],
@@ -32,7 +32,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Dracónido Azul',
+        name: 'Dragonar Azul',
         description: 'Ascendencia de dragón azul. Resistencia al relámpago y aliento de relámpago en línea de 9m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['relámpago'],
@@ -41,7 +41,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Dracónido Verde',
+        name: 'Dragonar Verde',
         description: 'Ascendencia de dragón verde. Resistencia al veneno y aliento de veneno en cono de 4.5m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['veneno'],
@@ -50,7 +50,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Dracónido Blanco',
+        name: 'Dragonar Blanco',
         description: 'Ascendencia de dragón blanco. Resistencia al frío y aliento de escarcha en cono de 4.5m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['frío'],
@@ -59,7 +59,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Dracónido Negro',
+        name: 'Dragonar Negro',
         description: 'Ascendencia de dragón negro. Resistencia al ácido y aliento de ácido en línea de 9m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['ácido'],
@@ -68,7 +68,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Dracónido Latón',
+        name: 'Dragonar Latón',
         description: 'Ascendencia de dragón de latón. Resistencia al fuego y aliento de fuego en línea de 9m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['fuego'],
@@ -77,35 +77,35 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Dracónido Bronce',
-        description: 'Ascendencia de dragón de bronce. Resistencia al relámpago y aliento en línea de 9m.',
+        name: 'Dragonar Bronce',
+        description: 'Ascendencia de dragón de bronce. Resistencia al relámpago y aliento de relámpago en línea de 9m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['relámpago'],
         traits: [
-          { name: 'Aliento de Relámpago', description: 'Línea de relámpago de 1.5m × 9m (salvación de DES). Daño 2d6.', type: 'damage' }
+          { name: 'Aliento de Relámpago', description: 'Línea de relámpago de 1.5m × 9m (salvación de DES). Daño de relámpago 2d6.', type: 'damage' }
         ]
       },
       {
-        name: 'Dracónido Cobre',
-        description: 'Ascendencia de dragón de cobre. Resistencia al ácido y aliento en línea de 9m.',
+        name: 'Dragonar Cobre',
+        description: 'Ascendencia de dragón de cobre. Resistencia al ácido y aliento de ácido en línea de 9m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['ácido'],
         traits: [
-          { name: 'Aliento de Ácido', description: 'Línea de ácido de 1.5m × 9m (salvación de DES). Daño 2d6.', type: 'damage' }
+          { name: 'Aliento de Ácido', description: 'Línea de ácido de 1.5m × 9m (salvación de DES). Daño de ácido 2d6.', type: 'damage' }
         ]
       },
       {
-        name: 'Dracónido Oro',
-        description: 'Ascendencia de dragón de oro. Resistencia al fuego y aliento en cono de 4.5m.',
+        name: 'Dragonar Oro',
+        description: 'Ascendencia de dragón de oro. Resistencia al fuego y aliento de fuego en cono de 4.5m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['fuego'],
         traits: [
-          { name: 'Aliento de Fuego', description: 'Cono de fuego de 4.5m (salvación de DES). Daño 2d6.', type: 'damage' }
+          { name: 'Aliento de Fuego', description: 'Cono de fuego de 4.5m (salvación de DES). Daño de fuego 2d6.', type: 'damage' }
         ]
       },
       {
-        name: 'Dracónido Plata',
-        description: 'Ascendencia de dragón de plata. Resistencia al frío y aliento en cono de 4.5m.',
+        name: 'Dragonar Plata',
+        description: 'Ascendencia de dragón de plata. Resistencia al frío y aliento de escarcha en cono de 4.5m.',
         fixed: { str: 2, cha: 1 },
         resistances: ['frío'],
         traits: [
@@ -384,10 +384,10 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   },
 
   // ════════════════════════════════════════════════════════════════
-  // 9. TIEFLING
+  // 9. INFERNAL
   // ════════════════════════════════════════════════════════════════
-  'Tiefling': {
-    name: 'Tiefling',
+  'Infernal': {
+    name: 'Infernal',
     description: 'Humanoides con herencia infernal, cuernos y afinidad con el fuego y las sombras.',
     size: 'Mediano',
     speed: 9,
@@ -404,9 +404,37 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     ],
     subraces: [
       {
-        name: 'Tiefling de Asmodeus',
-        description: 'Legado del Señor de los Nueve Infiernos.',
+        name: 'Infernal Infernal',
+        description: 'Legado del Señor de los Infiernos.',
         fixed: { cha: 2, int: 1 }
+      }
+    ]
+  },
+
+  // ════════════════════════════════════════════════════════════════
+  // 10. CELESTIAL
+  // ════════════════════════════════════════════════════════════════
+  'Celestial': {
+    name: 'Celestial',
+    description: 'Humanoides tocados por la gracia de planos celestiales, guardianes del bien y la luz divina.',
+    size: 'Mediano',
+    speed: 9,
+    age: 'Viven hasta 160 años.',
+    alignment: 'Generalmente leales y buenos.',
+    languages: ['Común', 'Celestial'],
+    darkvision: 18,
+    resistances: ['radiante', 'necrótico'],
+    fixed: { cha: 2, wis: 1 },
+    traits: [
+      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
+      { name: 'Resistencia Celestial', description: 'Resistencia al daño radiante y necrótico.', type: 'defense' },
+      { name: 'Manos Curativas', description: 'Como acción, tocas una criatura para curar PG iguales a tu nivel.', type: 'feature' }
+    ],
+    subraces: [
+      {
+        name: 'Celestial Protector',
+        description: 'Tocado por la luz espiritual celestial.',
+        fixed: { cha: 2, wis: 1 }
       }
     ]
   }
@@ -453,6 +481,7 @@ export const RACE_LANGUAGES: Record<string, string[]> = {
   'Humano Estándar':     ['Común', 'Un idioma adicional (a elección)'],
   'Humano Entrenado (Variante)': ['Común', 'Un idioma adicional (a elección)'],
   'Elfo':                ['Común', 'Élfico'],
+  'Elfo Oscuro':         ['Común', 'Élfico'],
   'Elfo Oscuro (Drow)':  ['Común', 'Élfico'],
   'Alto Elfo':           ['Común', 'Élfico', 'Un idioma adicional (a elección)'],
   'Elfo de los Bosques': ['Común', 'Élfico'],
@@ -462,17 +491,17 @@ export const RACE_LANGUAGES: Record<string, string[]> = {
   'Mediano':             ['Común', 'Mediano'],
   'Mediano Piesligero':  ['Común', 'Mediano'],
   'Mediano Fornido':     ['Común', 'Mediano'],
-  'Dracónido':           ['Común', 'Dracónico'],
-  'Dracónido Rojo':      ['Común', 'Dracónico'],
-  'Dracónido Azul':      ['Común', 'Dracónico'],
-  'Dracónido Verde':     ['Común', 'Dracónico'],
-  'Dracónido Blanco':    ['Común', 'Dracónico'],
-  'Dracónido Negro':     ['Común', 'Dracónico'],
-  'Dracónido Latón':     ['Común', 'Dracónico'],
-  'Dracónido Bronce':    ['Común', 'Dracónico'],
-  'Dracónido Cobre':     ['Común', 'Dracónico'],
-  'Dracónido Oro':       ['Común', 'Dracónico'],
-  'Dracónido Plata':     ['Común', 'Dracónico'],
+  'Dragonar':            ['Común', 'Dracónico'],
+  'Dragonar Rojo':       ['Común', 'Dracónico'],
+  'Dragonar Azul':       ['Común', 'Dracónico'],
+  'Dragonar Verde':      ['Común', 'Dracónico'],
+  'Dragonar Blanco':     ['Común', 'Dracónico'],
+  'Dragonar Negro':      ['Común', 'Dracónico'],
+  'Dragonar Latón':      ['Común', 'Dracónico'],
+  'Dragonar Bronce':     ['Común', 'Dracónico'],
+  'Dragonar Cobre':      ['Común', 'Dracónico'],
+  'Dragonar Oro':        ['Común', 'Dracónico'],
+  'Dragonar Plata':      ['Común', 'Dracónico'],
   'Gnomo':               ['Común', 'Gnomo'],
   'Gnomo de las Rocas':  ['Común', 'Gnomo'],
   'Gnomo de los Bosques':['Común', 'Gnomo'],
@@ -480,13 +509,16 @@ export const RACE_LANGUAGES: Record<string, string[]> = {
   'Semielfo Versátil':   ['Común', 'Élfico', 'Un idioma adicional (a elección)'],
   'Semiorco':            ['Común', 'Orco'],
   'Semiorco Indómito':   ['Común', 'Orco'],
-  'Tiefling':            ['Común', 'Infernal'],
-  'Tiefling de Asmodeus':['Común', 'Infernal'],
+  'Infernal':            ['Común', 'Infernal'],
+  'Infernal Infernal':   ['Común', 'Infernal'],
+  'Celestial':           ['Común', 'Celestial'],
+  'Celestial Protector': ['Común', 'Celestial'],
 };
 
 /** Devuelve el título original de la categoría según la Raza Base */
 export function getSubraceCategoryLabel(baseRace: string): string {
   switch (baseRace) {
+    case 'Dragonar':
     case 'Dracónido':
       return 'Ascendencia Dracónica';
     case 'Humano':
@@ -503,8 +535,11 @@ export function getSubraceCategoryLabel(baseRace: string): string {
       return 'Herencia Élfica';
     case 'Semiorco':
       return 'Linaje Orco';
+    case 'Infernal':
     case 'Tiefling':
       return 'Legado Infernal';
+    case 'Celestial':
+      return 'Legado Celestial';
     default:
       return 'Subraza / Variante';
   }
@@ -518,5 +553,5 @@ export function resolveBaseRace(raceOrSubrace: string): string {
       return bKey;
     }
   }
-  return 'Dracónido';
+  return 'Dragonar';
 }
