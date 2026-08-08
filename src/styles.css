@@ -2512,11 +2512,319 @@ input:focus, textarea:focus, select:focus {
   min-width: 150px;
 }
 
-/* ─── PACK GRID IN CREATION ───────────────────────────────────── */
-.pack-grid {
+/* ─── RACE ADVANTAGES & BONUSES STYLES ─────────────────────────── */
+.race-advantage-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.race-advantage-item {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  border-left: 3px solid var(--brass-dim);
+  border-radius: 4px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.race-advantage-item:hover {
+  border-color: var(--brass-dim);
+  border-left-color: var(--brass);
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.08), transparent 70%), var(--leather-2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+.advantage-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.advantage-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+
+.advantage-label {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.98rem;
+  color: var(--brass);
+  letter-spacing: 0.3px;
+}
+
+.advantage-value {
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  color: var(--parchment-dim);
+  line-height: 1.45;
+  background: var(--ink);
+  padding: 6px 10px;
+  border-radius: 3px;
+  border: 1px solid rgba(60, 47, 34, 0.5);
+}
+
+/* ─── CREATION STEP 4: EQUIPMENT & ARMOR & WEAPONS ─────────────── */
+.pack-grid, .armor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.armor-option {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  border-radius: 5px;
+  padding: 12px 14px;
+  display: flex;
   gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  word-break: break-word;
+}
+
+.armor-option:hover {
+  border-color: var(--brass-dim);
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.06), transparent 70%), var(--leather-2);
+  transform: translateY(-1px);
+}
+
+.armor-option.selected {
+  border-color: var(--brass);
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.12), transparent 70%), var(--leather-2);
+  box-shadow: 0 0 10px rgba(201, 162, 39, 0.25);
+}
+
+.armor-option input[type="radio"],
+.armor-option input[type="checkbox"] {
+  accent-color: var(--brass);
+  margin-top: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.armor-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.armor-option-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.armor-option-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--parchment);
+  line-height: 1.2;
+}
+
+.armor-option-ac {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--brass);
+  background: var(--ink);
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid rgba(201, 162, 39, 0.25);
+  display: inline-block;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.armor-option-details {
+  font-size: 0.78rem;
+  color: var(--parchment-dim);
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.armor-type-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--parchment-dim);
+  border: 1px solid var(--seam);
+}
+
+.prof-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.prof-badge.star {
+  background: rgba(111, 143, 78, 0.2);
+  color: #8bc34a;
+  border: 1px solid rgba(111, 143, 78, 0.4);
+}
+
+.prof-badge.non-prof {
+  background: rgba(230, 126, 34, 0.18);
+  color: #f39c12;
+  border: 1px solid rgba(230, 126, 34, 0.4);
+}
+
+.shield-toggle {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.shield-toggle .tool-chip {
+  padding: 8px 14px;
+  font-size: 0.88rem;
+}
+
+/* ─── WEAPONS SECTION IN CREATION ─────────────────────────────── */
+.weapon-category-section {
+  margin-top: 14px;
+}
+
+.weapon-cat-label {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--brass-dim);
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--seam);
+  padding-bottom: 4px;
+}
+
+.weapon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+}
+
+.weapon-card {
+  background: var(--leather-2);
+  border: 1px solid var(--seam);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  word-break: break-word;
+}
+
+.weapon-card:hover {
+  border-color: var(--brass-dim);
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.05), transparent 70%), var(--leather-2);
+}
+
+.weapon-card.selected {
+  border-color: var(--brass);
+  background: radial-gradient(ellipse at top left, rgba(201, 162, 39, 0.12), transparent 70%), var(--leather-2);
+  box-shadow: 0 0 8px rgba(201, 162, 39, 0.2);
+}
+
+.weapon-card input[type="checkbox"] {
+  accent-color: var(--brass);
+  margin-top: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.weapon-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.weapon-card-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.weapon-card-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--parchment);
+}
+
+.weapon-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.weapon-dice {
+  color: var(--brass);
+  font-weight: 700;
+  background: var(--ink);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(201, 162, 39, 0.3);
+}
+
+.weapon-dmg-type {
+  color: var(--parchment-dim);
+  font-style: italic;
+  font-size: 0.74rem;
+}
+
+.weapon-card-props {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.weapon-prop-chip {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--parchment-dim);
+  background: var(--ink);
+  border: 1px solid var(--seam);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.weapon-range-note {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--brass-dim);
+  margin-top: 2px;
 }
 
 /* ─── SKILLS 2-COLUMN GRID ─────────────────────────────────────── */

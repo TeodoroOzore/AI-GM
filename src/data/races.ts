@@ -10,7 +10,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Dragonar': {
     name: 'Dragonar',
-    description: 'Humanoides orgullosos nacidos del linaje dracónico, poseedores de un arma de aliento elemental y resistencia natural.',
+    description: 'Humanoides de presencia imponente nacidos del aliento y la sangre de los grandes dragones antiguos. Su orgullo militar, escamas duras y devoción a sus ancestros definen su carácter noble y fiero.',
     size: 'Mediano',
     speed: 9,
     age: 'Alcanzan la adultez a los 15 años y viven unos 80 años.',
@@ -18,13 +18,12 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     languages: ['Común', 'Dracónico'],
     fixed: { str: 2, cha: 1 },
     traits: [
-      { name: 'Arma de Aliento Elemental', description: 'Exhala energía elemental (2d6 a 5d6 daño según tu ascendencia).', type: 'damage' },
-      { name: 'Resistencia Dracónica', description: 'Resistencia al tipo de daño elemental de tu linaje dracónico.', type: 'defense' }
+      { name: 'Arma de Aliento Elemental', description: 'Exhala energía elemental (2d6 a 5d6 daño según tu ascendencia).', type: 'damage' }
     ],
     subraces: [
       {
         name: 'Dragonar Rojo',
-        description: 'Ascendencia de dragón rojo. Resistencia al fuego y aliento de fuego en cono de 4.5m.',
+        description: 'Ascendencia de dragón rojo. El calor de los volcanes arde en sus venas, otorgándoles resistencia natural al fuego (+2 FUE, +1 CAR) y un aliento abrasador de llamas en cono.',
         fixed: { str: 2, cha: 1 },
         resistances: ['fuego'],
         traits: [
@@ -33,7 +32,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Azul',
-        description: 'Ascendencia de dragón azul. Resistencia al relámpago y aliento de relámpago en línea de 9m.',
+        description: 'Ascendencia de dragón azul. Forjados bajo las tormentas del desierto, su cuerpo encauza descargas eléctricas (+2 FUE, +1 CAR) y proyectan un aliento lineal de relámpago.',
         fixed: { str: 2, cha: 1 },
         resistances: ['relámpago'],
         traits: [
@@ -42,7 +41,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Verde',
-        description: 'Ascendencia de dragón verde. Resistencia al veneno y aliento de veneno en cono de 4.5m.',
+        description: 'Ascendencia de dragón verde. Herederos de las selvas y brumas tóxicas, su biología filtra venenos ambientales (+2 FUE, +1 CAR) y expulsan una nube de gas venenoso.',
         fixed: { str: 2, cha: 1 },
         resistances: ['veneno'],
         traits: [
@@ -51,7 +50,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Blanco',
-        description: 'Ascendencia de dragón blanco. Resistencia al frío y aliento de escarcha en cono de 4.5m.',
+        description: 'Ascendencia de dragón blanco. Templados en glaciares eternos, su constitución resiste heladas bajo cero (+2 FUE, +1 CAR) y exhalan un soplo de escarcha.',
         fixed: { str: 2, cha: 1 },
         resistances: ['frío'],
         traits: [
@@ -60,7 +59,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Negro',
-        description: 'Ascendencia de dragón negro. Resistencia al ácido y aliento de ácido en línea de 9m.',
+        description: 'Ascendencia de dragón negro. Vinculados a los pantanos oscuros, su piel soporta sustancias corrosivas (+2 FUE, +1 CAR) y disparan un chorro ácido disolvente.',
         fixed: { str: 2, cha: 1 },
         resistances: ['ácido'],
         traits: [
@@ -69,7 +68,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Latón',
-        description: 'Ascendencia de dragón de latón. Resistencia al fuego y aliento de fuego en línea de 9m.',
+        description: 'Ascendencia de dragón de latón. Vivaces y amantes de los climas cálidos, canalizan resistencia al fuego (+2 FUE, +1 CAR) y un haz lineal de llamas.',
         fixed: { str: 2, cha: 1 },
         resistances: ['fuego'],
         traits: [
@@ -78,7 +77,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Bronce',
-        description: 'Ascendencia de dragón de bronce. Resistencia al relámpago y aliento de relámpago en línea de 9m.',
+        description: 'Ascendencia de dragón de bronce. Protectores de las costas y mares tormentosos, soportan descargas eléctricas (+2 FUE, +1 CAR) y exhalan una línea de relámpago.',
         fixed: { str: 2, cha: 1 },
         resistances: ['relámpago'],
         traits: [
@@ -87,7 +86,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Cobre',
-        description: 'Ascendencia de dragón de cobre. Resistencia al ácido y aliento de ácido en línea de 9m.',
+        description: 'Ascendencia de dragón de cobre. Inquietos e ingeniosos, su linaje resiste fluidos corrosivos (+2 FUE, +1 CAR) y proyectan una línea de ácido.',
         fixed: { str: 2, cha: 1 },
         resistances: ['ácido'],
         traits: [
@@ -96,7 +95,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Oro',
-        description: 'Ascendencia de dragón de oro. Resistencia al fuego y aliento de fuego en cono de 4.5m.',
+        description: 'Ascendencia de dragón de oro. Majestuosos y solemnes, encarnan el fuego divino purificador (+2 FUE, +1 CAR) con inmunidad parcial al calor y aliento de fuego en cono.',
         fixed: { str: 2, cha: 1 },
         resistances: ['fuego'],
         traits: [
@@ -105,7 +104,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Dragonar Plata',
-        description: 'Ascendencia de dragón de plata. Resistencia al frío y aliento de escarcha en cono de 4.5m.',
+        description: 'Ascendencia de dragón de plata. Nobles caballeros del frío, su aliento de congelación paraliza amenazas (+2 FUE, +1 CAR) con resistencia natural al hielo.',
         fixed: { str: 2, cha: 1 },
         resistances: ['frío'],
         traits: [
@@ -120,7 +119,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Elfo': {
     name: 'Elfo',
-    description: 'Seres longevos y elegantes, profundamente conectados con la magia y la naturaleza.',
+    description: 'Seres longevos y contemplativos que observan los siglos pasar. Su biología no requiere sueño terrenal sino un trance meditativo de 4 horas, y la sangre feérica en sus venas los vuelve inmunes al sueño mágico y resistentes al encantamiento.',
     size: 'Mediano',
     speed: 9,
     age: 'Alcanzan la adultez a los 100 años y pueden vivir hasta los 750 años.',
@@ -128,14 +127,13 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     languages: ['Común', 'Élfico'],
     darkvision: 18,
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad hasta 18 metros.', type: 'senses' },
       { name: 'Ascendencia Feérica', description: 'Ventaja en salvaciones contra encantamiento e inmunidad a sueño mágico.', type: 'defense' },
       { name: 'Trance', description: 'Meditación profunda durante 4 horas al día en lugar de dormir.', type: 'feature' }
     ],
     subraces: [
       {
         name: 'Alto Elfo',
-        description: 'Dominio innato de la magia arcana y erudición de reinos antiguos.',
+        description: 'Descendientes de los antiguos reinos arcanos. Su juventud transcurre entre manuscritos y la esgrima élfica (+2 DES por agilidad feérica, +1 INT por erudición), dominando además un truco de Mago innato.',
         fixed: { dex: 2, int: 1 },
         extraLanguages: 1,
         weaponProf: ['Espada larga', 'Espada corta', 'Arco largo', 'Arco corto'],
@@ -147,7 +145,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Elfo de los Bosques',
-        description: 'Sentidos aguzados y pies veloces, adaptados a la naturaleza indómita.',
+        description: 'Ermitaños y cazadores de selvas primigenias. Décadas de sigilo entre el follaje agudizan sus sentidos e intuición (+2 DES, +1 SAB), aumentando su velocidad a 10.5m y camuflándose en la naturaleza.',
         fixed: { dex: 2, wis: 1 },
         speed: 10.5,
         weaponProf: ['Espada larga', 'Espada corta', 'Arco largo', 'Arco corto'],
@@ -158,15 +156,14 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
         ]
       },
       {
-        name: 'Elfo Oscuro (Drow)',
-        description: 'Habitantes del Submundo con visión superior en sombras y magia drow.',
+        name: 'Elfo Oscuro',
+        description: 'Exiliados en las cavernas del Submundo. Adaptados a milenios de sombras e intriga, poseen visión nocturna superior de 36m y magia de sombras (+2 DES por agilidad, +1 CAR por su temible magnetismo).',
         fixed: { dex: 2, cha: 1 },
         darkvision: 36,
         weaponProf: ['Espada ropera', 'Espada corta', 'Ballesta de mano'],
         traits: [
-          { name: 'Visión en la Oscuridad Superior', description: 'Tu visión en la oscuridad se extiende a los 36 metros.', type: 'senses' },
-          { name: 'Magia Drow', description: 'Conoces Luces danzantes (Nivel 1), Fuego feérico (Nivel 3) y Oscuridad (Nivel 5). Carisma es tu aptitud mágica.', type: 'spell' },
-          { name: 'Entrenamiento Drow en Armas', description: 'Competencia con espada ropera, espada corta y ballesta de mano.', type: 'proficiency' },
+          { name: 'Magia del Elfo Oscuro', description: 'Conoces Luces danzantes (Nivel 1), Fuego feérico (Nivel 3) y Oscuridad (Nivel 5). Carisma es tu aptitud mágica.', type: 'spell' },
+          { name: 'Entrenamiento del Elfo Oscuro en Armas', description: 'Competencia con espada ropera, espada corta y ballesta de mano.', type: 'proficiency' },
           { name: 'Sensibilidad a la Luz Solar', description: 'Desventaja en ataques y pruebas de vista bajo luz solar directa.', type: 'feature' }
         ]
       }
@@ -178,7 +175,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Enano': {
     name: 'Enano',
-    description: 'Pueblos fuertes, tradicionales y persistentes, tallados en las piedras de las montañas.',
+    description: 'Forjados en la piedra de las montañas, los enanos destacan por su cuerpo denso, orgullo de clan y maestría con martillos y hachas. Su metabolismo resiste toxinas e venenos ambientales.',
     size: 'Mediano',
     speed: 7.5,
     age: 'Viven unos 350 años.',
@@ -189,15 +186,13 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     weaponProf: ['Hacha de batalla', 'Hacha de mano', 'Martillo de guerra', 'Martillo ligero'],
     toolChoices: { count: 1, options: ['Herramientas de herrero', 'Herramientas de cervecero', 'Herramientas de cantero'] },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
-      { name: 'Resistencia Enana', description: 'Resistencia y ventaja en tiradas de salvación contra veneno.', type: 'defense' },
       { name: 'Entrenamiento en Armas Enanas', description: 'Competencia con hachas y martillos.', type: 'proficiency' },
       { name: 'Conocimiento de la Piedra', description: 'Doble bono de competencia en pruebas de Historia sobre trabajo de piedra.', type: 'skill' }
     ],
     subraces: [
       {
         name: 'Enano de las Colinas',
-        description: 'Intuición aguzada y resistencia corporal sobrenatural.',
+        description: 'Enanos de temple sereno y sabiduría arraigada en la tierra (+2 CON, +1 SAB). Su vitalidad corporal les otorga la Robustez Enana, incrementando sus Puntos de Golpe máximos en cada nivel.',
         fixed: { con: 2, wis: 1 },
         traits: [
           { name: 'Robustez Enana', description: 'Tu máximo de Puntos de Golpe aumenta en +1 por cada nivel.', type: 'feature' }
@@ -205,7 +200,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Enano de las Montañas',
-        description: 'Corpulentos y fuertes, adiestrados en vestir armaduras de metal.',
+        description: 'Habitantes de las ciudadelas subterráneas profundas. Acostumbrados a cargar lingotes y vestir armaduras pesadas (+2 CON, +2 FUE), nacen con competencia innata en armaduras ligeras y medias.',
         fixed: { con: 2, str: 2 },
         armorProf: ['Ligera', 'Media'],
         traits: [
@@ -220,7 +215,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Gnomo': {
     name: 'Gnomo',
-    description: 'Inventores entusiastas y curiosos de gran intelecto y vitalidad.',
+    description: 'Seres pequeños de energía inagotable y curiosidad desbordante. Su mente inquisitiva procesa la realidad rápidamente, otorgándoles Astucia Gnoma: ventaja en salvaciones de INT, SAB y CAR contra magia.',
     size: 'Pequeño',
     speed: 7.5,
     age: 'Viven de 350 a 500 años.',
@@ -228,13 +223,12 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     languages: ['Común', 'Gnomo'],
     darkvision: 18,
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
       { name: 'Astucia Gnoma', description: 'Ventaja en salvaciones de Inteligencia, Sabiduría y Carisma contra magia.', type: 'defense' }
     ],
     subraces: [
       {
         name: 'Gnomo de las Rocas',
-        description: 'Ingeniosos mecánicos y constructores de artefactos.',
+        description: 'Inventores y relojeros compulsivos (+2 INT por genio analítico, +1 CON por vigor en el taller). Pasan la vida construyendo artefactos y pequeños artilugios mecánicos funcionales.',
         fixed: { int: 2, con: 1 },
         traits: [
           { name: 'Conocimiento del Artesano', description: 'Doble competencia en Inteligencia sobre objetos mágicos o tecnológicos.', type: 'skill' },
@@ -243,7 +237,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Gnomo de los Bosques',
-        description: 'Afinidad con la magia de ilusión y las criaturas de los bosques.',
+        description: 'Protectores de la fauna forestal. Su naturaleza reservada y afinidad con la ilusión (+2 INT, +1 DES) les permite lanzar Ilusión Menor innata y comunicarse con bestias pequeñas.',
         fixed: { int: 2, dex: 1 },
         traits: [
           { name: 'Ilusión Innata', description: 'Conoces el truco Ilusión Menor (Inteligencia es tu aptitud mágica).', type: 'spell' },
@@ -258,7 +252,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Humano': {
     name: 'Humano',
-    description: 'La raza más adaptable, ambiciosa y versátil del mundo.',
+    description: 'La raza más ambiciosa, diversa y adaptable de todos los reinos. Al carecer de dones biológicos extremos, los humanos compensan con una tenacidad incansable que les permite prosperar en cualquier entorno.',
     size: 'Mediano',
     speed: 9,
     age: 'Alcanzan la adultez a los 18 años y viven menos de un siglo.',
@@ -269,19 +263,19 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     subraces: [
       {
         name: 'Humano Estándar',
-        description: 'Aumenta todas tus puntuaciones de habilidad en +1.',
+        description: 'Los humanos son la raza más proliferada del continente; seres que se adaptan a cualquier situación y amenaza. Esta versatilidad todoterreno justifica su aumento de +1 en TODOS sus atributos/estadísticas (FUE, DES, CON, INT, SAB, CAR).',
         fixed: { str: 1, dex: 1, con: 1, int: 1, wis: 1, cha: 1 },
         traits: [
-          { name: 'Versátil', description: '+1 a todas las puntuaciones de habilidad.', type: 'feature' }
+          { name: 'Versátil', description: '+1 a todas las puntuaciones de atributo (FUE, DES, CON, INT, SAB, CAR).', type: 'feature' }
         ]
       },
       {
         name: 'Humano Entrenado (Variante)',
-        description: 'Ganas +1 en dos atributos a tu elección y 1 habilidad adicional.',
+        description: 'El humano entrenado enfoca sus esfuerzos en una disciplina específica. Su especialización intensiva justifica el +1 a dos atributos/estadísticas a elección, una competencia de habilidad adicional y un talento entrenado.',
         choice: { count: 2, amount: 1 },
         skillChoices: { count: 1, options: ['Atletismo', 'Acrobacias', 'Juego de Manos', 'Sigilo', 'Arcanos', 'Historia', 'Investigación', 'Naturaleza', 'Religión', 'Trato con Animales', 'Perspicacia', 'Medicina', 'Percepción', 'Supervivencia', 'Engaño', 'Intimidación', 'Interpretación', 'Persuasión'] },
         traits: [
-          { name: 'Especialización Entrenada', description: '+1 a 2 atributos a elección y 1 habilidad extra.', type: 'feature' }
+          { name: 'Especialización Entrenada', description: '+1 a 2 atributos/estadísticas a elección y 1 competencia de habilidad adicional.', type: 'feature' }
         ]
       }
     ]
@@ -292,7 +286,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Mediano': {
     name: 'Mediano',
-    description: 'Pequeños, afables y dotados de una suerte extraordinaria.',
+    description: 'Criaturas afables de pequeña estatura que valoran la paz, el buen comer y la comunidad. Una bendición misteriosa del destino rodea a su pueblo, otorgándoles la habilidad Suerte para repetir cualquier 1 en dados.',
     size: 'Pequeño',
     speed: 7.5,
     age: 'Viven unos 150 años.',
@@ -306,7 +300,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     subraces: [
       {
         name: 'Mediano Piesligero',
-        description: 'Sigilosos y diestros en pasar desapercibidos.',
+        description: 'Escurridizos, sociables y simpáticos. Su agilidad felina y encanto personal (+2 DES, +1 CAR) les permite deslizarse entre la multitud y ocultarse tras criaturas de mayor tamaño.',
         fixed: { dex: 2, cha: 1 },
         traits: [
           { name: 'Sigiloso por Naturaleza', description: 'Puedes ocultarte tras criaturas de mayor tamaño.', type: 'skill' }
@@ -314,7 +308,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
       },
       {
         name: 'Mediano Fornido',
-        description: 'Fuertes de constitución y resistentes a toxinas.',
+        description: 'Descendientes de linajes antiguos con sangre resistente (+2 DES, +1 CON). Su cuerpo denso y estómago fuerte les otorga resistencia natural al veneno y ventaja contra toxinas.',
         fixed: { dex: 2, con: 1 },
         resistances: ['veneno'],
         traits: [
@@ -329,7 +323,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Semielfo': {
     name: 'Semielfo',
-    description: 'Unen la gracia feérica élfica con el espíritu ambicioso humano.',
+    description: 'Hijos de dos mundos, los semielfos encarnan la elegancia y visión de sus ancestros élficos combinada con la energía apasionada y ambiciosa de la humanidad.',
     size: 'Mediano',
     speed: 9,
     age: 'Viven unos 180 años.',
@@ -341,14 +335,13 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     choice: { count: 2, amount: 1 },
     skillChoices: { count: 2, options: ['Atletismo', 'Acrobacias', 'Juego de Manos', 'Sigilo', 'Arcanos', 'Historia', 'Investigación', 'Naturaleza', 'Religión', 'Trato con Animales', 'Perspicacia', 'Medicina', 'Percepción', 'Supervivencia', 'Engaño', 'Intimidación', 'Interpretación', 'Persuasión'] },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
       { name: 'Ascendencia Feérica', description: 'Ventaja contra encantamiento e inmunidad a sueño mágico.', type: 'defense' },
       { name: 'Versatilidad de Habilidades', description: 'Ganas competencia en 2 habilidades a tu elección.', type: 'skill' }
     ],
     subraces: [
       {
         name: 'Semielfo Versátil',
-        description: 'Herencia combinada con gran adaptabilidad.',
+        description: 'Mediadores nacidos para navegar ambas sociedades. Su encanto personal y diplomacia innata (+2 CAR y +1 a dos atributos a elección) justifica su versatilidad, competencia en dos habilidades elegidas y visión nocturna.',
         fixed: { cha: 2 },
         choice: { count: 2, amount: 1 }
       }
@@ -360,7 +353,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Semiorco': {
     name: 'Semiorco',
-    description: 'Combinan la ferocidad imparable orca con la tenacidad humana.',
+    description: 'Pobladores de frontera que unen la fuerza física bruta y ferocidad del pueblo orco con la voluntad humana. Su cuerpo atlético y resistencia imponen respeto en combate.',
     size: 'Mediano',
     speed: 9,
     age: 'Maduran a los 14 años y viven unos 75 años.',
@@ -370,14 +363,13 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     fixed: { str: 2, con: 1 },
     skillProf: ['Intimidación'],
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
       { name: 'Ataques Salvajes', description: '1 dado extra de daño del arma en impactos críticos cuerpo a cuerpo.', type: 'damage' },
       { name: 'Resistencia Implacable', description: '1/día al caer a 0 PG permaneces con 1 PG.', type: 'defense' }
     ],
     subraces: [
       {
         name: 'Semiorco Indómito',
-        description: 'Fuerza física temible e instinto de combate.',
+        description: 'Guerreros cuyo ardor combativo e instinto de supervivencia (+2 FUE, +1 CON) les permite propinar impactos críticos devastadores con armas y negarse a caer (Resistencia Implacable), manteniéndose con 1 PG.',
         fixed: { str: 2, con: 1 }
       }
     ]
@@ -388,7 +380,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Infernal': {
     name: 'Infernal',
-    description: 'Humanoides con herencia infernal, cuernos y afinidad con el fuego y las sombras.',
+    description: 'Humanoides tocados por la sombra de pactos o planos infernales antiguos. Portan cuernos, cola prensil y ojos profundos, conservando resistencia natural al fuego e inmunidad a quemaduras.',
     size: 'Mediano',
     speed: 9,
     age: 'Viven unos 100 años.',
@@ -398,14 +390,12 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     resistances: ['fuego'],
     fixed: { cha: 2, int: 1 },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
-      { name: 'Resistencia Infernal', description: 'Resistencia al daño de fuego.', type: 'defense' },
       { name: 'Legado Infernal', description: 'Taumaturgia (Nivel 1), Reprensión infernal (Nivel 3) y Oscuridad (Nivel 5).', type: 'spell' }
     ],
     subraces: [
       {
-        name: 'Infernal Infernal',
-        description: 'Legado del Señor de los Infiernos.',
+        name: 'Infernal Astado',
+        description: 'Herederos directos de la majestad de los señores de los infiernos. Su magnetismo oscuro e intelecto perspicaz (+2 CAR, +1 INT) justifica su dominio del Legado Infernal (Taumaturgia, Reprensión Infernal y Oscuridad).',
         fixed: { cha: 2, int: 1 }
       }
     ]
@@ -416,7 +406,7 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
   // ════════════════════════════════════════════════════════════════
   'Celestial': {
     name: 'Celestial',
-    description: 'Humanoides tocados por la gracia de planos celestiales, guardianes del bien y la luz divina.',
+    description: 'Descendientes de bendiciones angélicas y planos de luz pura. Nacen marcados por una vocación divina hacia la justicia, la protección de los débiles y la sanación de heridas.',
     size: 'Mediano',
     speed: 9,
     age: 'Viven hasta 160 años.',
@@ -426,14 +416,12 @@ export const BASE_RACES: Record<string, BaseRaceDef> = {
     resistances: ['radiante', 'necrótico'],
     fixed: { cha: 2, wis: 1 },
     traits: [
-      { name: 'Visión en la Oscuridad', description: 'Visión en la oscuridad a 18 metros.', type: 'senses' },
-      { name: 'Resistencia Celestial', description: 'Resistencia al daño radiante y necrótico.', type: 'defense' },
       { name: 'Manos Curativas', description: 'Como acción, tocas una criatura para curar PG iguales a tu nivel.', type: 'feature' }
     ],
     subraces: [
       {
         name: 'Celestial Protector',
-        description: 'Tocado por la luz espiritual celestial.',
+        description: 'Guardianes imbuidos de luz espiritual (+2 CAR por magnetismo sagrado, +1 SAB por intuición divina). Su resistencia al daño radiante y necrótico justifica su poder de Manos Curativas para restaurar la vida con un toque.',
         fixed: { cha: 2, wis: 1 }
       }
     ]
@@ -482,7 +470,6 @@ export const RACE_LANGUAGES: Record<string, string[]> = {
   'Humano Entrenado (Variante)': ['Común', 'Un idioma adicional (a elección)'],
   'Elfo':                ['Común', 'Élfico'],
   'Elfo Oscuro':         ['Común', 'Élfico'],
-  'Elfo Oscuro (Drow)':  ['Común', 'Élfico'],
   'Alto Elfo':           ['Común', 'Élfico', 'Un idioma adicional (a elección)'],
   'Elfo de los Bosques': ['Común', 'Élfico'],
   'Enano':               ['Común', 'Enano'],
@@ -510,7 +497,7 @@ export const RACE_LANGUAGES: Record<string, string[]> = {
   'Semiorco':            ['Común', 'Orco'],
   'Semiorco Indómito':   ['Común', 'Orco'],
   'Infernal':            ['Común', 'Infernal'],
-  'Infernal Infernal':   ['Común', 'Infernal'],
+  'Infernal Astado':   ['Común', 'Infernal'],
   'Celestial':           ['Común', 'Celestial'],
   'Celestial Protector': ['Común', 'Celestial'],
 };

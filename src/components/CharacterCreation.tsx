@@ -286,7 +286,7 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
       if (prev.includes(name)) {
         return prev.filter(c => c !== name);
       }
-      if (spellLimits.cantripsKnownMax > 0 && prev.length >= spellLimits.cantripsKnownMax) {
+      if (spellLimits.cantripsKnownMax === 0 || prev.length >= spellLimits.cantripsKnownMax) {
         return prev;
       }
       return [...prev, name];
@@ -298,7 +298,7 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
       if (prev.includes(name)) {
         return prev.filter(s => s !== name);
       }
-      if (spellLimits.spellsKnownOrPreparedMax > 0 && prev.length >= spellLimits.spellsKnownOrPreparedMax) {
+      if (spellLimits.spellsKnownOrPreparedMax === 0 || prev.length >= spellLimits.spellsKnownOrPreparedMax) {
         return prev;
       }
       return [...prev, name];
@@ -371,12 +371,18 @@ const [raceChoiceA, setRaceChoiceA] = useState<AbilityKey>('str');
   };
 
   const getSkillCount = () => {
+    let count = 2;
     switch (className) {
-      case 'Pícaro': return 4;
-      case 'Bardo': return 3;
-      case 'Explorador': return 3;
-      default: return 2;
+      case 'Pícaro': count = 4; break;
+      case 'Bardo': count = 3; break;
+      case 'Explorador': count = 3; break;
+      default: count = 2; break;
     }
+    const rdef = RACES[race];
+    if (rdef?.skillChoices) {
+      count += rdef.skillChoices.count || 0;
+    }
+    return count;
   };
 
   const buildWeaponItem = (entry: WeaponCatalogEntry): WeaponItem => {
@@ -509,7 +515,7 @@ c.languages = Array.from(new Set([...(profs.languages || []), ...extraLanguages]
       });
     }
 
-    // ── Hechizos/acciones raciales (Dracónido, Tiefling, Drow, Alto Elfo) ──
+    // ── Hechizos/acciones raciales (Dracónido, Tiefling, Elfo Oscuro, Alto Elfo) ──
     const racialSpells = getRacialSpells(race, raceAncestry, raceCantrip, level);
     for (const rspell of racialSpells) {
       spells.push(rspell);
@@ -893,32 +899,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
 
 
 
-                  {/* Habilidades raciales adicionales */}
-                  {(rdef.skillChoices && rdef.skillChoices.options && rdef.skillChoices.options.length > 0) && (
-                    <div className="race-choice-row" style={{ marginTop: '10px' }}>
-                      <label>🎯 Competencias de habilidad adicionales (elige {rdef.skillChoices.count})</label>
-                      <div className="race-skill-choices">
-                        {SKILLS.filter(s => rdef.skillChoices!.options.includes(s.name)).map(s => (
-                          <label key={s.name} className={`tool-chip ${raceSkillChoices.includes(s.name) ? 'selected' : ''}`}>
-                            <input
-                              type="checkbox"
-                              checked={raceSkillChoices.includes(s.name)}
-                              onChange={() => {
-                                setRaceSkillChoices(prev =>
-                                  prev.includes(s.name)
-                                    ? prev.filter(x => x !== s.name)
-                                    : prev.length < (rdef.skillChoices?.count || 2)
-                                      ? [...prev, s.name]
-                                      : prev
-                                );
-                              }}
-                            />
-                            <span>{s.name}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+
 
                   {/* Herramientas de artesano raciales */}
                   {(rdef.toolChoices && rdef.toolChoices.options && rdef.toolChoices.options.length > 0) && (
@@ -1051,6 +1032,11 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
               );
             })()}
           </div>
+
+          <div className="step-nav">
+            <div></div>
+            <button className="step-next-btn" onClick={() => setCurrentStep('abilities')}>Siguiente →</button>
+          </div>
         </div>
       )}
 
@@ -1171,8 +1157,9 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
               Competencias de habilidades
               <span className="skill-count-badge">
                 {classChosenSkills.length} / {getSkillCount()} elegidas
+                {RACES[race]?.skillChoices?.count ? ` (+${RACES[race].skillChoices.count} de ${race})` : ''}
                 {lockedSkills.length > 0 && (
-                  <span className="bg-skill-badge">+ {lockedSkills.length} del trasfondo</span>
+                  <span className="bg-skill-badge">+ {lockedSkills.length} fijas</span>
                 )}
               </span>
             </div>
@@ -1276,23 +1263,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
               </button>
             )}
 
-            {/* Herramientas fijas del trasfondo (auto-equipadas) */}
-            {(() => {
-              const bgDef = BACKGROUND_EXTRAS[background];
-              if (!bgDef || !bgDef.tools || bgDef.tools.length === 0) return null;
-              return (
-                <div className="bg-fixed-tools-row" style={{ marginBottom: '10px' }}>
-                  <div className="small-note" style={{ fontWeight: 600, marginBottom: '4px' }}>
-                    🔧 Herramientas del trasfondo «{background}» (fijas, se equipan automáticamente):
-                  </div>
-                  <div className="prof-chips-row">
-                    {bgDef.tools.map(t => (
-                      <span key={t} className="prof-chip tool-chip fixed">✓ {t}</span>
-                    ))}
-                  </div>
-                </div>
-              );
-            })()}
+
             <div className="tools-grid">
               {(['kit', 'instrumento', 'artesano', 'juego'] as const).map(cat => {
                 const tools = TOOLS_CATALOG.filter(t => t.category === cat);
@@ -1346,17 +1317,34 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
               const rdef = RACES[race];
               if (!rdef) return null;
               const resistances = getRacialResistances(race, raceAncestry);
-              const items: { label: string; value: string }[] = [];
+              const items: { label: string; value: string; icon: string }[] = [];
+              const seenLabels = new Set<string>();
+
               if (resistances.length > 0) {
-                items.push({ label: 'Resistencias al daño', value: resistances.join(', ') });
+                items.push({ label: 'Resistencias al daño', value: resistances.map(r => `✓ ${r}`).join(' · '), icon: '🛡️' });
+                seenLabels.add('resistencias al daño');
               }
               if (rdef.darkvision) {
-                items.push({ label: 'Visión en la oscuridad', value: `${rdef.darkvision} m` });
+                const dvLabel = rdef.darkvision > 18 ? 'Visión en la oscuridad superior' : 'Visión en la oscuridad';
+                items.push({ label: dvLabel, value: `Visión en penumbra u oscuridad total hasta ${rdef.darkvision} metros.`, icon: '👁️' });
+                seenLabels.add('visión en la oscuridad');
+                seenLabels.add('visión en la oscuridad superior');
               }
               if (rdef.traits) {
                 for (const t of rdef.traits) {
                   if (t.type === 'defense' || t.type === 'senses' || t.type === 'movement') {
-                    items.push({ label: t.name, value: t.description });
+                    const tNameLower = t.name.toLowerCase();
+                    if (seenLabels.has('visión en la oscuridad') && (tNameLower.includes('visión en la oscuridad') || tNameLower.includes('visión superior'))) {
+                      continue;
+                    }
+                    if (seenLabels.has('resistencias al daño') && (tNameLower.includes('resistencia celestial') || tNameLower.includes('resistencia infernal') || tNameLower.includes('resistencia enana') || tNameLower.includes('resistencia dracónica') || tNameLower.includes('resistencia al daño'))) {
+                      continue;
+                    }
+                    if (seenLabels.has(tNameLower)) continue;
+                    seenLabels.add(tNameLower);
+
+                    const icon = t.type === 'defense' ? '🛡️' : t.type === 'senses' ? '👁️' : '🏃';
+                    items.push({ label: t.name, value: t.description, icon });
                   }
                 }
               }
@@ -1367,7 +1355,10 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 <div className="race-advantage-list">
                   {items.map((it, idx) => (
                     <div key={idx} className="race-advantage-item">
-                      <span className="advantage-label">{it.label}</span>
+                      <div className="advantage-header-row">
+                        <span className="advantage-icon">{it.icon}</span>
+                        <span className="advantage-label">{it.label}</span>
+                      </div>
                       <span className="advantage-value">{it.value}</span>
                     </div>
                   ))}
@@ -1433,7 +1424,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                           <input
                             type="checkbox"
                             checked={selectedCantrips.includes(c.name)}
-                            disabled={!selectedCantrips.includes(c.name) && spellLimits.cantripsKnownMax > 0 && selectedCantrips.length >= spellLimits.cantripsKnownMax}
+                            disabled={!selectedCantrips.includes(c.name) && (spellLimits.cantripsKnownMax === 0 || selectedCantrips.length >= spellLimits.cantripsKnownMax)}
                             onChange={() => handleToggleCantrip(c.name)}
                           />
                           <div className="spell-chip-content">
@@ -1467,7 +1458,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                           <input
                             type="checkbox"
                             checked={selectedSpells.includes(s.name)}
-                            disabled={!selectedSpells.includes(s.name) && spellLimits.spellsKnownOrPreparedMax > 0 && selectedSpells.length >= spellLimits.spellsKnownOrPreparedMax}
+                            disabled={!selectedSpells.includes(s.name) && (spellLimits.spellsKnownOrPreparedMax === 0 || selectedSpells.length >= spellLimits.spellsKnownOrPreparedMax)}
                             onChange={() => handleToggleSpell(s.name)}
                           />
                           <div className="spell-chip-content">
@@ -1546,7 +1537,7 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                   <span className="armor-option-ac">CA 10 + DES{className === 'Bárbaro' ? ' + CON' : className === 'Monje' ? ' + SAB' : ''}</span>
                 </div>
               </label>
-              {ARMOR_CATALOG.filter(a => ['Túnica de aprendiz', 'Cuero', 'Cuero tachonado', 'Cota de escamas', 'Cota de malla'].includes(a.name)).map(a => {
+              {ARMOR_CATALOG.filter(a => ['Túnica de aprendiz', 'Cuero', 'Cota de escamas', 'Cota de malla'].includes(a.name)).map(a => {
                 const isRecArmor = rec?.armor.includes(a.name);
                 const isProf = isArmorProficient(a.name, a.type, className, race, background);
                 return (
@@ -1722,6 +1713,11 @@ const usedPoints = Object.values(pointBuy).reduce((sum, v) => sum + POINTBUY_COS
                 {selectedSpells.length > 0 && <div className="review-value">Hechizos nv.1: {selectedSpells.join(', ')}</div>}
               </div>
             )}
+          </div>
+
+          <div className="step-nav" style={{ marginBottom: '16px' }}>
+            <button className="step-prev-btn" onClick={() => setCurrentStep('equipment')}>← Anterior</button>
+            <div></div>
           </div>
 
           <button className="cta" onClick={handleSubmit}>Crear personaje y cruzar el umbral</button>

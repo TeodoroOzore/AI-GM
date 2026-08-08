@@ -89,7 +89,7 @@ export function hasRequiredTool(c: CharacterSheet, toolRequired?: string): boole
     ...((c.equippedGear || []).map(g => (g.name || '').toLowerCase())),
   ];
 
-  // Helper keyword matching
+  // Búsqueda de palabra clave auxiliar
   const keywords = ['herrero', 'joyero', 'herbolario', 'envenenador', 'alquimista', 'curtidor', 'carpintero', 'ladrón', 'falsific', 'grabado', 'sanador', 'navegante', 'pintor', 'albañil', 'tejedor', 'alfeñique'];
   
   for (const item of allItems) {

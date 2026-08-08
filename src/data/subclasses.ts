@@ -1,5 +1,150 @@
 import { SubclassDetail } from '../types';
 
+export interface SubclassCategoryInfo {
+  singular: string;
+  plural: string;
+  fullName: string;
+  titleWithClass: string;
+  gender: 'm' | 'f';
+  spellsTitle: string;
+  companionTitle: string;
+}
+
+export function getSubclassCategoryInfo(className: string): SubclassCategoryInfo {
+  switch (className) {
+    case 'Explorador':
+      return {
+        singular: 'Clan',
+        plural: 'Clanes',
+        fullName: 'Clanes del Explorador',
+        titleWithClass: 'Subclase / Clanes del Explorador',
+        gender: 'm',
+        spellsTitle: '🪄 Conjuros / Trucos del Clan',
+        companionTitle: '🐾 Compañero / Bestia del Clan'
+      };
+    case 'Bárbaro':
+      return {
+        singular: 'Senda',
+        plural: 'Sendas',
+        fullName: 'Sendas del Bárbaro',
+        titleWithClass: 'Subclase / Sendas del Bárbaro',
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Trucos de la Senda',
+        companionTitle: '🐾 Compañero / Familiar de la Senda'
+      };
+    case 'Bardo':
+      return {
+        singular: 'Escuela',
+        plural: 'Escuelas',
+        fullName: 'Escuelas del Bardo',
+        titleWithClass: 'Subclase / Escuelas del Bardo',
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Trucos de la Escuela',
+        companionTitle: '🐾 Compañero / Familiar de la Escuela'
+      };
+    case 'Clérigo':
+      return {
+        singular: 'Doctrina',
+        plural: 'Doctrinas',
+        fullName: 'Doctrinas del Clérigo',
+        titleWithClass: 'Subclase / Doctrinas del Clérigo',
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Dones de la Doctrina',
+        companionTitle: '🐾 Compañero / Familiar de la Doctrina'
+      };
+    case 'Druida':
+      return {
+        singular: 'Armonía',
+        plural: 'Armonías',
+        fullName: 'Armonías del Druida',
+        titleWithClass: 'Subclase / Armonías del Druida',
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Ritos de la Armonía',
+        companionTitle: '🐾 Compañero / Familiar de la Armonía'
+      };
+    case 'Guerrero':
+      return {
+        singular: 'Estilo',
+        plural: 'Estilos',
+        fullName: 'Estilos del Guerrero',
+        titleWithClass: 'Subclase / Estilos del Guerrero',
+        gender: 'm',
+        spellsTitle: '🪄 Conjuros / Técnicas del Estilo',
+        companionTitle: '🐾 Compañero / Escudero del Estilo'
+      };
+    case 'Hechicero':
+      return {
+        singular: 'Herencia',
+        plural: 'Herencias',
+        fullName: 'Herencias del Hechicero',
+        titleWithClass: 'Subclase / Herencias del Hechicero',
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Magias de la Herencia',
+        companionTitle: '🐾 Compañero / Familiar de la Herencia'
+      };
+    case 'Mago':
+      return {
+        singular: 'Estudios',
+        plural: 'Estudios',
+        fullName: 'Estudios del Mago',
+        titleWithClass: 'Subclase / Estudios del Mago',
+        gender: 'm',
+        spellsTitle: '🪄 Conjuros / Fórmulas de los Estudios',
+        companionTitle: '🐾 Familiar / Constructo de los Estudios'
+      };
+    case 'Monje':
+      return {
+        singular: 'Filosofía',
+        plural: 'Filosofías',
+        fullName: 'Filosofías del Monje',
+        titleWithClass: 'Subclase / Filosofías del Monje',
+        gender: 'f',
+        spellsTitle: '🪄 Técnicas / Artes de la Filosofía',
+        companionTitle: '🐾 Compañero / Espíritu de la Filosofía'
+      };
+    case 'Paladín':
+      return {
+        singular: 'Orden',
+        plural: 'Órdenes',
+        fullName: 'Órdenes del Paladín',
+        titleWithClass: 'Subclase / Órdenes del Paladín',
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Dones de la Orden',
+        companionTitle: '🐾 Montura / Compañero de la Orden'
+      };
+    case 'Pícaro':
+      return {
+        singular: 'Hermandad',
+        plural: 'Hermandades',
+        fullName: 'Hermandades del Pícaro',
+        titleWithClass: 'Subclase / Hermandades del Pícaro',
+        gender: 'f',
+        spellsTitle: '🪄 Trucos / Maniobras de la Hermandad',
+        companionTitle: '🐾 Compañero / Informante de la Hermandad'
+      };
+    case 'Brujo':
+      return {
+        singular: 'Contrato',
+        plural: 'Contratos',
+        fullName: 'Contratos del Brujo',
+        titleWithClass: 'Subclase / Contratos del Brujo',
+        gender: 'm',
+        spellsTitle: '🪄 Conjuros / Concesiones del Contrato',
+        companionTitle: '🐾 Familiar / Siervo del Contrato'
+      };
+    default:
+      return {
+        singular: 'Subclase',
+        plural: 'Subclases',
+        fullName: `Subclases de ${className}`,
+        titleWithClass: `Subclase / ${className}`,
+        gender: 'f',
+        spellsTitle: '🪄 Conjuros / Trucos de la Subclase',
+        companionTitle: '🐾 Compañero / Familiar de la Subclase'
+      };
+  }
+}
+
 export const SUBCLASS_CATALOG: Record<string, SubclassDetail> = {
   // ==========================================
   // BÁRBARO (Sendas)
@@ -383,12 +528,12 @@ export const SUBCLASS_CATALOG: Record<string, SubclassDetail> = {
   },
 
   // ==========================================
-  // EXPLORADOR (Marcas)
+  // EXPLORADOR (Clanes)
   // ==========================================
-  'Marca del Cazador': {
-    name: 'Marca del Cazador',
+  'Clan de los Cazadores': {
+    name: 'Clan de los Cazadores',
     className: 'Explorador',
-    description: 'Especialista en la cacería de presa, adaptándose para abatir gigantes, hordas o presas veloces.',
+    description: 'Especialista en la cacería de presas y monstruos, adaptando sus tácticas marciales para abatir gigantes, hordas o presas veloces.',
     coreMechanic: 'Tácticas de Cazador (Asesino de Gigantes, Caza-Hordas) y defensas marciales.',
     keyRole: 'Daño Físico Adaptable & Cazador de Monstruos',
     features: [
@@ -396,21 +541,21 @@ export const SUBCLASS_CATALOG: Record<string, SubclassDetail> = {
       { level: 7, title: 'Táctica Defensiva', description: 'Desventaja en ataques de oportunidad enemigos o bonus a salvaciones.', type: 'feature' }
     ]
   },
-  'Marca del Depredador': {
-    name: 'Marca del Depredador',
+  'Clan de los Depredadores': {
+    name: 'Clan de los Depredadores',
     className: 'Explorador',
-    description: 'Acechadores de las profundidades sin luz y cavernas, emboscando con velocidad aterradora.',
-    coreMechanic: 'Emboscada Temible (ataque y movimiento extra en primer turno) e invisibilidad a la visión en la oscuridad.',
+    description: 'Acechadores de las profundidades sin luz y cavernas subterráneas, emboscando con velocidad aterradora.',
+    coreMechanic: 'Emboscada Temible (ataque y movimiento extra en primer turno) e invisibilidad ante visión en la oscuridad.',
     keyRole: 'Emboscador Sigiloso de Primer Turno',
     features: [
-      { level: 3, title: 'Emboscador Temible', description: 'En el primer turno de combate ganas +3m de velocidad y un ataque extra con 1d8 daño adicional.', type: 'feature' },
+      { level: 3, title: 'Emboscada Temible', description: 'En el primer turno de combate ganas +3m de velocidad y un ataque extra con 1d8 daño adicional.', type: 'feature' },
       { level: 3, title: 'Sombra de la Profundidad', description: 'Invisibilidad para criaturas que dependen de la visión en la oscuridad para verte.', type: 'feature' }
     ]
   },
-  'Marca del Favor Místico': {
-    name: 'Marca del Favor Místico',
+  'Clan del Favor Místico': {
+    name: 'Clan del Favor Místico',
     className: 'Explorador',
-    description: 'Bendecidos por el glamour del Reino Feérico, combinando ataques carismáticos y engaño mágico.',
+    description: 'Bendecidos por el glamour del Reino Feérico, combinando ataques carismáticos, control mental y engaño mágico.',
     coreMechanic: 'Daño psíquico de Favor Feérico y bonificador de Carisma en pruebas sociales.',
     keyRole: 'Explorador Carismático & Control Mágico',
     features: [
@@ -418,8 +563,8 @@ export const SUBCLASS_CATALOG: Record<string, SubclassDetail> = {
       { level: 7, title: 'Torcedura Mente Feérica', description: 'Ventaja en salvaciones contra ser encantado o asustado.', type: 'feature' }
     ]
   },
-  'Marca de la Manada': {
-    name: 'Marca de la Manada',
+  'Clan de la Manada': {
+    name: 'Clan de la Manada',
     className: 'Explorador',
     description: 'Forma un vínculo inquebrantable con un compañero bestial que lucha codo a codo en el campo de batalla.',
     coreMechanic: 'Compañero Bestial convocado con estadísticas escaladas por nivel.',
@@ -437,23 +582,23 @@ export const SUBCLASS_CATALOG: Record<string, SubclassDetail> = {
   'Hermandad de los Ladrones': {
     name: 'Hermandad de los Ladrones',
     className: 'Pícaro',
-    description: 'Especialistas en agilidad deslumbrante, uso rápido de objetos en combate y escalada felina.',
-    coreMechanic: 'Manos Rápidas para usar objetos o herramientas como acción bonus y Trabajo del Segundo Piso.',
-    keyRole: 'Utilidad Rápida & Infiltrado Urbano',
+    description: 'Especialista en agilidad callejera, sigilo, ganzúas y acciones veloces en combate.',
+    coreMechanic: 'Manos Rápidas (usar objetos o abrir cerraduras como acción adicional) y trepador nato.',
+    keyRole: 'Infiltrador & Utilidad de Combate',
     features: [
-      { level: 3, title: 'Manos Rápidas', description: 'Puedes usar Juego de Manos, desactivar trampas o usar objetos como acción bonus.', type: 'feature' },
-      { level: 3, title: 'Trabajo del Segundo Piso', description: 'Escalas a tu velocidad normal sin penalización.', type: 'feature' }
+      { level: 3, title: 'Manos Rápidas', description: 'Usar objeto o Juego de Manos como acción adicional.', type: 'feature' },
+      { level: 3, title: 'Trabajo de Segundo Piso', description: 'Trepar no cuesta movimiento adicional y saltas más lejos.', type: 'feature' }
     ]
   },
   'Hermandad de los Silenciadores': {
     name: 'Hermandad de los Silenciadores',
     className: 'Pícaro',
-    description: 'Maestros del golpe letal desapercibido, ejecutando ataques mortales antes de que la víctima reaccione.',
-    coreMechanic: 'Asesinato (ventaja contra quienes no han actuado y crítico automático en sorpresa).',
-    keyRole: 'Eliminador de Objetivos de Un Solo Golpe',
+    description: 'Maestros del asesinato frío y la sorpresa letal con venenos y disfraces.',
+    coreMechanic: 'Golpe Asesino (ventaja contra enemigos que no han actuado y crítico automático en sorpresa).',
+    keyRole: 'Daño Explosivo de Apertura',
     features: [
-      { level: 3, title: 'Asesinato', description: 'Tienes ventaja en ataques contra criaturas que no han actuado en el combate. Impactos a criaturas sorprendidas son críticos automáticos.', type: 'feature' },
-      { level: 9, title: 'Infiltración Perfecta', description: 'Creas identidades falsas impecables.', type: 'feature' }
+      { level: 3, title: 'Asesinar', description: 'Ventaja en ataques contra criaturas que no han actuado. Crítico automático en sorpresa.', type: 'feature' },
+      { level: 3, title: 'Competencias de Asesino', description: 'Competencia con kit de disfraz y kit de venenos.', type: 'feature' }
     ]
   },
   'Hermandad de los Susurradores': {
@@ -646,9 +791,14 @@ SUBCLASS_CATALOG['Camino de los Cuatro Elementos'] = SUBCLASS_CATALOG['Filosofí
 SUBCLASS_CATALOG['Juramento de Devoción'] = SUBCLASS_CATALOG['Orden del Cruzado'];
 SUBCLASS_CATALOG['Juramento de Venganza'] = SUBCLASS_CATALOG['Orden del Cuervo'];
 SUBCLASS_CATALOG['Juramento de los Ancestros'] = SUBCLASS_CATALOG['Orden de los Antepasados'];
-SUBCLASS_CATALOG['Cazador'] = SUBCLASS_CATALOG['Marca del Cazador'];
-SUBCLASS_CATALOG['Señor de las Bestias'] = SUBCLASS_CATALOG['Marca de la Manada'];
-SUBCLASS_CATALOG['Vagabundo Feérico'] = SUBCLASS_CATALOG['Marca del Favor Místico'];
+SUBCLASS_CATALOG['Cazador'] = SUBCLASS_CATALOG['Clan de los Cazadores'];
+SUBCLASS_CATALOG['Señor de las Bestias'] = SUBCLASS_CATALOG['Clan de la Manada'];
+SUBCLASS_CATALOG['Vagabundo Feérico'] = SUBCLASS_CATALOG['Clan del Favor Místico'];
+SUBCLASS_CATALOG['Acechador Sombrío'] = SUBCLASS_CATALOG['Clan de los Depredadores'];
+SUBCLASS_CATALOG['Marca del Cazador'] = SUBCLASS_CATALOG['Clan de los Cazadores'];
+SUBCLASS_CATALOG['Marca del Depredador'] = SUBCLASS_CATALOG['Clan de los Depredadores'];
+SUBCLASS_CATALOG['Marca del Favor Místico'] = SUBCLASS_CATALOG['Clan del Favor Místico'];
+SUBCLASS_CATALOG['Marca de la Manada'] = SUBCLASS_CATALOG['Clan de la Manada'];
 SUBCLASS_CATALOG['Ladrón'] = SUBCLASS_CATALOG['Hermandad de los Ladrones'];
 SUBCLASS_CATALOG['Asesino'] = SUBCLASS_CATALOG['Hermandad de los Silenciadores'];
 SUBCLASS_CATALOG['Embaucador Arcano'] = SUBCLASS_CATALOG['Hermandad de los Susurradores'];

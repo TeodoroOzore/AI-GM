@@ -37,7 +37,7 @@ export function App() {
   const [sheetFocusSection, setSheetFocusSection] = useState<string>('');
   const [bestiaryOpen, setBestiaryOpen] = useState<boolean>(false);
 
-  // Load state from localStorage on mount safely
+  // Cargar el estado desde localStorage de forma segura al iniciar
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);

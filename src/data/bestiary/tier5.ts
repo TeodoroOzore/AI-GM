@@ -338,8 +338,8 @@ export const BESTIARY_TIER5: BestiaryEntry[] = [
     lore: 'Cuando un dragón muere sin descanso o es resucitado por magia oscura, puede alzarse como un dragón no-muerto. Sus alas de pergamino crujen, su aliento es frío como la tumba y su odio hacia los vivos es eterno. Es un recordatorio aterrador de que ni siquiera los más poderosos escapan de la muerte.'
   },
   {
-    id: 'matriarca-drow',
-    name: 'Matriarca Drow',
+    id: 'matriarca-elfo-oscuro',
+    name: 'Matriarca Elfo Oscuro',
     emoji: '🌑',
     size: 'Mediano',
     type: 'humanoide',
@@ -366,8 +366,8 @@ export const BESTIARY_TIER5: BestiaryEntry[] = [
     ],
     weaknesses: ['La luz solar directa la debilita; su orgullo la hace subestimar a las razas "inferiores".'],
     strengths: ['Mando absoluto sobre su casa, magia venenosa y alianzas con arañas colosales.'],
-    habitat: 'Ciudades del submundo, templos de araña, cortes drow.',
-    lore: 'Las matriarcas drow son las sacerdotisas supremas de las ciudades del submundo, gobernando con intriga y veneno. Cada una dirige una casa noble a través de alianzas, asesinatos y favores. Su fe en la diosa araña es absoluta, y su crueldad, legendaria.'
+    habitat: 'Ciudades del submundo, templos de araña, cortes de elfos oscuros.',
+    lore: 'Las matriarcas de los elfos oscuros son las sacerdotisas supremas de las ciudades del submundo, gobernando con intriga y veneno. Cada una dirige una casa noble a través de alianzas, asesinatos y favores. Su fe en la diosa araña es absoluta, y su crueldad, legendaria.'
   },
   {
     id: 'angel-vengador',

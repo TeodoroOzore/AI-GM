@@ -1,4 +1,4 @@
-// ─── Character Utility Functions ──────────────────────────────────
+// ─── Funciones de Utilidad de Personaje ───────────────────────────
 
 import { AbilityKey, CharacterSheet, SpellItem, ToolCategory } from '../types/core';
 import { abilityMod, fmtSigned } from '../data/abilities';
@@ -89,7 +89,7 @@ export function getToolCategoryLimits(className: string, race: string, backgroun
 
 // ─── Hechizos/acciones raciales ───────────────────────────────────
 // Devuelve SpellItem[] con level='racial' para los rasgos que otorgan
-// conjuros o acciones por raza (Dracónido, Tiefling, Drow, Alto Elfo, etc.)
+// conjuros o acciones por raza (Dracónido, Tiefling, Elfo Oscuro, Alto Elfo, etc.)
 export function getRacialSpells(
   race: string,
   raceAncestry: string,
@@ -143,7 +143,7 @@ export function getRacialSpells(
   }
 
   // ── Elfo Oscuro: Magia de Sombras ──
-  if (race.includes('Elfo Oscuro') || race.includes('Drow')) {
+  if (race.includes('Elfo Oscuro')) {
     spells.push({
       name: 'Luces danzantes',
       level: 'racial',

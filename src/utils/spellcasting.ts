@@ -1,10 +1,10 @@
-// ─── Spellcasting Limits & Slot Tables ────────────────────────────
+// ─── Límites de Lanzamiento de Hechizos y Tablas de Espacios ────────
 
 import { AbilityKey, CharacterSheet, SpellcastingLimits } from '../types/core';
 import { CLASSES, FULL_SLOTS, HALF_SLOTS, PACT_SLOTS, profBonus } from '../data/classes';
 import { ABILITIES, abilityMod, fmtSigned } from '../data/abilities';
 
-// FULL_SLOTS, HALF_SLOTS, PACT_SLOTS, POINTBUY_COST are now imported from '../data/classes'
+// FULL_SLOTS, HALF_SLOTS, PACT_SLOTS se importan de '../data/classes'
 
 function getMaxSlotLevel(slots?: number[]): number {
   if (!slots) return 1;
@@ -15,10 +15,11 @@ function getMaxSlotLevel(slots?: number[]): number {
 }
 
 export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
+  const lvl = c.level;
   const cdef = CLASSES[c.className] || CLASSES['Guerrero'];
-  const spellType = cdef.spellcasting?.type || null;
+  const spellType = (c.className === 'Paladín' || c.className === 'Explorador') && lvl < 2 ? null : (cdef.spellcasting?.type || null);
 
-  const abKey: AbilityKey = cdef.spellcasting?.ability || (c.subclass === 'Caballero Arcano' || c.subclass === 'Embaucador Arcano' ? 'int' : 'int');
+  const abKey: AbilityKey = cdef.spellcasting?.ability || (c.subclass === 'Estilo del Misticismo' || c.subclass === 'Hermandad de los Susurradores' ? 'int' : 'int');
   const abVal = abilityMod(c.abilities[abKey]);
   const prof = profBonus(c.level);
   const dc = 8 + prof + abVal;
@@ -32,8 +33,6 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
   let ritualDesc = '';
   let pactLvl: number | undefined;
   let pactCnt: number | undefined;
-
-  const lvl = c.level;
 
   switch (c.className) {
     case 'Mago':
@@ -98,23 +97,23 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
 
     case 'Paladín':
       cantripsMax = 0;
-      spellsMax = Math.max(1, abVal + Math.floor(lvl / 2));
+      spellsMax = lvl < 2 ? 0 : Math.max(1, abVal + Math.floor(lvl / 2));
       labelText = 'Conjuros de Juramento Preparados';
-      maxLvl = getMaxSlotLevel(HALF_SLOTS[lvl]);
+      maxLvl = lvl < 2 ? 0 : getMaxSlotLevel(HALF_SLOTS[lvl]);
       ritual = false;
       break;
 
     case 'Explorador':
       cantripsMax = 0;
       const rangerKnown = [0, 2, 3, 4, 5, 6, 7, 8, 9, 9, 10, 10, 11, 11, 11, 11, 11, 11, 11, 11];
-      spellsMax = rangerKnown[Math.min(19, Math.max(0, lvl - 1))];
+      spellsMax = lvl < 2 ? 0 : rangerKnown[Math.min(19, Math.max(0, lvl - 1))];
       labelText = 'Conjuros Conocidos';
-      maxLvl = getMaxSlotLevel(HALF_SLOTS[lvl]);
+      maxLvl = lvl < 2 ? 0 : getMaxSlotLevel(HALF_SLOTS[lvl]);
       ritual = false;
       break;
 
     case 'Guerrero':
-      if (c.subclass === 'Caballero Arcano' && lvl >= 3) {
+      if (c.subclass === 'Estilo del Misticismo' && lvl >= 3) {
         cantripsMax = lvl >= 10 ? 3 : 2;
         const ekKnown = [0, 0, 3, 4, 4, 4, 5, 6, 6, 7, 8, 8, 9, 10, 10, 11, 11, 12, 12, 13];
         spellsMax = ekKnown[Math.min(19, Math.max(0, lvl - 1))];
@@ -124,7 +123,7 @@ export function getSpellcastingLimits(c: CharacterSheet): SpellcastingLimits {
       break;
 
     case 'Pícaro':
-      if (c.subclass === 'Embaucador Arcano' && lvl >= 3) {
+      if (c.subclass === 'Hermandad de los Susurradores' && lvl >= 3) {
         cantripsMax = lvl >= 10 ? 3 : 2;
         const atKnown = [0, 0, 3, 4, 4, 4, 5, 6, 6, 7, 8, 8, 9, 10, 10, 11, 11, 12, 12, 13];
         spellsMax = atKnown[Math.min(19, Math.max(0, lvl - 1))];

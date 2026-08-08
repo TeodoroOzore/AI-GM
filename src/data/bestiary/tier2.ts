@@ -880,8 +880,8 @@ export const BESTIARY_TIER2: BestiaryEntry[] = [
     lore: 'Los guardianes hadas son servidores leales de los señores feéricos, protectores de bosques sagrados y lindes entre mundos. Son escurridizos y burlones, desaparecen en la niebla y golpean desde donde menos se espera. Su lealtad al reino feérico es absoluta.'
   },
   {
-    id: 'asaltante-drow',
-    name: 'Asaltante Drow',
+    id: 'asaltante-elfo-oscuro',
+    name: 'Asaltante Elfo Oscuro',
     emoji: '🌑',
     size: 'Mediano',
     type: 'humanoide',
@@ -907,7 +907,7 @@ export const BESTIARY_TIER2: BestiaryEntry[] = [
     weaknesses: ['La luz solar directa los perjudica gravemente.'],
     strengths: ['Sigilo, veneno y magia de oscuridad combinados.'],
     habitat: 'Submundo, ciudades subterráneas, arañas colosales.',
-    lore: 'Los asaltantes drow son guerreros de las ciudades del submundo, entrenados en el sigilo y el combate de emboscada. Prefieren la oscuridad, donde su visión superior y su magia les dan ventaja. Sus ballestas disparan dardos venenosos y sus tácticas son frías y despiadadas.'
+    lore: 'Los asaltantes elfos oscuros son guerreros de las ciudades del submundo, entrenados en el sigilo y el combate de emboscada. Prefieren la oscuridad, donde su visión superior y su magia les dan ventaja. Sus ballestas disparan dardos venenosos y sus tácticas son frías y despiadadas.'
   },
   {
     id: 'araña-gigante',

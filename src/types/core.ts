@@ -529,6 +529,7 @@ export type SpellItem = {
   notes: string;
   damageType?: DamageType;
   school?: SpellSchool;
+  prepared?: boolean;
 };
 
 export type CompanionItem = {
@@ -602,6 +603,11 @@ raceExtraLanguage?: string;
   classChoices?: Record<string, string>;
 concentratingOnSpell?: string;
   warlockInvocations?: string[];
+  metamagicChoices?: string[];
+  activeAuras?: string[];
+  hunterMarkActive?: boolean;
+  hunterMarkTarget?: string;
+  wildShapeActiveForm?: string;
   resistances?: string[];
   craftingProgress?: CraftingProgress;
   unlockedRecipes?: string[]; // IDs de recetas avanzadas desbloqueadas por el DM/NPCs

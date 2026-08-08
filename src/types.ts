@@ -1,7 +1,7 @@
 // ─── Barrel Export: Re-exports everything from modular files ─────
-// All components import from '../types' — this file keeps compatibility.
+// Todos los componentes importan desde '../types' — este archivo mantiene la compatibilidad.
 
-// Core type definitions
+// Definiciones de tipos principales
 export type {
   AbilityKey,
   AbilityDef,
@@ -70,7 +70,7 @@ FightingStyleDef,
   BaseClassDetail,
 } from './types/core';
 
-// Core functions & constants
+// Funciones principales y constantes
 export { BODY_ZONE_ALIASES, NON_EQUIPPABLE_SLOTS, getBodyZone } from './types/core';
 
 // Character-specific types
@@ -87,7 +87,7 @@ export type {
   CampaignState as CampaignState2,
 } from './types/character';
 
-// Bestiary types
+// Tipos del Bestiario
 export type {
   MonsterSize,
   MonsterType,
@@ -96,7 +96,7 @@ export type {
   BestiaryTier,
 } from './types/core';
 
-// Data constants
+// Constantes de datos
 export { ABILITIES, SKILLS, POINTBUY_COST, abilityMod, fmtSigned, DAMAGE_TYPE_EMOJI, DAMAGE_TYPE_COLOR } from './data/abilities';
 export { RACES, BASE_RACES, RACE_LANGUAGES, resolveBaseRace, getSubraceCategoryLabel } from './data/races';
 export { CLASSES, FULL_SLOTS, HALF_SLOTS, PACT_SLOTS, profBonus, hpMaxFor, classResources } from './data/classes';
@@ -120,7 +120,7 @@ export { WARLOCK_INVOCATIONS_CATALOG, getWarlockInvocationsLimit } from './data/
 export { CLASS_RECOMMENDATIONS } from './data/recommendations';
 export { STARTING_PACKS, EQUIPMENT_SLOTS } from './data/startingPacks';
 
-// Bestiary data
+// Datos del Bestiario
 export {
   BESTIARY,
   BESTIARY_TIERS,
@@ -132,9 +132,11 @@ export {
 } from './data/bestiary';
 export type { BestiaryFilter } from './data/bestiary';
 
-// Utility functions
+// Funciones de utilidad
 export { secureRandInt, rollD20, rollFormula } from './utils/dice';
 export { blankCharacter, resolveToolCategory, getToolCategoryLimits, getRacialSpells, getRacialResistances } from './utils/character';
+export { getSubclassCategoryInfo } from './data/subclasses';
+export type { SubclassCategoryInfo } from './data/subclasses';
 export { getSpellcastingLimits } from './utils/spellcasting';
 // Crafting & Forge utilities
 export {
@@ -159,3 +161,4 @@ export {
   computeAC,
   buildWeaponItem,
 } from './utils/crafting';
+export type TabKey = 'stats' | 'gear' | 'crafting' | 'journal' | 'class' | 'dynamic' | 'familiars' | 'companions';

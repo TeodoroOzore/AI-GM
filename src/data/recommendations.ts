@@ -24,7 +24,7 @@ export const CLASS_RECOMMENDATIONS: Record<string, ClassRecommendation> = {
   'Clérigo': {
     skills: ['Religión', 'Medicina', 'Perspicacia', 'Historia', 'Persuasión'],
     tools: [],
-    cantrips: ['Llama Sagrada', 'Taumaturgia', 'Palabra de Sanación'],
+    cantrips: ['Llama Sagrada', 'Taumaturgia', 'Plegaria a los Caídos'],
     spells: ['Curar Heridas', 'Bendición', 'Escudo de la Fe', 'Infligir Heridas', 'Detectar Magia'],
     weapons: ['Maza', 'Martillo de guerra', 'Ballesta ligera'],
     armor: ['Cota de malla', 'Cota de escamas', 'Escudo'],
@@ -33,7 +33,7 @@ export const CLASS_RECOMMENDATIONS: Record<string, ClassRecommendation> = {
   'Druida': {
     skills: ['Naturaleza', 'Percepción', 'Supervivencia', 'Trato con Animales', 'Medicina'],
     tools: ['Kit de herbolario'],
-    cantrips: ['Producir Llama', 'Druídica', 'Espinas'],
+    cantrips: ['Producir Llama', 'Druidismo', 'Látigo de Espinas'],
     spells: ['Curar Heridas', 'Enmarañar', 'Detectar Magia', 'Onda Atronadora', 'Palabra Sanadora'],
     weapons: ['Cimitarra', 'Bastón', 'Daga'],
     armor: ['Cuero', 'Pieles', 'Escudo'],
@@ -43,7 +43,7 @@ export const CLASS_RECOMMENDATIONS: Record<string, ClassRecommendation> = {
     skills: ['Percepción', 'Supervivencia', 'Sigilo', 'Naturaleza', 'Atletismo'],
     tools: [],
     cantrips: [],
-    spells: ['Favor del Cazador', 'Saeta Guía del Cazador', 'Curar Heridas', 'Detectar Magia', 'Enmarañar'],
+    spells: ['Marca del Cazador', 'Curar Heridas', 'Detectar Magia', 'Enmarañar'],
     weapons: ['Arco largo', 'Espada larga', 'Espada corta', 'Daga'],
     armor: ['Cuero tachonado', 'Cota de escamas'],
     description: 'Competente en armaduras ligeras, medias, escudos, armas simples y marciales. Hechizos desde nivel 2 (SAB).'
@@ -60,7 +60,7 @@ description: 'Competente en TODAS las armaduras, escudos, armas simples y marcia
   'Hechicero': {
     skills: ['Arcanos', 'Persuasión', 'Engaño', 'Intimidación', 'Religión'],
     tools: [],
-    cantrips: ['Rayo de Fuego', 'Prestidigitación', 'Descarga Eléctrica', 'Luz'],
+    cantrips: ['Rayo de Fuego', 'Prestidigitación', 'Agarre Electrizante', 'Luz'],
     spells: ['Proyectil Mágico', 'Escudo', 'Manos Ardientes', 'Dormir'],
     weapons: ['Daga', 'Dardo', 'Honda', 'Bastón'],
     armor: [],
@@ -105,7 +105,7 @@ description: 'Competente en TODAS las armaduras, escudos, armas simples y marcia
   'Brujo': {
     skills: ['Arcanos', 'Engaño', 'Intimidación', 'Investigación', 'Naturaleza', 'Religión'],
     tools: [],
-    cantrips: ['Descarga Sobrecogedora', 'Toque Gélido', 'Prestidigitación'],
+    cantrips: ['Descarga Mística', 'Toque Gélido', 'Prestidigitación'],
     spells: ['Rayo de Brujo', 'Represalia Infernal', 'Hechizar Persona', 'Retirada Acelerada'],
     weapons: ['Daga', 'Bastón', 'Ballesta ligera'],
     armor: ['Cuero'],
